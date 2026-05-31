@@ -3,7 +3,7 @@
 A free, open-source textbook for advanced analytics. Every chapter covers:
 **Concept → Use Cases → Implementation → Research Frontiers**
 
-🌐 **Live Site:** [your-username.github.io/advanced-analytics](https://your-username.github.io/advanced-analytics)
+🌐 **Live Site:** [https://book-aa.dataglacier.org](https://book-aa.dataglacier.org)
 
 ## Chapters
 | # | Title | Status |
