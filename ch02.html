@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Ch 2: EDA & Feature Engineering — Advanced Analytics</title>
+<style>
+:root{
+  --bg:#07090F;--surface:#0D1120;--surface2:#121828;--surface3:#18203A;
+  --border:rgba(100,120,255,0.18);--border-hi:rgba(100,120,255,0.38);
+  --body:#DDE3F8;--body-dim:#98A8CC;--body-faint:#4E5C80;
+  --h1:#FFFFFF;--h2:#7B8FFF;--h3:#00E5FF;--h4:#FFB300;--h5:#A6E3A1;
+  --indigo:#6366F1;--cyan:#06B6D4;--amber:#F59E0B;--green:#10B981;
+  --pink:#EC4899;--violet:#8B5CF6;--orange:#F97316;
+  --code-bg:#04060D;--sidebar-w:290px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:#07090F!important;color-scheme:dark}
+body{background:#07090F!important;color:var(--body)!important;font-family:'Georgia','Times New Roman',serif;font-size:17px;line-height:1.9;-webkit-font-smoothing:antialiased;min-height:100vh!important;}
+#sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:#08091A!important;border-right:1px solid #1A2550;overflow-y:auto;z-index:100;display:flex;flex-direction:column;}
+#sb-header{padding:22px 18px 16px;background:linear-gradient(160deg,#0C1535,#0D1120)!important;border-bottom:1px solid #1A2550;}
+#sb-header .logo{font-family:'Courier New',monospace;font-size:9.5px;letter-spacing:.25em;color:#00E5FF!important;font-weight:800;text-transform:uppercase;margin-bottom:8px;}
+#sb-header h2{font-size:13px;font-weight:700;font-family:sans-serif;color:#FFFFFF!important;line-height:1.4;}
+.nav-part{padding:14px 0 4px;}
+.nav-part-label{padding:4px 18px;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#2E3A60!important;font-family:sans-serif;font-weight:800;}
+.nav-ch{display:block;padding:6px 18px;font-size:12px;color:#6070A0!important;text-decoration:none;font-family:sans-serif;border-left:2px solid transparent;transition:all .15s;line-height:1.4;}
+.nav-ch:hover{color:#C8D4F8!important;background:rgba(99,102,241,.10);border-left-color:#6366F1;}
+.nav-ch.active{color:#00E5FF!important;border-left-color:#00E5FF;background:rgba(0,229,255,.09);font-weight:700;}
+.nav-ch.locked{color:#2E3A60!important;cursor:default;}
+.nav-ch .ch-num{font-family:'Courier New',monospace;font-size:9px;color:#3A4870!important;margin-right:6px;letter-spacing:.1em;}
+.nav-ch.active .ch-num{color:#00E5FF!important;}
+.nav-sub{display:block;padding:4px 18px 4px 34px;font-size:11px;color:#3A4870!important;text-decoration:none;font-family:sans-serif;transition:all .15s;}
+.nav-sub:hover{color:#8899CC!important;}
+.nav-sub.active{color:#7B8FFF!important;}
+#main{margin-left:var(--sidebar-w);max-width:860px;padding:0 52px 120px;}
+.ch-hero{padding:60px 0 44px;border-bottom:1px solid #10182E;margin-bottom:0;background:linear-gradient(180deg,rgba(6,182,212,.08) 0%,transparent 60%)!important;}
+.ch-hero .ch-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:18px;font-family:sans-serif;}
+.ch-hero .ch-eyebrow .part-tag{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#4E5C80!important;font-weight:700;}
+.ch-hero .ch-eyebrow .ch-tag{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#06B6D4!important;font-weight:800;background:rgba(6,182,212,.18);padding:3px 10px;border-radius:6px;}
+.ch-hero h1{font-size:clamp(26px,4.5vw,44px);color:#FFFFFF!important;line-height:1.15;margin-bottom:14px;letter-spacing:-.01em;}
+.ch-hero h1 .accent{background:linear-gradient(110deg,#22D3EE 0%,#818CF8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.ch-hero .ch-desc{font-size:15.5px;color:#8898C0!important;max-width:640px;line-height:1.75;margin-bottom:24px;}
+.ch-hero .ch-meta{display:flex;gap:20px;flex-wrap:wrap;font-family:sans-serif;}
+.ch-hero .ch-meta .m{font-size:11.5px;color:#4E5C80!important;display:flex;align-items:center;gap:5px;}
+.ch-hero .ch-meta .m span{color:#06B6D4!important;font-weight:700;}
+.content-section{padding:52px 0;border-bottom:1px solid #10182E;}
+.section-banner{display:flex;align-items:center;gap:14px;padding:12px 18px;border-radius:10px;margin-bottom:32px;font-family:sans-serif;}
+.section-banner .s-icon{font-size:20px;}
+.section-banner .s-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;margin-bottom:2px;}
+.section-banner .s-title{font-size:16px;font-weight:700;color:#FFFFFF!important;}
+.banner-concept{background:rgba(99,102,241,.16)!important;border-left:4px solid #6366F1;}
+.banner-concept .s-label{color:#818CF8!important;}
+.banner-usecases{background:rgba(16,185,129,.14)!important;border-left:4px solid #10B981;}
+.banner-usecases .s-label{color:#34D399!important;}
+.banner-impl{background:rgba(6,182,212,.14)!important;border-left:4px solid #06B6D4;}
+.banner-impl .s-label{color:#22D3EE!important;}
+.banner-research{background:rgba(245,158,11,.14)!important;border-left:4px solid #F59E0B;}
+.banner-research .s-label{color:#FBBF24!important;}
+h2{font-size:28px;color:#7B8FFF!important;margin-bottom:12px;letter-spacing:-.01em;text-shadow:0 0 40px rgba(123,143,255,.35)!important;}
+h3{font-size:21px;color:#00E5FF!important;margin:44px 0 14px;font-weight:700;border-bottom:1px solid rgba(0,229,255,.25)!important;padding-bottom:9px!important;text-shadow:0 0 24px rgba(0,229,255,.3)!important;}
+h4{font-size:13.5px;color:#FFB300!important;text-transform:uppercase;letter-spacing:.09em;margin:30px 0 10px;font-family:sans-serif;font-weight:800;}
+h5{font-size:15px;color:#A6E3A1!important;margin:22px 0 8px;font-family:sans-serif;font-weight:700;}
+p{color:#DDE3F8!important;margin-bottom:18px;font-size:16.5px;line-height:1.88;}
+strong{color:#FFFFFF!important;font-weight:700;}
+em{color:#FFB300!important;font-style:italic;}
+a{color:#60A5FA!important;}
+ul,ol{padding-left:22px;margin-bottom:18px;}
+li{color:#DDE3F8!important;margin-bottom:8px;font-size:16px;line-height:1.75;}
+li strong{color:#FFFFFF!important;}
+.callout{border-radius:10px;padding:18px 22px;margin:26px 0;border-left:4px solid;font-family:sans-serif;font-size:14.5px;line-height:1.75;}
+.callout p{font-size:14.5px!important;margin-bottom:8px!important;color:#DDE3F8!important;}
+.callout p:last-child{margin-bottom:0!important;}
+.callout ul,.callout ol{margin-bottom:0;}
+.callout li{font-size:14px!important;color:#DDE3F8!important;}
+.callout-concept{background:rgba(99,102,241,.16)!important;border-color:#6366F1;}
+.callout-analogy{background:rgba(245,158,11,.14)!important;border-color:#F59E0B;}
+.callout-warning{background:rgba(236,72,153,.14)!important;border-color:#EC4899;}
+.callout-tip{background:rgba(16,185,129,.14)!important;border-color:#10B981;}
+.callout-key{background:rgba(6,182,212,.14)!important;border-color:#06B6D4;}
+.callout-research{background:rgba(245,158,11,.10)!important;border-color:#F59E0B;}
+.cl{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;display:block;margin-bottom:8px;}
+.callout-concept .cl{color:#818CF8!important;}
+.callout-analogy .cl{color:#FBBF24!important;}
+.callout-warning .cl{color:#F472B6!important;}
+.callout-tip .cl{color:#34D399!important;}
+.callout-key .cl{color:#22D3EE!important;}
+.callout-research .cl{color:#FBBF24!important;}
+pre{background:#04060D!important;border:1px solid #1E2850!important;border-top:3px solid #06B6D4!important;color:#CDD6F4!important;font-family:'Courier New','Fira Code',monospace!important;font-size:13px!important;line-height:1.75!important;border-radius:8px!important;padding:20px 22px!important;overflow-x:auto!important;margin:18px 0 24px!important;}
+pre code{background:none!important;border:none!important;color:inherit!important;padding:0!important;font-size:inherit!important;}
+code{background:rgba(6,182,212,.18)!important;border:1px solid rgba(6,182,212,.35)!important;color:#67E8F9!important;font-size:13px!important;border-radius:4px!important;padding:2px 7px!important;font-family:'Courier New',monospace!important;}
+.code-label{color:#3A4870!important;font-size:10px!important;letter-spacing:.14em!important;text-transform:uppercase!important;font-family:sans-serif!important;display:flex!important;align-items:center!important;gap:6px!important;margin-bottom:-8px!important;padding-top:12px!important;}
+.code-label::before{content:'';display:inline-block;width:8px;height:8px;background:#06B6D4;border-radius:50%;}
+.kw{color:#CBA6F7!important;}.fn{color:#89B4FA!important;}.st{color:#A6E3A1!important;}
+.nu{color:#FAB387!important;}.cm{color:#6272A4!important;font-style:italic!important;}
+.cl2{color:#F9E2AF!important;}.dc{color:#89DCEB!important;}.op{color:#CDD6F4!important;}
+.formula{background:#04060D!important;border:1px solid rgba(255,179,0,.28)!important;border-radius:10px!important;padding:20px 24px!important;margin:20px 0!important;font-family:'Courier New',monospace!important;font-size:14px!important;color:#FFD060!important;text-align:center!important;line-height:2.2!important;overflow-x:auto!important;}
+.formula .f-label{font-size:10px!important;color:#4E5C80!important;text-transform:uppercase!important;letter-spacing:.15em!important;display:block!important;margin-bottom:6px!important;text-align:left!important;}
+.diagram{background:#030508!important;border:1px solid rgba(0,229,255,.22)!important;border-left:3px solid #00E5FF!important;border-radius:8px!important;padding:22px 24px!important;font-family:'Courier New',monospace!important;font-size:12.5px!important;line-height:1.88!important;overflow-x:auto!important;margin:20px 0!important;color:#6FB3CC!important;}
+.dl{color:#FFB300!important;font-weight:700!important;}
+.db{color:#A6E3A1!important;font-weight:600!important;}
+.dd{color:#89B4FA!important;}
+.dv{color:#CBA6F7!important;}
+.tbl-wrap{overflow-x:auto;margin:20px 0;}
+table{width:100%;border-collapse:collapse;border:1px solid #1E2850;}
+th{background:#0F1525!important;color:#00E5FF!important;font-size:11.5px!important;letter-spacing:.07em!important;text-transform:uppercase!important;padding:12px 16px!important;border-bottom:1px solid #1E2850!important;font-family:sans-serif!important;font-weight:700!important;}
+td{color:#DDE3F8!important;padding:11px 16px!important;border-bottom:1px solid rgba(100,120,255,.10)!important;font-size:14px!important;vertical-align:top!important;}
+td strong{color:#00E5FF!important;}
+td code{font-size:12px!important;}
+tr:nth-child(even) td{background:rgba(99,102,241,.05)!important;}
+tr:hover td{background:rgba(99,102,241,.10)!important;}
+.quiz{background:rgba(245,158,11,.11)!important;border:1px solid rgba(245,158,11,.32)!important;border-radius:12px!important;padding:22px 24px!important;margin:32px 0!important;font-family:sans-serif!important;}
+.quiz .q-title{font-size:10px!important;letter-spacing:.2em!important;text-transform:uppercase!important;color:#FBBF24!important;font-weight:800!important;margin-bottom:14px!important;display:flex!important;align-items:center!important;gap:8px!important;}
+.quiz ol{padding-left:20px!important;}
+.quiz li{color:#DDE3F8!important;font-size:14px!important;margin-bottom:10px!important;line-height:1.65!important;}
+.quiz .hint{margin-top:14px!important;font-size:12px!important;color:#4E5C80!important;font-style:italic!important;}
+.steps{margin:20px 0;}
+.step{display:flex;gap:16px;margin-bottom:22px;align-items:flex-start;}
+.step-n{min-width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#06B6D4,#6366F1)!important;color:#FFFFFF!important;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:sans-serif;margin-top:3px;box-shadow:0 0 18px rgba(6,182,212,.5);}
+.step-body strong{display:block;color:#FFFFFF!important;font-family:sans-serif;font-size:15px;margin-bottom:4px;}
+.step-body p{color:#98A8CC!important;font-size:14.5px!important;margin-bottom:0!important;}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+.compare-box{background:var(--surface2)!important;border:1px solid #1A2550;border-radius:10px;padding:18px 20px;}
+.compare-box h5{margin-top:0!important;margin-bottom:12px!important;}
+.compare-box ul{margin-bottom:0;}
+.compare-box li{font-size:13.5px!important;color:#98A8CC!important;margin-bottom:6px!important;}
+.paper{background:rgba(245,158,11,.08)!important;border:1px solid rgba(245,158,11,.25)!important;border-left:3px solid #F59E0B!important;border-radius:8px!important;padding:16px 18px!important;margin:14px 0!important;font-family:sans-serif!important;}
+.paper .p-title{font-size:14px!important;color:#FFFFFF!important;font-weight:700!important;margin-bottom:4px!important;}
+.paper .p-meta{font-size:11px!important;color:#4E5C80!important;margin-bottom:8px!important;letter-spacing:.04em!important;}
+.paper .p-desc{font-size:13px!important;color:#98A8CC!important;line-height:1.6!important;}
+.ch-nav{display:flex;gap:14px;margin-top:52px;padding-top:32px;border-top:1px solid #10182E;}
+.ch-nav a{flex:1;padding:16px 20px;background:#0C1225!important;border:1px solid #1A2550!important;border-radius:10px!important;text-decoration:none!important;color:#8899CC!important;font-family:sans-serif!important;font-size:13px!important;transition:all .15s!important;display:block!important;}
+.ch-nav a:hover{border-color:#06B6D4!important;color:#FFFFFF!important;}
+.ch-nav .nav-lbl{font-size:10px!important;text-transform:uppercase!important;letter-spacing:.12em!important;color:#3A4870!important;margin-bottom:4px!important;}
+#menu-btn{display:none;}
+@media(max-width:900px){
+  #sidebar{transform:translateX(-100%);transition:transform .3s;}
+  #sidebar.open{transform:translateX(0);}
+  #main{margin-left:0;padding:0 18px 80px;}
+  #menu-btn{display:block;position:fixed;top:12px;right:14px;z-index:200;background:#06B6D4!important;border:none;color:#FFFFFF!important;padding:9px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-family:sans-serif;font-weight:700;box-shadow:0 4px 16px rgba(6,182,212,.5);}
+  .compare{grid-template-columns:1fr;}
+}
+*{scrollbar-width:thin;scrollbar-color:#1E2850 #050810;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:#050810;}
+::-webkit-scrollbar-thumb{background:#1E2850;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#06B6D4;}
+</style>
+</head>
+<body style="background:#07090F!important;color:#DDE3F8!important;">
+<button id="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+
+<nav id="sidebar">
+  <div id="sb-header">
+    <div class="logo">Advanced Analytics · 2026</div>
+    <h2>Complete Mastery Book</h2>
+  </div>
+  <div class="nav-part">
+    <div class="nav-part-label">Navigation</div>
+    <a class="nav-ch" href="index.html"><span class="ch-num">00 ·</span> Table of Contents</a>
+  </div>
+  <div class="nav-part">
+    <div class="nav-part-label">Part I — Foundations</div>
+    <a class="nav-ch" href="ch01.html"><span class="ch-num">01 ·</span> Statistical Foundations</a>
+    <a class="nav-ch active" href="ch02.html"><span class="ch-num">02 ·</span> EDA &amp; Feature Engineering</a>
+    <a class="nav-sub active" href="#concept">🧠 Concept</a>
+    <a class="nav-sub" href="#usecases">🏭 Use Cases</a>
+    <a class="nav-sub" href="#implementation">⚙️ Implementation</a>
+    <a class="nav-sub" href="#research">🔬 Research</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">03 ·</span> Regression &amp; Prediction</a>
+  </div>
+  <div class="nav-part">
+    <div class="nav-part-label">Part II — Core Methods</div>
+    <a class="nav-ch locked" href="#"><span class="ch-num">04 ·</span> Classification</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">05 ·</span> Time Series</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">06 ·</span> Clustering</a>
+  </div>
+  <div class="nav-part">
+    <div class="nav-part-label">Part III — Advanced</div>
+    <a class="nav-ch locked" href="#"><span class="ch-num">07 ·</span> Causal Inference</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">08 ·</span> Bayesian Analytics</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">09 ·</span> Graph Analytics</a>
+  </div>
+  <div class="nav-part">
+    <div class="nav-part-label">Part IV — Production</div>
+    <a class="nav-ch locked" href="#"><span class="ch-num">10 ·</span> NLP &amp; Text</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">11 ·</span> MLOps</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">12 ·</span> Data Pipelines</a>
+  </div>
+</nav>
+
+<main id="main">
+
+<div class="ch-hero">
+  <div class="ch-eyebrow">
+    <span class="ch-tag">Chapter 02</span>
+    <span class="part-tag">Part I · Foundations</span>
+  </div>
+  <h1><span class="accent">Exploratory Data Analysis</span><br>&amp; Feature Engineering</h1>
+  <p class="ch-desc">Most models fail not because of the algorithm — they fail because of bad data understanding and poor feature design. This chapter covers the systematic craft of knowing your data deeply and transforming it into signals a model can actually use.</p>
+  <div class="ch-meta">
+    <div class="m">📖 <span>~65 min</span> reading</div>
+    <div class="m">💻 <span>14</span> code examples</div>
+    <div class="m">🔬 <span>5</span> research papers</div>
+    <div class="m">🧠 <span>5</span> core concepts</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SECTION 1: CONCEPT
+════════════════════════════════════════ -->
+<section class="content-section" id="concept">
+  <div class="section-banner banner-concept">
+    <span class="s-icon">🧠</span>
+    <div>
+      <div class="s-label">Section 1 of 4</div>
+      <div class="s-title">Concept — The Deep Theory</div>
+    </div>
+  </div>
+
+  <h2>EDA Is Not Plotting. Feature Engineering Is Not Intuition.</h2>
+
+  <p>Most people think EDA means making histograms until something looks interesting. That's not EDA — that's wandering. Real EDA is a <strong>systematic investigation with specific questions</strong>: What is the shape of each variable? What relationships exist? What assumptions does my intended model make, and does my data violate them? Where is the data wrong?</p>
+
+  <p>Feature engineering is similarly misunderstood as "adding new columns." The real definition: <em>feature engineering is the process of encoding domain knowledge and data structure into a representation that makes the learning problem easier</em>. A well-engineered feature can make a linear model outperform a deep neural network.</p>
+
+  <div class="callout callout-concept">
+    <span class="cl">🔑 The Single Most Important Insight</span>
+    <p>Every machine learning algorithm is a function approximator. Its job is to find a mapping from features to targets. <strong>Feature engineering reshapes the input space</strong> so that the mapping becomes simpler — ideally linear. A nonlinear relationship in raw space might be perfectly linear in log-space. A cyclical feature (hour of day) that confuses a tree might be trivially separable when encoded as sin/cos components. The model's job gets easier every time you make the underlying structure more explicit.</p>
+  </div>
+
+  <h3>2.1 The EDA Framework — Systematic, Not Random</h3>
+
+  <p>Effective EDA always answers questions in this order. Skipping steps produces missed problems that destroy models later.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <strong>Understand the data generation process</strong>
+        <p>Before touching the data: how was it collected? What does each row represent? What could go wrong at collection time? A clickstream row is not the same as a transaction row. Sensor data from a factory has different failure modes than survey data. The answers determine everything else.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <strong>Univariate analysis — understand each variable alone</strong>
+        <p>Distribution shape (normal? skewed? bimodal?), range, cardinality for categoricals, missing rate, outlier presence. The goal is not to look at pretty plots — it's to identify every variable that needs transformation before modeling.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <strong>Bivariate analysis — understand relationships</strong>
+        <p>Feature-target relationships (which features actually predict your target?), feature-feature correlations (multicollinearity), conditional distributions (does the relationship between X and Y change based on a third variable Z?). This is where you find your most powerful features.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">4</div>
+      <div class="step-body">
+        <strong>Data quality audit — find what's wrong</strong>
+        <p>Missing values (MCAR, MAR, MNAR — they require different treatments), duplicates, impossible values (negative ages, future dates), inconsistent encoding (same category spelled multiple ways), unit inconsistencies, temporal leakage.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">5</div>
+      <div class="step-body">
+        <strong>Multivariate analysis — understand the joint structure</strong>
+        <p>Cluster structure in the feature space, class overlap for classification tasks, interaction effects between features, temporal trends if data has a time dimension. Dimensionality reduction (PCA, UMAP) helps visualize this.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>2.2 Distributions in Depth — Reading the Shape</h3>
+
+  <p>A histogram tells you the story of your data if you know how to read it. Each shape implies specific modeling decisions.</p>
+
+  <div class="tbl-wrap">
+  <table>
+    <tr><th>Shape Pattern</th><th>What It Implies</th><th>What To Do</th></tr>
+    <tr>
+      <td><strong>Right-skewed (long right tail)</strong></td>
+      <td>Multiplicative process, bounded below at 0. Revenue, income, counts, durations.</td>
+      <td>Log transform or Box-Cox. Use median not mean for summary stats. Consider log-normal or gamma models.</td>
+    </tr>
+    <tr>
+      <td><strong>Bimodal (two humps)</strong></td>
+      <td>Two subpopulations mixed. E.g. users who open emails within 1 min or not at all.</td>
+      <td>Find and encode the grouping variable. Consider modeling the two groups separately. Mixture models.</td>
+    </tr>
+    <tr>
+      <td><strong>Uniform distribution</strong></td>
+      <td>Often an ID or hash column disguised as a numeric. Or a truly uninformative feature.</td>
+      <td>Check if it's actually an ID. If genuinely uniform and numeric, it may have weak predictive power.</td>
+    </tr>
+    <tr>
+      <td><strong>Spike at zero + continuous tail</strong></td>
+      <td>Zero-inflated data. Many users spend $0; those who spend anything are log-normal.</td>
+      <td>Two-part model: classify zero vs non-zero, then model the non-zero part separately.</td>
+    </tr>
+    <tr>
+      <td><strong>Discrete with large gaps</strong></td>
+      <td>Manual data entry, rounding, or ordinal masquerading as numeric.</td>
+      <td>Treat as ordinal or categorical. Check if gaps are meaningful or artifacts.</td>
+    </tr>
+    <tr>
+      <td><strong>Heavy-tailed (extreme outliers)</strong></td>
+      <td>Power-law or Pareto process. Social media followers, city sizes, wealth.</td>
+      <td>Winsorize or clip at a quantile for regression. Log transform. Understand if outliers are real.</td>
+    </tr>
+  </table>
+  </div>
+
+  <h3>2.3 Missing Data — Three Mechanisms, Three Treatments</h3>
+
+  <p>Missing data is not a problem to be "fixed" by deleting rows or filling with the mean. It is a phenomenon that carries information about <em>why</em> data is missing. Getting this wrong causes biased models.</p>
+
+  <div class="diagram">
+<span class="dl">Missing Data Mechanisms:</span>
+
+<span class="db">MCAR</span> — Missing Completely At Random
+  The probability of being missing is unrelated to any variable.
+  Example: Lab equipment randomly fails regardless of patient condition.
+  Test: Little's MCAR test (chi-square test on missing patterns)
+  Treatment: Complete-case analysis valid. Mean/median imputation OK.
+  Frequency: Rare in practice. Usually an optimistic assumption.
+
+<span class="db">MAR</span>  — Missing At Random
+  Missingness depends on OBSERVED variables, not the missing value itself.
+  Example: Income is more often missing for younger respondents (age observed).
+  Test: Compare missing vs non-missing groups on observed variables.
+  Treatment: Multiple imputation (MICE), model-based imputation.
+  Frequency: Common. Most statistical software assumes MAR.
+
+<span class="db">MNAR</span> — Missing Not At Random
+  Missingness depends on the MISSING VALUE ITSELF.
+  Example: High earners refuse to report income (income causes missingness).
+  Example: Sick patients miss follow-up appointments.
+  Test: Cannot be verified from data alone — requires domain knowledge.
+  Treatment: Selection models, sensitivity analysis, domain knowledge.
+  Frequency: Common in practice, often ignored. Causes systematic bias.
+  </div>
+
+  <div class="callout callout-warning">
+    <span class="cl">⚠️ The Mean Imputation Disaster</span>
+    <p>Mean/median imputation is almost always wrong and causes three specific problems: it <strong>shrinks variance</strong> (all imputed values are identical, reducing variability), it <strong>distorts correlations</strong> (replacing missing values with the mean breaks the relationship between that variable and others), and it <strong>creates impossible values</strong> (imputing mean age = 34.7 when age should be an integer, or mean income in a bimodal distribution falling between the two modes where nobody actually is).</p>
+    <p><strong>Use instead:</strong> MICE (Multiple Imputation by Chained Equations) for MAR data. Add a binary missingness indicator as a feature regardless of imputation method — the fact that a value was missing is itself informative.</p>
+  </div>
+
+  <h3>2.4 Outliers — Signal or Noise?</h3>
+
+  <p>The most dangerous question in analytics is: "Should I remove this outlier?" The answer depends entirely on <em>why</em> the value is extreme, which requires understanding the data generation process.</p>
+
+  <div class="compare">
+    <div class="compare-box">
+      <h5>Outliers That Are Errors — Remove/Fix</h5>
+      <ul>
+        <li>Age = 999 (data entry error)</li>
+        <li>Revenue = -50,000 (sign error)</li>
+        <li>Date = year 2099 (system default)</li>
+        <li>Duplicate rows from JOIN explosion</li>
+        <li>Test/bot traffic in production logs</li>
+        <li>Sensor reading during calibration</li>
+      </ul>
+    </div>
+    <div class="compare-box">
+      <h5>Outliers That Are Real — Keep/Model</h5>
+      <ul>
+        <li>A whale customer spending 100× average</li>
+        <li>A viral post with 1M views vs normal 100</li>
+        <li>A fraudulent transaction (the whole point)</li>
+        <li>A crash event in safety-critical systems</li>
+        <li>Record-breaking stock market day</li>
+        <li>A medical patient with rare condition</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-tip">
+    <span class="cl">✅ The Right Process for Outliers</span>
+    <p><strong>1. Detect</strong> using IQR fences (Q3 + 1.5×IQR), Z-score (&gt;3σ), or Isolation Forest for multivariate outliers. <strong>2. Investigate each one</strong> — do not automate removal. <strong>3. Document your decision</strong> and the reasoning. <strong>4. If keeping for modeling</strong>, use robust methods (Huber loss, quantile regression, tree-based models) that are insensitive to outliers rather than deleting real data. <strong>5. Winsorize</strong> (cap at 99th percentile) as a middle ground when outliers are real but extreme enough to destabilize linear models.</p>
+  </div>
+
+  <h3>2.5 Feature Engineering — The Five Families</h3>
+
+  <p>Feature engineering techniques fall into five categories. A deep practitioner has all five in their toolkit and knows when each is appropriate.</p>
+
+  <h4>Family 1: Numerical Transformations</h4>
+  <p>Reshaping the distribution of continuous variables to satisfy model assumptions or make relationships linear.</p>
+
+  <div class="tbl-wrap">
+  <table>
+    <tr><th>Transform</th><th>Formula</th><th>Use When</th><th>Inverse</th></tr>
+    <tr><td><strong>Log</strong></td><td><code>log(x)</code> or <code>log1p(x)</code></td><td>Right-skewed positive data. Makes multiplicative relationships additive.</td><td><code>exp(x)</code></td></tr>
+    <tr><td><strong>Square Root</strong></td><td><code>√x</code></td><td>Count data (Poisson). Milder than log. Works on zeros.</td><td><code>x²</code></td></tr>
+    <tr><td><strong>Box-Cox</strong></td><td><code>(xᵅ-1)/λ</code></td><td>Optimal normalization — finds the best λ from data.</td><td>Parametric</td></tr>
+    <tr><td><strong>Yeo-Johnson</strong></td><td>Extended Box-Cox</td><td>Like Box-Cox but handles negative values and zeros.</td><td>Parametric</td></tr>
+    <tr><td><strong>Rank / Quantile</strong></td><td>Replace with quantile</td><td>When you need uniform or normal marginal distributions. Robust to outliers.</td><td>None</td></tr>
+    <tr><td><strong>Winsorization</strong></td><td>Clip at p/1-p quantiles</td><td>Reduce outlier influence without removing data.</td><td>None</td></tr>
+    <tr><td><strong>Binning</strong></td><td>Cut into intervals</td><td>When relationship is step-wise, not smooth. Handles non-monotonic effects.</td><td>None</td></tr>
+  </table>
+  </div>
+
+  <h4>Family 2: Categorical Encoding</h4>
+  <p>Converting categorical variables into numerical representations. The choice of encoding significantly impacts model performance and is highly model-dependent.</p>
+
+  <div class="tbl-wrap">
+  <table>
+    <tr><th>Encoding</th><th>Output</th><th>Best For</th><th>Avoid When</th></tr>
+    <tr><td><strong>One-Hot (OHE)</strong></td><td>k-1 binary columns</td><td>Low-cardinality nominals, linear models, neural nets</td><td>High cardinality (&gt;50 categories) — curse of dimensionality</td></tr>
+    <tr><td><strong>Label / Ordinal</strong></td><td>Integer 0 to k-1</td><td>Ordinal categories (low/med/high), tree models</td><td>Nominal categories with no order — implies false ordering</td></tr>
+    <tr><td><strong>Target Encoding</strong></td><td>Mean target per category</td><td>High-cardinality in tree models (cities, products, users)</td><td>Without cross-validation — causes massive target leakage</td></tr>
+    <tr><td><strong>Count / Frequency</strong></td><td>Category frequency</td><td>When frequency itself is informative (popular vs rare)</td><td>When frequency correlates with target spuriously</td></tr>
+    <tr><td><strong>Binary / Hash</strong></td><td>k binary columns</td><td>Very high cardinality, memory constraints</td><td>When collision rate is unacceptable for your cardinality</td></tr>
+    <tr><td><strong>Embeddings</strong></td><td>Dense vector (8-32 dim)</td><td>Neural nets, very high cardinality (user IDs, product IDs)</td><td>Small datasets — not enough data to learn embedding quality</td></tr>
+    <tr><td><strong>WoE (Weight of Evidence)</strong></td><td>Log(P(event)/P(non-event))</td><td>Binary classification, credit scoring, logistic regression</td><td>Multi-class problems — WoE is inherently binary</td></tr>
+  </table>
+  </div>
+
+  <div class="callout callout-warning">
+    <span class="cl">⚠️ Target Encoding — The Leakage Trap</span>
+    <p>Target encoding replaces a category with the mean target value for that category. On the surface, this seems ideal for high-cardinality features like user IDs or zip codes. The trap: <strong>you're using the target to create your features</strong>. If done naively on the full dataset, the model trains on features that directly encode the answer — this is target leakage, and it produces spectacular train metrics and terrible production performance.</p>
+    <p><strong>Correct approach:</strong> Always use out-of-fold target encoding. For each fold in cross-validation, compute target means on the <em>other</em> folds only. Libraries like <code>category_encoders</code> handle this correctly with the <code>TargetEncoder</code> class.</p>
+  </div>
+
+  <h4>Family 3: Datetime Features</h4>
+  <p>Time is one of the richest sources of features in business data. Raw timestamps are useless — their meaning must be extracted and encoded correctly.</p>
+
+  <div class="tbl-wrap">
+  <table>
+    <tr><th>Feature</th><th>Why It Matters</th><th>Encoding Note</th></tr>
+    <tr><td><strong>Hour of day</strong></td><td>Traffic, purchases, support tickets all have hourly patterns</td><td>Use sin/cos: <code>sin(2π·hour/24)</code>, <code>cos(2π·hour/24)</code> — encodes cyclical continuity (23:59 is close to 00:01)</td></tr>
+    <tr><td><strong>Day of week</strong></td><td>B2B vs B2C behave differently weekday vs weekend</td><td>sin/cos encoding: <code>sin(2π·dow/7)</code></td></tr>
+    <tr><td><strong>Month / Season</strong></td><td>Seasonality in sales, churn, engagement</td><td>sin/cos for cyclical, or one-hot if pattern is not smooth</td></tr>
+    <tr><td><strong>Is weekend / holiday</strong></td><td>Strong behavioral discontinuity at these boundaries</td><td>Binary flag. Use a holiday calendar library (workalendar, holidays)</td></tr>
+    <tr><td><strong>Time since event</strong></td><td>Recency: days since last purchase, last login, last support ticket</td><td>Raw numeric. Often log-transform for heavy-tailed distributions</td></tr>
+    <tr><td><strong>Time to event</strong></td><td>Days until contract renewal, subscription expiry, warranty end</td><td>Raw numeric or bucketed (30/60/90 day windows)</td></tr>
+    <tr><td><strong>Elapsed time in period</strong></td><td>Day 3 of month vs day 28 — payroll timing effects</td><td>Normalize: day_of_month / days_in_month → [0,1]</td></tr>
+  </table>
+  </div>
+
+  <h4>Family 4: Interaction &amp; Polynomial Features</h4>
+  <p>Linear models can only capture additive effects. If the effect of feature A depends on the value of feature B, you need to encode that interaction explicitly. Tree models find interactions automatically — linear models, neural nets, and SVMs do not.</p>
+
+  <div class="formula">
+    <span class="f-label">Polynomial Features — Expanding the Feature Space</span>
+    Original features: [x₁, x₂]
+
+    Degree-2 polynomial expansion:
+    [x₁, x₂, x₁², x₁x₂, x₂²]
+
+    Interaction term x₁x₂ captures: "the effect of x₁ depends on x₂"
+    Example: price_sensitivity × income_level
+             (high income users are less sensitive to price changes)
+
+    Warning: Degree-3 with 10 features → 286 features
+             Degree-3 with 100 features → 176,851 features
+             Always use regularization (Lasso/Ridge) with polynomial features.
+  </div>
+
+  <h4>Family 5: Aggregation &amp; Window Features</h4>
+  <p>The richest features for tabular ML are often aggregations across related rows — computing behavioral summaries per entity (user, product, store) over time windows.</p>
+
+  <div class="diagram">
+<span class="dl">Window Aggregation Example: E-Commerce User Features</span>
+
+Raw event log:
+  user_id | event_time          | event_type  | amount
+  U001    | 2025-01-15 14:22:00 | purchase    | 89.99
+  U001    | 2025-01-18 09:45:00 | page_view   | 0
+  U001    | 2025-01-20 16:10:00 | add_to_cart | 0
+  U001    | 2025-01-21 11:30:00 | purchase    | 124.50
+
+Engineered features (as of 2025-01-22):
+  <span class="db">Recency:</span>    days_since_last_purchase = 1
+  <span class="db">Frequency:</span>  purchases_last_30d = 2, purchases_last_90d = 4
+  <span class="db">Monetary:</span>   total_spend_last_30d = 214.49, avg_order_value = 107.25
+  <span class="db">Behavior:</span>   page_views_last_7d = 3, add_to_cart_rate = 0.33
+  <span class="db">Trend:</span>      spend_growth_rate = (214.49 - 89.99) / 89.99 = 1.38
+  <span class="db">Sequence:</span>   days_between_purchases_avg = 6.0
+
+This is the <span class="dv">RFM (Recency-Frequency-Monetary)</span> framework,
+the foundation of customer analytics since the 1990s.
+  </div>
+
+  <h3>2.6 The Leakage Problem — The Silent Model Killer</h3>
+
+  <p><strong>Target leakage</strong> occurs when your features contain information that would not be available at prediction time. It is the single most common cause of models that perform brilliantly in evaluation and catastrophically in production.</p>
+
+  <div class="callout callout-warning">
+    <span class="cl">⚠️ Real Leakage Examples That Destroyed Production Models</span>
+    <ul>
+      <li><strong>Hospital readmission model:</strong> Included "discharge_type" as a feature. Patients who died in hospital never got readmitted — discharge_type="deceased" perfectly predicted no readmission. Not available at prediction time.</li>
+      <li><strong>Fraud detection:</strong> Included "fraud_review_flag" set by the fraud team — this was set after fraud was discovered, not before. The model learned to detect when the fraud team had already found fraud.</li>
+      <li><strong>Churn prediction:</strong> Included "last_contact_reason = cancellation_inquiry" — this was set when the customer called to cancel, which is exactly when they were about to churn. Available at prediction time, but encodes the target almost perfectly.</li>
+      <li><strong>Loan default:</strong> Used future account balance data — the aggregation included data from months after the loan decision point.</li>
+    </ul>
+  </div>
+
+  <div class="callout callout-tip">
+    <span class="cl">✅ How to Prevent Leakage Systematically</span>
+    <p><strong>Temporal discipline:</strong> For any feature that changes over time, define a strict "feature cutoff date" before the prediction date. All features must be computed using only data available before that cutoff. <strong>Treat-time simulation:</strong> Simulate exactly what data would have been available at the moment the prediction would be made in production. <strong>Suspicious AUC check:</strong> If a new feature increases AUC from 0.72 to 0.98, assume leakage first. Investigate before celebrating.</p>
+  </div>
+
+  <h3>2.7 Feature Selection — Less Is Often More</h3>
+
+  <p>Adding more features does not monotonically improve model performance. Irrelevant and redundant features add noise, increase training time, make models less interpretable, and in small datasets cause overfitting.</p>
+
+  <div class="tbl-wrap">
+  <table>
+    <tr><th>Method</th><th>Type</th><th>How It Works</th><th>Strength</th></tr>
+    <tr><td><strong>Correlation / Mutual Info</strong></td><td>Filter</td><td>Rank features by univariate relationship with target</td><td>Fast, model-agnostic. Good first pass.</td></tr>
+    <tr><td><strong>Variance Threshold</strong></td><td>Filter</td><td>Remove near-zero variance features</td><td>Removes constants and near-constants instantly</td></tr>
+    <tr><td><strong>Lasso (L1)</strong></td><td>Embedded</td><td>Regularization drives irrelevant feature coefficients to exactly 0</td><td>Automatic, handles collinear features</td></tr>
+    <tr><td><strong>Feature Importance (Trees)</strong></td><td>Embedded</td><td>Average impurity decrease per feature across all trees</td><td>Captures non-linear relationships</td></tr>
+    <tr><td><strong>Permutation Importance</strong></td><td>Model-agnostic</td><td>Shuffle each feature; measure performance drop</td><td>Works for any model, respects interactions</td></tr>
+    <tr><td><strong>SHAP Values</strong></td><td>Model-agnostic</td><td>Game-theoretic attribution of each feature's contribution</td><td>Most faithful importance measure, handles correlations</td></tr>
+    <tr><td><strong>RFE (Recursive Feature Elimination)</strong></td><td>Wrapper</td><td>Iteratively remove least important features, re-train</td><td>Finds optimal subset but computationally expensive</td></tr>
+    <tr><td><strong>Boruta</strong></td><td>Wrapper</td><td>Compare real features against randomly shuffled shadow features</td><td>Statistically rigorous, finds all relevant features</td></tr>
+  </table>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════
+     SECTION 2: USE CASES
+════════════════════════════════════════ -->
+<section class="content-section" id="usecases">
+  <div class="section-banner banner-usecases">
+    <span class="s-icon">🏭</span>
+    <div>
+      <div class="s-label">Section 2 of 4</div>
+      <div class="s-title">Use Cases — Where This Gets Applied</div>
+    </div>
+  </div>
+
+  <h2>EDA &amp; Feature Engineering Across Industries</h2>
+
+  <h3>2.8 E-Commerce — Customer Lifetime Value Prediction</h3>
+
+  <p>Predicting which customers will be most valuable over the next 12 months. The quality of the feature set determines almost everything about model performance.</p>
+
+  <p><strong>Raw data available:</strong> order history, browsing sessions, email interactions, support tickets, demographics.</p>
+
+  <p><strong>EDA reveals:</strong></p>
+  <ul>
+    <li>CLV is log-normally distributed — 80% of customers contribute 20% of revenue. Mean CLV of $240 is meaningless; median $45 is more representative</li>
+    <li>53% of customers made exactly 1 purchase and never returned — the "one-and-done" segment dominates</li>
+    <li>Strong bimodality in session duration: 30 seconds (bounce) vs 8 minutes (engaged). Two different user types mixed in one dataset</li>
+    <li>Missing email open rate for 34% of customers — MNAR (non-openers have no open data), needs a separate "no_email_data" flag</li>
+  </ul>
+
+  <p><strong>Feature engineering decisions:</strong></p>
+  <ul>
+    <li>Log-transform CLV target before regression — residuals are then approximately normal</li>
+    <li>Create <code>is_repeat_buyer</code> binary flag — the one-and-done segment needs a separate model or a strong indicator</li>
+    <li>RFM features over 30/60/90/180 day windows — recency decay is exponential, so <code>log(days_since_last_purchase)</code></li>
+    <li>Session depth score: <code>pages_viewed × avg_time_per_page</code> — single interaction captures both breadth and depth</li>
+    <li>Category affinity vector: normalized purchase amounts per category — who is a "shoes person" vs "electronics person"</li>
+    <li>Email engagement ratio: <code>opens / sends</code> with Laplace smoothing for low-send customers</li>
+  </ul>
+
+  <h3>2.9 Healthcare — Readmission Risk Prediction</h3>
+
+  <p>Predicting 30-day hospital readmission from electronic health records (EHR). Feature engineering here directly impacts patient outcomes.</p>
+
+  <p><strong>Critical EDA findings:</strong></p>
+  <ul>
+    <li>Diagnosis codes (ICD-10) have 70,000+ unique values — direct one-hot encoding is impossible. Need hierarchical grouping (CCS categories) or embedding</li>
+    <li>Lab values have extreme missingness (40-80%) that is MNAR — sicker patients get more tests, so missing lab = probably less sick is often wrong</li>
+    <li>Length of stay is right-skewed with a spike at 0 (same-day discharge) — zero-inflated, needs separate treatment</li>
+    <li>Temporal leakage risk: discharge medications, discharge instructions, and follow-up appointment bookings all occur after the readmission risk window starts</li>
+  </ul>
+
+  <p><strong>Feature engineering patterns specific to healthcare:</strong></p>
+  <ul>
+    <li><strong>Comorbidity indices:</strong> Charlson Comorbidity Index and Elixhauser scores aggregate diagnosis codes into validated risk scores — domain knowledge compressed into a single feature</li>
+    <li><strong>Lab trajectory:</strong> Not just the last lab value but the <em>trend</em> — creatinine rising 0.3 mg/dL over 3 days is far more alarming than a static elevated value</li>
+    <li><strong>Medication complexity:</strong> Count of medications, count of drug classes, polypharmacy flag (&gt;10 medications)</li>
+    <li><strong>Social determinants:</strong> Zip code poverty rate, distance to hospital — available from public databases, highly predictive</li>
+  </ul>
+
+  <h3>2.10 Financial Services — Credit Default Prediction</h3>
+
+  <p>Building a credit scorecard requires both excellent EDA and regulatory-compliant feature engineering. In many jurisdictions, certain features are legally prohibited (race, gender, age in some contexts), requiring careful data governance.</p>
+
+  <p><strong>EDA specifics for credit data:</strong></p>
+  <ul>
+    <li>Default rates are typically 1-5% — severe class imbalance requires specific handling (SMOTE, cost-sensitive learning)</li>
+    <li>Many applicants have thin credit files — missing features are MNAR (no credit history = different risk profile than those with missing data by chance)</li>
+    <li>Strong multicollinearity among credit bureau features — need to identify and handle redundant features (VIF analysis)</li>
+  </ul>
+
+  <p><strong>WoE (Weight of Evidence) encoding</strong> is the industry standard for credit because it:</p>
+  <ul>
+    <li>Handles missing values naturally (missing = its own category)</li>
+    <li>Produces a monotonic transformation interpretable by regulators</li>
+    <li>Works well with logistic regression (the required interpretable model)</li>
+    <li>The IV (Information Value) provides a built-in feature selection metric</li>
+  </ul>
+
+  <h3>2.11 Manufacturing — Predictive Maintenance</h3>
+
+  <p>Using sensor data (vibration, temperature, current draw) to predict machine failure before it happens. Feature engineering on time series sensor data is its own specialized domain.</p>
+
+  <p><strong>Key feature engineering patterns:</strong></p>
+  <ul>
+    <li><strong>Rolling statistics:</strong> Mean, std, min, max over 1/5/30 minute windows — captures both level and volatility changes that precede failure</li>
+    <li><strong>FFT features:</strong> Fast Fourier Transform extracts frequency domain features from vibration signals — rotating machinery failure shows up as specific frequency harmonics before it's visible in raw signal</li>
+    <li><strong>Change point features:</strong> Sudden shifts in sensor mean or variance are often the earliest failure signal — CUSUM statistics as features</li>
+    <li><strong>Cross-sensor features:</strong> Temperature × vibration interaction, or deviation from expected temperature given current draw — encodes physics-based domain knowledge</li>
+    <li><strong>Time-to-previous-maintenance:</strong> Features encoding when last service was performed and what was done</li>
+  </ul>
+
+  <h3>When EDA Reveals You Need a Different Model Entirely</h3>
+
+  <div class="callout callout-key">
+    <span class="cl">📌 The Most Important Outcome of EDA</span>
+    <p>Sometimes thorough EDA reveals that the modeling approach you planned is wrong for the data structure you have. Examples: data with strong cluster structure suggests you need separate models per cluster rather than one global model. Zero-inflated data suggests a two-part model. Strong temporal autocorrelation means your train/test split must be temporal, not random. Data that changes in character over time (concept drift) means you need a model that retrains frequently. <strong>EDA should inform the entire modeling strategy — it's not just a preprocessing step.</strong></p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════
+     SECTION 3: IMPLEMENTATION
+════════════════════════════════════════ -->
+<section class="content-section" id="implementation">
+  <div class="section-banner banner-impl">
+    <span class="s-icon">⚙️</span>
+    <div>
+      <div class="s-label">Section 3 of 4</div>
+      <div class="s-title">Implementation — Full Python Code</div>
+    </div>
+  </div>
+
+  <h2>A Production EDA &amp; Feature Engineering Toolkit</h2>
+
+  <h3>3.1 Automated EDA Report</h3>
+
+  <div class="code-label">Python — Systematic data profiling from scratch</div>
+  <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+<span class="kw">from</span> scipy <span class="kw">import</span> stats
+<span class="kw">from</span> scipy.stats <span class="kw">import</span> shapiro, kstest, skew, kurtosis
+<span class="kw">import</span> warnings
+warnings.filterwarnings(<span class="st">'ignore'</span>)
+
+<span class="kw">class</span> <span class="cl2">DataProfiler</span>:
+    <span class="cm">"""
+    Systematic EDA profiler. Produces an actionable report of every
+    column's properties and recommended treatments.
+    
+    Covers: distributions, missing data, outliers, cardinality,
+            skewness, correlations, and recommended transforms.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, df: pd.DataFrame, target: str = <span class="kw">None</span>):
+        self.df     = df.copy()
+        self.target = target
+        self.report = {}
+
+    <span class="kw">def</span> <span class="fn">profile_numeric</span>(self, col: str) -> dict:
+        s = self.df[col].dropna()
+        n_missing = self.df[col].isna().sum()
+        pct_missing = n_missing / len(self.df)
+
+        <span class="cm"># Normality test (Shapiro for n<5000, KS for larger)</span>
+        <span class="kw">if</span> len(s) &lt; <span class="nu">5000</span>:
+            _, p_normal = shapiro(s.sample(min(len(s), <span class="nu">5000</span>), random_state=<span class="nu">42</span>))
+        <span class="kw">else</span>:
+            _, p_normal = kstest((s - s.mean()) / s.std(), <span class="st">'norm'</span>)
+
+        sk = skew(s)
+        kurt = kurtosis(s)
+
+        <span class="cm"># Outlier detection: IQR method</span>
+        q1, q3 = s.quantile(<span class="nu">0.25</span>), s.quantile(<span class="nu">0.75</span>)
+        iqr = q3 - q1
+        n_outliers = ((s &lt; q1 - <span class="nu">1.5</span>*iqr) | (s &gt; q3 + <span class="nu">1.5</span>*iqr)).sum()
+
+        <span class="cm"># Recommend transformation</span>
+        transform_rec = <span class="st">'none'</span>
+        <span class="kw">if</span> (s &gt; <span class="nu">0</span>).all() <span class="kw">and</span> sk &gt; <span class="nu">1.0</span>:
+            transform_rec = <span class="st">'log'</span>
+        <span class="kw">elif</span> (s &gt;= <span class="nu">0</span>).all() <span class="kw">and</span> sk &gt; <span class="nu">0.5</span>:
+            transform_rec = <span class="st">'sqrt'</span>
+        <span class="kw">elif</span> abs(sk) &gt; <span class="nu">0.5</span>:
+            transform_rec = <span class="st">'yeo-johnson'</span>
+
+        <span class="kw">return</span> {
+            <span class="st">'type'</span>:          <span class="st">'numeric'</span>,
+            <span class="st">'n'</span>:             len(s),
+            <span class="st">'n_missing'</span>:     n_missing,
+            <span class="st">'pct_missing'</span>:   pct_missing,
+            <span class="st">'mean'</span>:          s.mean(),
+            <span class="st">'median'</span>:        s.median(),
+            <span class="st">'std'</span>:           s.std(),
+            <span class="st">'min'</span>:           s.min(),
+            <span class="st">'max'</span>:           s.max(),
+            <span class="st">'p1'</span>:            s.quantile(<span class="nu">0.01</span>),
+            <span class="st">'p99'</span>:           s.quantile(<span class="nu">0.99</span>),
+            <span class="st">'skewness'</span>:      sk,
+            <span class="st">'kurtosis'</span>:      kurt,
+            <span class="st">'is_normal'</span>:     p_normal &gt; <span class="nu">0.05</span>,
+            <span class="st">'n_outliers_iqr'</span>: n_outliers,
+            <span class="st">'pct_outliers'</span>:  n_outliers / len(s),
+            <span class="st">'transform_rec'</span>: transform_rec,
+            <span class="st">'zero_pct'</span>:      (s == <span class="nu">0</span>).mean(),
+            <span class="st">'negative_pct'</span>:  (s &lt; <span class="nu">0</span>).mean(),
+        }
+
+    <span class="kw">def</span> <span class="fn">profile_categorical</span>(self, col: str) -> dict:
+        s = self.df[col]
+        n_missing   = s.isna().sum()
+        n_unique    = s.nunique()
+        top_5       = s.value_counts().head(<span class="nu">5</span>).to_dict()
+        top1_pct    = s.value_counts(normalize=<span class="kw">True</span>).iloc[<span class="nu">0</span>] <span class="kw">if</span> n_unique &gt; <span class="nu">0</span> <span class="kw">else</span> <span class="nu">0</span>
+
+        <span class="cm"># Cardinality-based encoding recommendation</span>
+        <span class="kw">if</span> n_unique &lt;= <span class="nu">2</span>:    enc = <span class="st">'binary'</span>
+        <span class="kw">elif</span> n_unique &lt;= <span class="nu">10</span>: enc = <span class="st">'one-hot'</span>
+        <span class="kw">elif</span> n_unique &lt;= <span class="nu">50</span>: enc = <span class="st">'target-encoding (with CV)'</span>
+        <span class="kw">else</span>:               enc = <span class="st">'target-encoding or embedding'</span>
+
+        <span class="kw">return</span> {
+            <span class="st">'type'</span>:          <span class="st">'categorical'</span>,
+            <span class="st">'n_unique'</span>:      n_unique,
+            <span class="st">'n_missing'</span>:     n_missing,
+            <span class="st">'pct_missing'</span>:   n_missing / len(self.df),
+            <span class="st">'top_5_values'</span>:  top_5,
+            <span class="st">'top1_dominance'</span>: top1_pct,
+            <span class="st">'encoding_rec'</span>:  enc,
+        }
+
+    <span class="kw">def</span> <span class="fn">run</span>(self) -> pd.DataFrame:
+        rows = []
+        <span class="kw">for</span> col <span class="kw">in</span> self.df.columns:
+            <span class="kw">if</span> self.df[col].dtype <span class="kw">in</span> [<span class="st">'int64'</span>, <span class="st">'float64'</span>]:
+                info = self.profile_numeric(col)
+            <span class="kw">else</span>:
+                info = self.profile_categorical(col)
+            info[<span class="st">'column'</span>] = col
+            rows.append(info)
+
+        summary = pd.DataFrame(rows).set_index(<span class="st">'column'</span>)
+
+        <span class="cm"># Flag columns needing attention</span>
+        print(<span class="st">"═"</span>*<span class="nu">60</span>)
+        print(<span class="st">"DATA PROFILING REPORT — Action Items"</span>)
+        print(<span class="st">"═"</span>*<span class="nu">60</span>)
+        <span class="kw">for</span> col, row <span class="kw">in</span> summary.iterrows():
+            issues = []
+            <span class="kw">if</span> row.get(<span class="st">'pct_missing'</span>, <span class="nu">0</span>) &gt; <span class="nu">0.05</span>:
+                issues.append(f<span class="st">"⚠ {row['pct_missing']:.0%} missing"</span>)
+            <span class="kw">if</span> row.get(<span class="st">'transform_rec'</span>, <span class="st">'none'</span>) != <span class="st">'none'</span>:
+                issues.append(f<span class="st">"→ apply {row['transform_rec']}"</span>)
+            <span class="kw">if</span> row.get(<span class="st">'pct_outliers'</span>, <span class="nu">0</span>) &gt; <span class="nu">0.05</span>:
+                issues.append(f<span class="st">"⚠ {row['pct_outliers']:.0%} outliers"</span>)
+            <span class="kw">if</span> issues:
+                print(f<span class="st">"  {col:<30}"</span> + <span class="st">"  |  "</span>.join(issues))
+        <span class="kw">return</span> summary
+
+<span class="cm"># ─── Usage ────────────────────────────────────────────────────</span>
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> fetch_california_housing
+housing = fetch_california_housing(as_frame=<span class="kw">True</span>)
+df = housing.frame
+
+profiler = DataProfiler(df, target=<span class="st">'MedHouseVal'</span>)
+report = profiler.run()
+print(<span class="st">"\nFull report:"</span>)
+print(report[[<span class="st">'type'</span>, <span class="st">'pct_missing'</span>, <span class="st">'skewness'</span>, <span class="st">'transform_rec'</span>]].round(<span class="nu">3</span>))</code></pre>
+
+  <h3>3.2 Missing Data — MICE Imputation</h3>
+
+  <div class="code-label">Python — Multiple Imputation by Chained Equations</div>
+  <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.experimental <span class="kw">import</span> enable_iterative_imputer
+<span class="kw">from</span> sklearn.impute <span class="kw">import</span> IterativeImputer, SimpleImputer
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestRegressor
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> BayesianRidge
+
+<span class="kw">def</span> <span class="fn">prepare_imputation</span>(df: pd.DataFrame, target_col: str = <span class="kw">None</span>) -> pd.DataFrame:
+    <span class="cm">"""
+    Production-grade missing data handling.
+    
+    Strategy:
+    1. Add missingness indicator columns (always informative)
+    2. Separate columns by missing rate
+    3. Apply MICE for MAR columns
+    4. Flag MNAR columns for manual review
+    """</span>
+    df = df.copy()
+    missing_pcts = df.isnull().mean()
+    missing_cols = missing_pcts[missing_pcts &gt; <span class="nu">0</span>].index.tolist()
+
+    <span class="cm"># Step 1: Always add binary missingness indicators FIRST</span>
+    <span class="cm"># The fact that data is missing is itself a feature</span>
+    <span class="kw">for</span> col <span class="kw">in</span> missing_cols:
+        df[f<span class="st">'missing_{col}'</span>] = df[col].isna().astype(<span class="nu">int</span>)
+
+    print(<span class="st">"Missingness indicators added for:"</span>, missing_cols)
+
+    <span class="cm"># Step 2: MICE imputation using Bayesian Ridge as the estimator</span>
+    <span class="cm"># BayesianRidge is fast and works well for most numeric data</span>
+    <span class="cm"># For categorical columns: use RandomForestClassifier instead</span>
+    numeric_cols = df.select_dtypes(include=[<span class="st">'float64'</span>, <span class="st">'int64'</span>]).columns
+    numeric_cols = [c <span class="kw">for</span> c <span class="kw">in</span> numeric_cols <span class="kw">if not</span> c.startswith(<span class="st">'missing_'</span>)]
+
+    mice_imputer = IterativeImputer(
+        estimator=BayesianRidge(),  <span class="cm"># model each column given all others</span>
+        max_iter=<span class="nu">10</span>,              <span class="cm"># iterations of chained equations</span>
+        random_state=<span class="nu">42</span>,
+        verbose=<span class="nu">0</span>
+    )
+
+    df[numeric_cols] = mice_imputer.fit_transform(df[numeric_cols])
+    print(f<span class="st">"MICE imputation complete for {len(numeric_cols)} numeric columns"</span>)
+
+    <span class="kw">return</span> df, mice_imputer
+
+<span class="cm"># ─── Test with synthetic data with different missing mechanisms ─</span>
+np.random.seed(<span class="nu">42</span>)
+n = <span class="nu">1000</span>
+df_test = pd.DataFrame({
+    <span class="st">'age'</span>:    np.random.normal(<span class="nu">45</span>, <span class="nu">15</span>, n),
+    <span class="st">'income'</span>: np.random.lognormal(<span class="nu">10</span>, <span class="nu">1</span>, n),
+    <span class="st">'score'</span>:  np.random.normal(<span class="nu">700</span>, <span class="nu">80</span>, n),
+})
+
+<span class="cm"># MCAR: 10% randomly missing</span>
+mcar_mask = np.random.rand(n) &lt; <span class="nu">0.10</span>
+df_test.loc[mcar_mask, <span class="st">'score'</span>] = np.nan
+
+<span class="cm"># MAR: income missing more for younger people</span>
+mar_mask = (np.random.rand(n) &lt; <span class="nu">0.3</span>) &amp; (df_test[<span class="st">'age'</span>] &lt; <span class="nu">35</span>)
+df_test.loc[mar_mask, <span class="st">'income'</span>] = np.nan
+
+print(f<span class="st">"Missing before: {df_test.isnull().sum().to_dict()}"</span>)
+df_imputed, imputer = prepare_imputation(df_test)
+print(f<span class="st">"Missing after:  {df_imputed[['age','income','score']].isnull().sum().to_dict()}"</span>)</code></pre>
+
+  <h3>3.3 Feature Engineering Pipeline — Production Grade</h3>
+
+  <div class="code-label">Python — sklearn Pipeline with custom transformers</div>
+  <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.base <span class="kw">import</span> BaseEstimator, TransformerMixin
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> (PowerTransformer, StandardScaler,
+                                      OneHotEncoder, TargetEncoder)
+<span class="kw">from</span> sklearn.compose <span class="kw">import</span> ColumnTransformer
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestRegressor
+
+<span class="cm"># ─── Custom Transformer 1: Datetime Feature Extractor ─────────</span>
+<span class="kw">class</span> <span class="cl2">DatetimeFeatures</span>(BaseEstimator, TransformerMixin):
+    <span class="cm">"""Extract rich features from a datetime column using cyclical encoding."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, col: str):
+        self.col = col
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, X, y=<span class="kw">None</span>): <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">transform</span>(self, X):
+        X = X.copy()
+        dt = pd.to_datetime(X[self.col])
+        <span class="cm"># Cyclical encoding: hour, day of week, month</span>
+        X[<span class="st">'hour_sin'</span>]  = np.sin(<span class="nu">2</span>*np.pi*dt.dt.hour / <span class="nu">24</span>)
+        X[<span class="st">'hour_cos'</span>]  = np.cos(<span class="nu">2</span>*np.pi*dt.dt.hour / <span class="nu">24</span>)
+        X[<span class="st">'dow_sin'</span>]   = np.sin(<span class="nu">2</span>*np.pi*dt.dt.dayofweek / <span class="nu">7</span>)
+        X[<span class="st">'dow_cos'</span>]   = np.cos(<span class="nu">2</span>*np.pi*dt.dt.dayofweek / <span class="nu">7</span>)
+        X[<span class="st">'month_sin'</span>] = np.sin(<span class="nu">2</span>*np.pi*dt.dt.month / <span class="nu">12</span>)
+        X[<span class="st">'month_cos'</span>] = np.cos(<span class="nu">2</span>*np.pi*dt.dt.month / <span class="nu">12</span>)
+        X[<span class="st">'is_weekend'</span>] = (dt.dt.dayofweek &gt;= <span class="nu">5</span>).astype(int)
+        X[<span class="st">'is_month_end'</span>] = dt.dt.is_month_end.astype(int)
+        <span class="kw">return</span> X.drop(columns=[self.col])
+
+<span class="cm"># ─── Custom Transformer 2: RFM Features ───────────────────────</span>
+<span class="kw">class</span> <span class="cl2">RFMFeatures</span>(BaseEstimator, TransformerMixin):
+    <span class="cm">"""
+    Compute Recency-Frequency-Monetary features from transaction data.
+    snapshot_date: the "as of" date for recency calculation.
+    windows_days: time windows for rolling aggregations.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, customer_col, date_col, amount_col,
+                 windows_days=[<span class="nu">7</span>, <span class="nu">30</span>, <span class="nu">90</span>], snapshot_date=<span class="kw">None</span>):
+        self.customer_col  = customer_col
+        self.date_col      = date_col
+        self.amount_col    = amount_col
+        self.windows_days  = windows_days
+        self.snapshot_date = snapshot_date
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, X, y=<span class="kw">None</span>): <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">transform</span>(self, X):
+        X = X.copy()
+        X[self.date_col] = pd.to_datetime(X[self.date_col])
+        snap = self.snapshot_date <span class="kw">or</span> X[self.date_col].max()
+
+        features = []
+        <span class="kw">for</span> cid, grp <span class="kw">in</span> X.groupby(self.customer_col):
+            grp = grp.sort_values(self.date_col)
+            row = {self.customer_col: cid}
+
+            <span class="cm"># Recency (lower = more recent = better)</span>
+            last_tx = grp[self.date_col].max()
+            row[<span class="st">'recency_days'</span>] = (snap - last_tx).days
+            row[<span class="st">'log_recency'</span>]  = np.log1p(row[<span class="st">'recency_days'</span>])
+
+            <span class="cm"># Rolling frequency and monetary for each window</span>
+            <span class="kw">for</span> w <span class="kw">in</span> self.windows_days:
+                cutoff = snap - pd.Timedelta(days=w)
+                recent = grp[grp[self.date_col] &gt;= cutoff]
+                row[f<span class="st">'freq_{w}d'</span>]      = len(recent)
+                row[f<span class="st">'total_spend_{w}d'</span>] = recent[self.amount_col].sum()
+                row[f<span class="st">'avg_spend_{w}d'</span>]   = recent[self.amount_col].mean() <span class="kw">if</span> len(recent) &gt; <span class="nu">0</span> <span class="kw">else</span> <span class="nu">0</span>
+
+            <span class="cm"># Trend: spend in last 30d vs 31-60d (momentum feature)</span>
+            w1 = snap - pd.Timedelta(days=<span class="nu">30</span>)
+            w2 = snap - pd.Timedelta(days=<span class="nu">60</span>)
+            recent_30  = grp[grp[self.date_col] &gt;= w1][self.amount_col].sum()
+            prev_30    = grp[(grp[self.date_col] &gt;= w2) &
+                             (grp[self.date_col] &lt;  w1)][self.amount_col].sum()
+            row[<span class="st">'spend_momentum'</span>] = np.log1p(recent_30) - np.log1p(prev_30)
+
+            features.append(row)
+
+        <span class="kw">return</span> pd.DataFrame(features).set_index(self.customer_col)
+
+
+<span class="cm"># ─── Custom Transformer 3: Outlier Winsorizer ─────────────────</span>
+<span class="kw">class</span> <span class="cl2">Winsorizer</span>(BaseEstimator, TransformerMixin):
+    <span class="cm">"""Clip numeric features at specified quantile bounds."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, lower=<span class="nu">0.01</span>, upper=<span class="nu">0.99</span>):
+        self.lower = lower; self.upper = upper
+        self.bounds_ = {}
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, X, y=<span class="kw">None</span>):
+        <span class="kw">if</span> isinstance(X, pd.DataFrame):
+            <span class="kw">for</span> col <span class="kw">in</span> X.columns:
+                self.bounds_[col] = (X[col].quantile(self.lower),
+                                     X[col].quantile(self.upper))
+        <span class="kw">else</span>:
+            <span class="kw">for</span> i <span class="kw">in</span> range(X.shape[<span class="nu">1</span>]):
+                self.bounds_[i] = (np.quantile(X[:,i], self.lower),
+                                   np.quantile(X[:,i], self.upper))
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">transform</span>(self, X):
+        X = X.copy()
+        <span class="kw">if</span> isinstance(X, pd.DataFrame):
+            <span class="kw">for</span> col, (lo, hi) <span class="kw">in</span> self.bounds_.items():
+                X[col] = X[col].clip(lo, hi)
+        <span class="kw">else</span>:
+            <span class="kw">for</span> i, (lo, hi) <span class="kw">in</span> self.bounds_.items():
+                X[:,i] = np.clip(X[:,i], lo, hi)
+        <span class="kw">return</span> X
+
+
+<span class="cm"># ─── Full Feature Pipeline ─────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">build_feature_pipeline</span>(
+    numeric_cols:    list,
+    categorical_low: list,   <span class="cm"># low cardinality → one-hot</span>
+    categorical_high: list,  <span class="cm"># high cardinality → target encoding</span>
+) -> ColumnTransformer:
+    <span class="cm">"""
+    Builds a production sklearn ColumnTransformer that:
+    - Winsorizes then Yeo-Johnson transforms numeric columns
+    - One-hot encodes low-cardinality categoricals
+    - Target-encodes high-cardinality categoricals
+    
+    Fit once on train set. Apply to train, val, test.
+    No data leakage possible since all stats computed on train only.
+    """</span>
+    numeric_pipeline = Pipeline([
+        (<span class="st">'winsorize'</span>,  Winsorizer(lower=<span class="nu">0.01</span>, upper=<span class="nu">0.99</span>)),
+        (<span class="st">'transform'</span>,  PowerTransformer(method=<span class="st">'yeo-johnson'</span>)),
+        (<span class="st">'scale'</span>,      StandardScaler()),
+    ])
+
+    categorical_low_pipeline = Pipeline([
+        (<span class="st">'ohe'</span>, OneHotEncoder(handle_unknown=<span class="st">'ignore'</span>, sparse_output=<span class="kw">False</span>)),
+    ])
+
+    <span class="cm"># TargetEncoder in sklearn >= 1.3 does cross-fit automatically</span>
+    categorical_high_pipeline = Pipeline([
+        (<span class="st">'te'</span>, TargetEncoder(smooth=<span class="st">'auto'</span>)),
+    ])
+
+    preprocessor = ColumnTransformer([
+        (<span class="st">'numeric'</span>,    numeric_pipeline,          numeric_cols),
+        (<span class="st">'cat_low'</span>,    categorical_low_pipeline,  categorical_low),
+        (<span class="st">'cat_high'</span>,   categorical_high_pipeline, categorical_high),
+    ], remainder=<span class="st">'drop'</span>)
+
+    <span class="kw">return</span> preprocessor</code></pre>
+
+  <h3>3.4 Feature Selection — Boruta + SHAP</h3>
+
+  <div class="code-label">Python — Rigorous feature selection with Boruta and SHAP</div>
+  <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> shap
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier, RandomForestRegressor
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> fetch_california_housing
+
+<span class="kw">def</span> <span class="fn">shap_feature_importance</span>(
+    model, X_train: pd.DataFrame, n_display: int = <span class="nu">20</span>
+) -> pd.DataFrame:
+    <span class="cm">"""
+    Compute SHAP-based feature importance.
+    
+    SHAP is superior to built-in feature_importances_ because:
+    1. Handles correlated features correctly (splits credit)
+    2. Provides direction (positive/negative effect)
+    3. Is consistent: a feature that helps more always gets higher SHAP
+    4. Model-agnostic (works for any model)
+    """</span>
+    explainer    = shap.TreeExplainer(model)
+    shap_values  = explainer.shap_values(X_train)
+
+    <span class="cm"># Mean absolute SHAP value = importance</span>
+    mean_abs_shap = np.abs(shap_values).mean(axis=<span class="nu">0</span>)
+    importance_df = pd.DataFrame({
+        <span class="st">'feature'</span>:    X_train.columns,
+        <span class="st">'shap_importance'</span>: mean_abs_shap,
+        <span class="st">'mean_shap'</span>:  shap_values.mean(axis=<span class="nu">0</span>),  <span class="cm"># direction of effect</span>
+    }).sort_values(<span class="st">'shap_importance'</span>, ascending=<span class="kw">False</span>)
+
+    print(f<span class="st">"Top {n_display} features by SHAP importance:"</span>)
+    print(importance_df.head(n_display).to_string(index=<span class="kw">False</span>))
+
+    <span class="cm"># SHAP summary plot</span>
+    shap.summary_plot(shap_values, X_train, show=<span class="kw">False</span>)
+    <span class="kw">return</span> importance_df
+
+<span class="kw">def</span> <span class="fn">permutation_importance_cv</span>(
+    model, X: pd.DataFrame, y: pd.Series,
+    n_repeats: int = <span class="nu">10</span>
+) -> pd.DataFrame:
+    <span class="cm">"""
+    Permutation importance: shuffle one feature at a time,
+    measure performance drop. Features that matter show large drops.
+    
+    More honest than impurity-based importance for correlated features.
+    """</span>
+    <span class="kw">from</span> sklearn.inspection <span class="kw">import</span> permutation_importance
+    result = permutation_importance(
+        model, X, y, n_repeats=n_repeats, random_state=<span class="nu">42</span>
+    )
+    perm_df = pd.DataFrame({
+        <span class="st">'feature'</span>:   X.columns,
+        <span class="st">'importance_mean'</span>: result.importances_mean,
+        <span class="st">'importance_std'</span>:  result.importances_std,
+    }).sort_values(<span class="st">'importance_mean'</span>, ascending=<span class="kw">False</span>)
+
+    <span class="cm"># Features with importance < 0 are actively hurting the model</span>
+    negative = perm_df[perm_df[<span class="st">'importance_mean'</span>] &lt; <span class="nu">0</span>]
+    <span class="kw">if</span> len(negative) &gt; <span class="nu">0</span>:
+        print(f<span class="st">"WARNING: {len(negative)} features have NEGATIVE importance:"</span>)
+        print(negative[<span class="st">'feature'</span>].tolist())
+        print(<span class="st">"Consider removing these — they actively hurt your model."</span>)
+
+    <span class="kw">return</span> perm_df
+
+<span class="cm"># ─── Example: California housing ──────────────────────────────</span>
+housing = fetch_california_housing(as_frame=<span class="kw">True</span>)
+X, y = housing.data, housing.target
+rf = RandomForestRegressor(n_estimators=<span class="nu">100</span>, random_state=<span class="nu">42</span>, n_jobs=-<span class="nu">1</span>)
+rf.fit(X, y)
+
+importance_df = shap_feature_importance(rf, X)</code></pre>
+
+  <h3>3.5 Leakage Detection — Automated Checks</h3>
+
+  <div class="code-label">Python — Detecting target leakage before it destroys your model</div>
+  <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score
+
+<span class="kw">def</span> <span class="fn">leakage_detector</span>(
+    df: pd.DataFrame,
+    target: str,
+    threshold_corr: float = <span class="nu">0.85</span>,
+    threshold_auc:  float = <span class="nu">0.95</span>
+) -> pd.DataFrame:
+    <span class="cm">"""
+    Automatically flag features that may be leaking target information.
+    
+    Two checks:
+    1. Correlation check: features with |corr| > threshold are suspicious
+    2. Single-feature AUC check: a feature that alone predicts the target
+       with AUC > threshold is almost certainly leaking
+    """</span>
+    flags = []
+    X = df.drop(columns=[target])
+    y = df[target]
+
+    <span class="kw">for</span> col <span class="kw">in</span> X.columns:
+        row = {<span class="st">'feature'</span>: col, <span class="st">'leakage_flag'</span>: <span class="kw">False</span>, <span class="st">'reason'</span>: []}
+
+        <span class="cm"># Check 1: Pearson correlation with target</span>
+        <span class="kw">if</span> X[col].dtype <span class="kw">in</span> [<span class="st">'float64'</span>, <span class="st">'int64'</span>]:
+            corr = abs(X[col].corr(y))
+            row[<span class="st">'correlation'</span>] = corr
+            <span class="kw">if</span> corr &gt; threshold_corr:
+                row[<span class="st">'leakage_flag'</span>] = <span class="kw">True</span>
+                row[<span class="st">'reason'</span>].append(f<span class="st">"HIGH CORR={corr:.3f}"</span>)
+
+        <span class="cm"># Check 2: Single-feature predictive power (for classification)</span>
+        <span class="kw">if</span> y.nunique() == <span class="nu">2</span> <span class="kw">and</span> X[col].dtype <span class="kw">in</span> [<span class="st">'float64'</span>, <span class="st">'int64'</span>]:
+            clf = RandomForestClassifier(n_estimators=<span class="nu">10</span>, random_state=<span class="nu">42</span>)
+            x_col = X[[col]].fillna(X[col].median())
+            auc = cross_val_score(clf, x_col, y, cv=<span class="nu">3</span>, scoring=<span class="st">'roc_auc'</span>).mean()
+            row[<span class="st">'single_feature_auc'</span>] = auc
+            <span class="kw">if</span> auc &gt; threshold_auc:
+                row[<span class="st">'leakage_flag'</span>] = <span class="kw">True</span>
+                row[<span class="st">'reason'</span>].append(f<span class="st">"SINGLE FEATURE AUC={auc:.3f}"</span>)
+
+        row[<span class="st">'reason'</span>] = <span class="st">' | '</span>.join(row[<span class="st">'reason'</span>]) <span class="kw">if</span> row[<span class="st">'reason'</span>] <span class="kw">else</span> <span class="st">'clean'</span>
+        flags.append(row)
+
+    result = pd.DataFrame(flags).sort_values(<span class="st">'leakage_flag'</span>, ascending=<span class="kw">False</span>)
+    leaked = result[result[<span class="st">'leakage_flag'</span>]]
+    <span class="kw">if</span> len(leaked) &gt; <span class="nu">0</span>:
+        print(<span class="st">"⚠️  POTENTIAL LEAKAGE DETECTED:"</span>)
+        print(leaked[[<span class="st">'feature'</span>, <span class="st">'reason'</span>]].to_string())
+    <span class="kw">else</span>:
+        print(<span class="st">"✅ No obvious leakage detected."</span>)
+    <span class="kw">return</span> result
+
+  <div class="quiz">
+    <div class="q-title">🧠 Section 3 Check — Implementation</div>
+    <ol>
+      <li>The <code>DataProfiler</code> recommends a log transform for a column with skewness 2.3. But the column has 15% zeros. Why would <code>log(x)</code> fail here, and what should you use instead? How would you modify the <code>profile_numeric</code> method to catch this case?</li>
+      <li>You're building a churn model. Your <code>leakage_detector</code> flags <code>support_ticket_reason = "cancellation"</code> with AUC=0.97. Does this mean you should remove the feature? Under what circumstances could it be a legitimate (non-leaking) feature?</li>
+      <li>The <code>RFMFeatures</code> transformer uses <code>np.log1p</code> for recency. Why log1p specifically instead of log? What would happen to a customer with 0 days since last purchase if you used <code>log</code>?</li>
+    </ol>
+    <div class="hint">For Q1: log(0) = -infinity. Use np.log1p(x) which computes log(1+x) and handles zeros gracefully. Update the transform_rec logic to check (s >= 0).all() instead of (s > 0).all() and use 'log1p' as the recommendation.</div>
+  </div>
+</code></pre>
+
+</section>
+
+<!-- ═══════════════════════════════════════
+     SECTION 4: RESEARCH FRONTIERS
+════════════════════════════════════════ -->
+<section class="content-section" id="research">
+  <div class="section-banner banner-research">
+    <span class="s-icon">🔬</span>
+    <div>
+      <div class="s-label">Section 4 of 4</div>
+      <div class="s-title">Research Frontiers — Where the Field Is Going</div>
+    </div>
+  </div>
+
+  <h2>The Cutting Edge of EDA &amp; Feature Engineering</h2>
+
+  <h3>4.1 Automated Feature Engineering (AutoFE)</h3>
+
+  <p>Manual feature engineering is the most time-consuming part of the ML pipeline and requires deep domain expertise. Research into automating this process has produced several powerful approaches.</p>
+
+  <div class="paper">
+    <div class="p-title">Deep Feature Synthesis: Towards Automating Data Science Endeavors</div>
+    <div class="p-meta">Kanter &amp; Veeramachaneni, 2015 · MIT · Implemented as Featuretools</div>
+    <div class="p-desc">Introduces Deep Feature Synthesis (DFS), which automatically generates features from relational databases by stacking aggregation and transformation primitives across entity relationships. Given a database schema (customers → orders → products), DFS generates hundreds of meaningful features like "max purchase amount in last 30 days" automatically. The <code>featuretools</code> library implements this. In Kaggle competitions, DFS-generated features routinely outperform manually engineered ones. Key limitation: computational cost scales with data size and schema complexity.</div>
+  </div>
+
+  <div class="paper">
+    <div class="p-title">AutoFELiX: Automated Feature Engineering for Relational Data</div>
+    <div class="p-meta">Lam et al., 2023 · Microsoft Research</div>
+    <div class="p-desc">Uses LLMs to suggest features based on the semantic meaning of column names and metadata — moving AutoFE beyond purely statistical pattern matching. Given columns named "last_login_date" and "signup_date", the LLM proposes "days_since_last_login" and "account_age_days" as meaningful derived features. Represents the convergence of LLMs and traditional ML pipelines.</div>
+  </div>
+
+  <h3>4.2 Self-Supervised Representation Learning for Tabular Data</h3>
+
+  <p>Rather than manually engineering features, self-supervised learning learns rich representations directly from raw tabular data without labels. This is the tabular equivalent of what BERT did for NLP.</p>
+
+  <div class="paper">
+    <div class="p-title">SCARF: Self-Supervised Contrastive Learning using Random Feature Corruption</div>
+    <div class="p-meta">Bahri et al., 2022 · Google Brain</div>
+    <div class="p-desc">Trains an encoder on tabular data by randomly corrupting subsets of features and learning to distinguish corrupted from original rows (contrastive learning). The learned representations outperform hand-crafted features on downstream tasks, especially in low-label regimes. Shows that tabular data has learnable structure that self-supervised methods can exploit. Particularly valuable when labeled data is scarce but unlabeled data is abundant — a common situation in enterprise analytics.</div>
+  </div>
+
+  <div class="paper">
+    <div class="p-title">TabPFN: A Transformer That Solves Small Tabular Classification Problems in a Second</div>
+    <div class="p-meta">Hollmann et al., 2022 · AutoML Freiburg</div>
+    <div class="p-desc">A pre-trained transformer that performs in-context learning on tabular data — it processes the entire training set as context and predicts test labels without any fine-tuning. For small datasets (&lt;1000 rows), it achieves state-of-art performance against XGBoost and AutoML systems, often in milliseconds. Represents a fundamental shift: instead of feature engineering + model training, the model itself learns the feature structure from context. Available as a Python library.</div>
+  </div>
+
+  <h3>4.3 Missing Data — GAIN and Deep Imputation</h3>
+
+  <div class="paper">
+    <div class="p-title">GAIN: Missing Data Imputation using Generative Adversarial Nets</div>
+    <div class="p-meta">Yoon, Jordon &amp; van der Schaar, 2018 · ICML</div>
+    <div class="p-desc">Uses a GAN to impute missing values by training a generator to fill in missing data and a discriminator to distinguish imputed from real values. Significantly outperforms MICE on high-missingness, complex-dependency scenarios. The key insight: MICE assumes linear relationships between variables for imputation; GAIN learns the full nonlinear joint distribution. Most practically significant for datasets with &gt;30% missingness and complex inter-variable relationships.</div>
+  </div>
+
+  <h3>4.4 Feature Interaction Discovery — Neural Network Approaches</h3>
+
+  <div class="paper">
+    <div class="p-title">Neural Interaction Detection</div>
+    <div class="p-meta">Tsang, Cheng &amp; Liu, 2018 · NeurIPS</div>
+    <div class="p-desc">Uses the weight matrix structure of trained neural networks to automatically detect which feature interactions are most important. More powerful than manually trying all pairwise interactions. The detected interactions can be added as explicit features to gradient boosting models, combining the expressiveness of neural interaction detection with the performance of tree-based models. Available as the FAST (Feature Interaction and Structured Testing) framework.</div>
+  </div>
+
+  <h3>4.5 Open Research Problems</h3>
+
+  <ul>
+    <li><strong>EDA for high-dimensional data:</strong> When you have 10,000 features, systematic univariate and bivariate EDA becomes computationally intractable. Scalable EDA methods that identify the most important patterns without exhaustive pair-wise analysis are an active area.</li>
+    <li><strong>Feature engineering for heterogeneous data:</strong> Real enterprise data combines tabular, text, images, time series, and graph data. Principled methods for creating unified feature representations from these diverse sources remain an open problem.</li>
+    <li><strong>Temporal leakage detection:</strong> Automated detection of temporal leakage in complex pipelines — where the leakage path goes through multiple feature transformations — is still largely unsolved. Current tools require manual inspection.</li>
+    <li><strong>Feature engineering under distribution shift:</strong> Features engineered on training data may become useless or harmful when the data distribution shifts. Robust feature engineering that generalizes across distribution shifts is an active research area.</li>
+    <li><strong>Causal feature selection:</strong> Traditional feature selection finds correlates of the target. Causal feature selection finds causes. The practical difference: a causal feature remains predictive when the distribution changes; a correlated feature may not. Methods from causal discovery (PC algorithm, FCI, GES) are being integrated with ML pipelines.</li>
+  </ul>
+
+  <h3>4.6 Essential Libraries for 2026</h3>
+  <div class="tbl-wrap">
+  <table>
+    <tr><th>Library</th><th>Purpose</th><th>Standout Feature</th></tr>
+    <tr><td><strong>ydata-profiling</strong></td><td>Automated EDA reports</td><td>One-line HTML report with all distributions, correlations, missing data</td></tr>
+    <tr><td><strong>featuretools</strong></td><td>Automated feature engineering</td><td>Deep Feature Synthesis from relational data</td></tr>
+    <tr><td><strong>category_encoders</strong></td><td>All encoding strategies</td><td>WoE, Target, James-Stein, Binary, all with proper CV support</td></tr>
+    <tr><td><strong>missingno</strong></td><td>Missing data visualization</td><td>Matrix, heatmap, dendrogram of missing patterns — MCAR vs MAR detection</td></tr>
+    <tr><td><strong>shap</strong></td><td>Feature importance &amp; explanation</td><td>TreeExplainer for XGBoost/LightGBM is near-instant even on large models</td></tr>
+    <tr><td><strong>skrub</strong></td><td>Dirty data &amp; encoding</td><td>Fuzzy string matching, GapEncoder for messy categories</td></tr>
+    <tr><td><strong>TabPFN</strong></td><td>Small dataset classification</td><td>Zero feature engineering needed for &lt;1000 rows, near-instant training</td></tr>
+    <tr><td><strong>dirty_cat</strong></td><td>High-cardinality categoricals</td><td>SimilarityEncoder handles typos and variations in string categories</td></tr>
+  </table>
+  </div>
+
+  <div class="quiz">
+    <div class="q-title">🧠 Chapter 2 — Final Questions</div>
+    <ol>
+      <li>You're given a dataset with 500 features to build a churn model. Walk through your complete EDA process step by step — what specific things are you looking for at each stage, and what decisions does each stage inform?</li>
+      <li>A feature <code>days_since_last_purchase</code> has a correlation of 0.72 with your target (churn). Your leakage detector flags it. Is this leakage? Justify your answer by thinking through whether this information would be available at prediction time.</li>
+      <li>You have a categorical feature <code>city</code> with 8,000 unique values. Half of the cities have fewer than 5 observations in your training set. Why does standard target encoding fail catastrophically for these rare cities, and how does smooth (shrinkage) target encoding fix it mathematically?</li>
+      <li>Your model's training AUC is 0.91 but validation AUC is 0.64. You've already done train/test split correctly. Name three feature engineering errors that could cause this specific pattern.</li>
+    </ol>
+    <div class="hint">For Q3: For rare cities, the mean target over 5 observations is extremely noisy. Smooth encoding blends the category estimate toward the global mean: θ_smooth = (n × θ_category + m × θ_global) / (n + m), where m is a smoothing hyperparameter. As n → 0, the estimate collapses to the global mean (safe); as n → ∞, it converges to the category mean (informative).</div>
+  </div>
+
+</section>
+
+<div class="ch-nav">
+  <a href="ch01.html">
+    <div class="nav-lbl">← Previous</div>
+    Ch 01: Statistical Foundations
+  </a>
+  <a href="#" style="opacity:.4;pointer-events:none;">
+    <div class="nav-lbl">Next →</div>
+    Ch 03: Regression &amp; Prediction (Coming Soon)
+  </a>
+</div>
+
+</main>
+<script>
+document.querySelectorAll('.nav-sub').forEach(l => {
+  l.addEventListener('click', () => document.getElementById('sidebar').classList.remove('open'));
+});
+</script>
+</body>
+</html>
