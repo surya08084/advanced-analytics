@@ -3,438 +3,649 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Advanced Analytics — Complete Mastery Book</title>
+<meta name="color-scheme" content="light">
+<title>Advanced Analytics &mdash; Complete Mastery Book</title>
 <style>
-/* ── RESET & BASE ─────────────────────────────────────────── */
+/* Shared chapter styles — Stanford-inspired clean academic design */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; font-size: 16px; }
+html { scroll-behavior: smooth; }
 body {
   font-family: 'Georgia', 'Times New Roman', serif;
   background: #FFFFFF;
   color: #1a1a1a;
-  line-height: 1.75;
+  line-height: 1.8;
+  font-size: 16.5px;
 }
-
-/* ── LAYOUT ───────────────────────────────────────────────── */
 .site-wrap { display: flex; min-height: 100vh; }
 
-/* ── SIDEBAR ──────────────────────────────────────────────── */
+/* SIDEBAR */
 #sidebar {
-  width: 240px;
-  flex-shrink: 0;
-  background: #F8F8F6;
-  border-right: 1px solid #E2E2DC;
-  position: fixed;
-  top: 0; left: 0;
-  height: 100vh;
-  overflow-y: auto;
-  padding: 0;
-  z-index: 100;
+  width: 240px; flex-shrink: 0; background: #F8F8F6;
+  border-right: 1px solid #E2E2DC; position: fixed;
+  top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 100;
 }
-.sb-logo {
-  padding: 20px 20px 14px;
-  border-bottom: 1px solid #E2E2DC;
-}
-.sb-logo .site-name {
-  font-family: sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #8B2C2C;
-  margin-bottom: 4px;
-}
-.sb-logo .course-name {
-  font-size: 13px;
-  font-family: sans-serif;
-  font-weight: 600;
-  color: #1a1a1a;
-  line-height: 1.4;
-}
+.sb-logo { padding: 20px 20px 14px; border-bottom: 1px solid #E2E2DC; }
+.sb-logo .site-name { font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8B2C2C; margin-bottom: 4px; }
+.sb-logo .course-name { font-size: 13px; font-family: sans-serif; font-weight: 600; color: #1a1a1a; line-height: 1.4; }
 .nav-group { padding: 14px 0 4px; }
-.nav-group-label {
-  padding: 0 20px 6px;
-  font-size: 10px;
-  font-family: sans-serif;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: #999;
-}
-.nav-link {
-  display: block;
-  padding: 5px 20px;
-  font-size: 12.5px;
-  font-family: sans-serif;
-  color: #333;
-  text-decoration: none;
-  border-left: 3px solid transparent;
-  transition: all 0.12s;
-  line-height: 1.4;
-}
+.nav-group-label { padding: 0 20px 6px; font-size: 10px; font-family: sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: #999; }
+.nav-link { display: block; padding: 5px 20px; font-size: 12.5px; font-family: sans-serif; color: #333; text-decoration: none; border-left: 3px solid transparent; transition: all 0.12s; line-height: 1.4; }
 .nav-link:hover { color: #8B2C2C; background: #F0EDE8; border-left-color: #C9A87C; }
 .nav-link.active { color: #8B2C2C; border-left-color: #8B2C2C; background: #F5EDE6; font-weight: 600; }
-.nav-link.locked { color: #bbb; cursor: default; }
-.nav-link.locked:hover { color: #bbb; background: none; border-left-color: transparent; }
+.nav-link.locked { color: #bbb; cursor: default; pointer-events: none; }
 .nav-link .ch { color: #aaa; margin-right: 4px; font-family: 'Courier New', monospace; font-size: 10px; }
 .nav-link.active .ch { color: #C9A87C; }
+.nav-sub { display: block; padding: 3px 20px 3px 32px; font-size: 11.5px; font-family: sans-serif; color: #777; text-decoration: none; transition: color 0.12s; }
+.nav-sub:hover { color: #8B2C2C; }
 
-/* ── MAIN ─────────────────────────────────────────────────── */
-#main {
-  margin-left: 240px;
-  flex: 1;
-  max-width: 820px;
-  padding: 0 56px 100px;
-}
+/* MAIN */
+#main { margin-left: 240px; flex: 1; max-width: 820px; padding: 0 56px 100px; }
 
-/* ── TOP NAV (like Stanford) ──────────────────────────────── */
-.top-nav {
-  border-bottom: 1px solid #E2E2DC;
-  padding: 0;
-  display: flex;
-  gap: 0;
-  background: #fff;
-}
-.top-nav a {
-  padding: 14px 18px;
-  font-size: 13px;
-  font-family: sans-serif;
-  font-weight: 600;
-  color: #555;
-  text-decoration: none;
-  border-bottom: 3px solid transparent;
-  margin-bottom: -1px;
-  transition: color 0.12s;
-}
+/* TOP NAV */
+.top-nav { border-bottom: 1px solid #E2E2DC; display: flex; gap: 0; }
+.top-nav a { padding: 13px 16px; font-size: 13px; font-family: sans-serif; font-weight: 600; color: #555; text-decoration: none; border-bottom: 3px solid transparent; margin-bottom: -1px; transition: color 0.12s; }
 .top-nav a:hover { color: #8B2C2C; }
 .top-nav a.current { color: #8B2C2C; border-bottom-color: #8B2C2C; }
 
-/* ── HERO ─────────────────────────────────────────────────── */
-.hero {
-  padding: 52px 0 40px;
-  border-bottom: 2px solid #E2E2DC;
-}
-.hero .kicker {
-  font-size: 12px;
-  font-family: sans-serif;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #8B2C2C;
-  margin-bottom: 12px;
-}
-.hero h1 {
-  font-size: 36px;
-  font-weight: 400;
-  line-height: 1.2;
-  color: #1a1a1a;
-  margin-bottom: 16px;
-  letter-spacing: -0.01em;
-}
-.hero h1 strong { font-weight: 700; }
-.hero .tagline {
-  font-size: 17px;
-  color: #444;
-  max-width: 620px;
-  line-height: 1.7;
-  margin-bottom: 28px;
-}
-.hero-meta {
-  display: flex;
-  gap: 32px;
-  font-family: sans-serif;
-  font-size: 13px;
-  color: #666;
-  flex-wrap: wrap;
-}
-.hero-meta strong { color: #1a1a1a; }
+/* CHAPTER HERO */
+.ch-hero { padding: 44px 0 32px; border-bottom: 2px solid #E2E2DC; }
+.ch-hero .eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; font-family: sans-serif; }
+.ch-hero .part-tag { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #888; font-weight: 700; }
+.ch-hero .ch-tag { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #8B2C2C; font-weight: 700; background: #FDF0EE; padding: 2px 8px; border-radius: 2px; border: 1px solid #F0C4BC; }
+.ch-hero h1 { font-size: 32px; font-weight: 400; line-height: 1.2; color: #1a1a1a; margin-bottom: 14px; letter-spacing: -0.01em; }
+.ch-hero h1 strong { font-weight: 700; }
+.ch-hero .ch-desc { font-size: 16px; color: #444; max-width: 640px; line-height: 1.7; margin-bottom: 22px; }
+.ch-hero .ch-meta { display: flex; gap: 24px; font-family: sans-serif; font-size: 13px; color: #666; flex-wrap: wrap; }
+.ch-hero .ch-meta strong { color: #8B2C2C; }
 
-/* ── SECTION ──────────────────────────────────────────────── */
-.section {
-  padding: 40px 0;
-  border-bottom: 1px solid #E2E2DC;
-}
-.section h2 {
-  font-size: 26px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 14px;
-  letter-spacing: -0.01em;
-}
-.section h3 {
-  font-size: 17px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 28px 0 10px;
-  font-family: sans-serif;
-}
-.section p { margin-bottom: 14px; color: #333; font-size: 15.5px; }
-.section strong { color: #1a1a1a; }
+/* SECTION BANNER */
+.section-banner { margin: 40px 0 24px; padding: 14px 18px; display: flex; align-items: center; gap: 14px; border-left: 4px solid; font-family: sans-serif; }
+.section-banner .s-num { font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 700; margin-bottom: 3px; }
+.section-banner .s-title { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+.section-banner .s-icon { font-size: 20px; }
+.sb-concept { background: #F0F4FF; border-color: #3F51B5; }
+.sb-concept .s-num { color: #3F51B5; }
+.sb-usecases { background: #F0FAF4; border-color: #2E7D32; }
+.sb-usecases .s-num { color: #2E7D32; }
+.sb-impl { background: #F0F9FF; border-color: #0277BD; }
+.sb-impl .s-num { color: #0277BD; }
+.sb-research { background: #FFF8E1; border-color: #F57F17; }
+.sb-research .s-num { color: #F57F17; }
 
-/* ── PATTERN GRID ─────────────────────────────────────────── */
-.pattern-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: #E2E2DC;
-  border: 1px solid #E2E2DC;
-  border-radius: 4px;
-  overflow: hidden;
-  margin: 24px 0;
-}
-.pattern-cell {
-  background: #fff;
-  padding: 20px 18px;
-}
-.pattern-cell .icon { font-size: 22px; margin-bottom: 8px; }
-.pattern-cell .label {
-  font-size: 13px;
-  font-weight: 700;
-  font-family: sans-serif;
-  color: #1a1a1a;
-  margin-bottom: 4px;
-}
-.pattern-cell .desc {
-  font-size: 12px;
-  color: #666;
-  font-family: sans-serif;
-  line-height: 1.5;
-}
+/* HEADINGS */
+h2 { font-size: 24px; font-weight: 700; color: #1a1a1a; margin: 40px 0 12px; border-bottom: 1px solid #E2E2DC; padding-bottom: 8px; }
+h3 { font-size: 19px; font-weight: 700; color: #1a1a1a; margin: 34px 0 12px; }
+h4 { font-size: 13px; font-weight: 700; font-family: sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: #8B2C2C; margin: 26px 0 8px; }
+h5 { font-size: 15.5px; font-weight: 700; font-family: sans-serif; color: #1a1a1a; margin: 20px 0 8px; }
 
-/* ── CHAPTER TABLE (like Stanford schedule) ──────────────── */
-.ch-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  font-family: sans-serif;
-  font-size: 14px;
-}
-.ch-table thead th {
-  text-align: left;
-  padding: 8px 12px;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #888;
-  border-bottom: 2px solid #1a1a1a;
-  font-weight: 700;
-}
-.ch-table tbody td {
-  padding: 12px 12px;
-  border-bottom: 1px solid #E2E2DC;
-  vertical-align: top;
-  color: #333;
-}
-.ch-table tbody tr:hover td { background: #FAFAF8; }
-.ch-table .ch-num {
-  font-family: 'Courier New', monospace;
-  font-size: 11px;
-  color: #888;
-  white-space: nowrap;
-}
-.ch-table .ch-title { font-weight: 600; color: #1a1a1a; }
-.ch-table .ch-title a {
-  color: #8B2C2C;
-  text-decoration: none;
-}
-.ch-table .ch-title a:hover { text-decoration: underline; }
-.ch-table .ch-desc { font-size: 12.5px; color: #555; margin-top: 3px; line-height: 1.5; }
-.ch-table .ch-status {
-  white-space: nowrap;
-  font-size: 11.5px;
-  font-weight: 600;
-}
-.ch-table .status-ready { color: #2E7D32; }
-.ch-table .status-soon  { color: #999; }
-.ch-table .ch-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
-.ch-table .tag {
-  font-size: 10px;
-  padding: 1px 6px;
-  border-radius: 3px;
-  font-weight: 600;
-  border: 1px solid;
-}
-.tag-c { color: #1565C0; border-color: #90CAF9; background: #E3F2FD; }
-.tag-i { color: #2E7D32; border-color: #A5D6A7; background: #E8F5E9; }
-.tag-r { color: #7B1FA2; border-color: #CE93D8; background: #F3E5F5; }
+/* PROSE */
+p { margin-bottom: 16px; color: #222; }
+strong { color: #1a1a1a; font-weight: 700; }
+em { color: #555; font-style: italic; }
+a { color: #8B2C2C; text-decoration: none; }
+a:hover { text-decoration: underline; }
+ul, ol { padding-left: 24px; margin-bottom: 16px; }
+li { margin-bottom: 7px; color: #333; }
+li strong { color: #1a1a1a; }
 
-/* ── CALLOUT ──────────────────────────────────────────────── */
-.callout {
-  border-left: 4px solid #C9A87C;
-  background: #FDF8F0;
-  padding: 14px 18px;
-  margin: 20px 0;
-  font-family: sans-serif;
-  font-size: 14px;
-  color: #333;
-  line-height: 1.65;
-}
-.callout strong { color: #1a1a1a; }
-.callout .callout-label {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-weight: 700;
-  color: #8B6914;
-  margin-bottom: 6px;
-  display: block;
-}
+/* CALLOUTS */
+.callout { border-left: 4px solid; padding: 14px 18px; margin: 22px 0; font-family: sans-serif; font-size: 14.5px; line-height: 1.65; }
+.callout p { font-size: 14.5px !important; margin-bottom: 8px !important; }
+.callout p:last-child { margin-bottom: 0 !important; }
+.callout ul { margin-bottom: 0; }
+.callout li { font-size: 14px; margin-bottom: 6px; }
+.callout .cl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; display: block; margin-bottom: 7px; }
+.callout-concept { background: #EEF2FF; border-color: #3F51B5; }
+.callout-concept .cl { color: #3F51B5; }
+.callout-analogy { background: #FFF8E1; border-color: #F9A825; }
+.callout-analogy .cl { color: #F57F17; }
+.callout-warning { background: #FFF3E0; border-color: #E64A19; }
+.callout-warning .cl { color: #BF360C; }
+.callout-tip { background: #F1F8E9; border-color: #558B2F; }
+.callout-tip .cl { color: #33691E; }
+.callout-key { background: #E0F7FA; border-color: #00838F; }
+.callout-key .cl { color: #00696F; }
+.callout-research { background: #FFF8E1; border-color: #F57F17; }
+.callout-research .cl { color: #E65100; }
 
-/* ── CODE BLOCK ───────────────────────────────────────────── */
-pre {
-  background: #F6F6F4;
-  border: 1px solid #E2E2DC;
-  border-left: 3px solid #8B2C2C;
-  padding: 18px 20px;
-  border-radius: 2px;
-  overflow-x: auto;
-  font-family: 'Courier New', 'Menlo', monospace;
-  font-size: 13px;
-  line-height: 1.7;
-  color: #1a1a1a;
-  margin: 16px 0;
-}
-code {
-  background: #F0EDE8;
-  padding: 1px 5px;
-  border-radius: 2px;
-  font-family: 'Courier New', monospace;
-  font-size: 13px;
-  color: #8B2C2C;
-}
-pre code { background: none; padding: 0; color: inherit; }
+/* CODE */
+pre { background: #F6F6F4; border: 1px solid #E2E2DC; border-left: 3px solid #8B2C2C; padding: 18px 20px; border-radius: 2px; overflow-x: auto; font-family: 'Courier New', 'Menlo', monospace; font-size: 13px; line-height: 1.75; color: #1a1a1a; margin: 14px 0 20px; }
+pre code { background: none !important; border: none !important; color: inherit !important; padding: 0 !important; font-size: inherit !important; }
+code { background: #F0EDE8; padding: 1px 5px; border-radius: 2px; font-family: 'Courier New', monospace; font-size: 13px; color: #8B2C2C; border: 1px solid #E8E0D8; }
+.code-label { font-family: sans-serif; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em; color: #888; margin-bottom: -8px; padding-top: 10px; display: flex; align-items: center; gap: 6px; }
+.code-label::before { content: ''; display: inline-block; width: 10px; height: 2px; background: #8B2C2C; }
 
-/* ── MOBILE ───────────────────────────────────────────────── */
+/* SYNTAX */
+.kw { color: #7B1FA2; } .fn { color: #1565C0; } .st { color: #2E7D32; }
+.nu { color: #E65100; } .cm { color: #9E9E9E; font-style: italic; }
+.cl2 { color: #006064; } .dc { color: #00838F; }
+
+/* FORMULA */
+.formula { background: #FAFAFA; border: 1px solid #E2E2DC; border-left: 3px solid #333; padding: 18px 22px; margin: 18px 0; font-family: 'Courier New', monospace; font-size: 14px; color: #1a1a1a; line-height: 2.2; overflow-x: auto; }
+.formula .f-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: #888; display: block; margin-bottom: 8px; font-family: sans-serif; text-align: left; }
+
+/* DIAGRAM */
+.diagram { background: #F8F8F6; border: 1px solid #E2E2DC; border-left: 3px solid #555; padding: 20px 22px; font-family: 'Courier New', monospace; font-size: 12.5px; line-height: 1.88; overflow-x: auto; margin: 18px 0; color: #333; }
+.dl { color: #8B2C2C; font-weight: 700; } .db { color: #2E7D32; font-weight: 600; }
+.dd { color: #1565C0; } .dv { color: #6A1B9A; }
+
+/* TABLES */
+.tbl-wrap { overflow-x: auto; margin: 18px 0; }
+table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13.5px; }
+th { text-align: left; padding: 9px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #555; border-bottom: 2px solid #1a1a1a; font-weight: 700; background: #FAFAFA; }
+td { padding: 10px 12px; border-bottom: 1px solid #E2E2DC; color: #333; vertical-align: top; }
+td strong { color: #8B2C2C; }
+td code { font-size: 12px; }
+tr:hover td { background: #FAFAF8; }
+
+/* QUIZ */
+.quiz { background: #FFFBF0; border: 1px solid #E8D8A0; padding: 20px 22px; margin: 28px 0; font-family: sans-serif; }
+.quiz .q-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; color: #8B6914; margin-bottom: 12px; display: block; }
+.quiz ol { padding-left: 20px; }
+.quiz li { color: #333; font-size: 14px; margin-bottom: 10px; line-height: 1.6; }
+.quiz .hint { margin-top: 14px; font-size: 12.5px; color: #888; font-style: italic; border-top: 1px solid #E8D8A0; padding-top: 12px; }
+
+/* STEPS */
+.steps { margin: 18px 0; }
+.step { display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start; }
+.step-n { min-width: 26px; height: 26px; border-radius: 50%; background: #8B2C2C; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; font-family: sans-serif; flex-shrink: 0; margin-top: 2px; }
+.step-body strong { display: block; font-family: sans-serif; font-size: 15px; color: #1a1a1a; margin-bottom: 4px; }
+.step-body p { color: #444; font-size: 14.5px; margin-bottom: 0; }
+
+/* COMPARE */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
+.compare-box { background: #FAFAFA; border: 1px solid #E2E2DC; padding: 16px 18px; }
+.compare-box h5 { margin-top: 0 !important; margin-bottom: 10px !important; font-family: sans-serif; }
+.compare-box ul { margin-bottom: 0; }
+.compare-box li { font-size: 13.5px; color: #444; margin-bottom: 6px; }
+
+/* PAPER */
+.paper { background: #FAFAFA; border: 1px solid #E2E2DC; border-left: 3px solid #F57F17; padding: 14px 16px; margin: 12px 0; font-family: sans-serif; }
+.paper .p-title { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 3px; }
+.paper .p-meta { font-size: 11.5px; color: #888; margin-bottom: 6px; }
+.paper .p-desc { font-size: 13px; color: #444; line-height: 1.6; }
+
+/* CHAPTER NAV */
+.ch-nav { display: flex; gap: 12px; margin-top: 48px; padding-top: 28px; border-top: 2px solid #E2E2DC; }
+.ch-nav a { flex: 1; padding: 14px 18px; background: #FAFAFA; border: 1px solid #E2E2DC; text-decoration: none; color: #333; font-family: sans-serif; font-size: 13px; transition: all 0.12s; display: block; }
+.ch-nav a:hover { border-color: #8B2C2C; color: #8B2C2C; }
+.ch-nav .nav-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 4px; }
+
+/* CONTENT SECTION DIVIDER */
+.content-section { padding: 44px 0; border-bottom: 1px solid #E2E2DC; }
+
+/* MOBILE */
 #menu-btn { display: none; }
 @media (max-width: 860px) {
   #sidebar { transform: translateX(-100%); transition: transform 0.25s; }
   #sidebar.open { transform: translateX(0); }
   #main { margin-left: 0; padding: 0 20px 80px; }
-  #menu-btn {
-    display: block; position: fixed; top: 12px; right: 14px; z-index: 200;
-    background: #8B2C2C; border: none; color: #fff;
-    padding: 8px 14px; border-radius: 3px; cursor: pointer;
-    font-size: 13px; font-family: sans-serif; font-weight: 700;
-  }
+  #menu-btn { display: block; position: fixed; top: 12px; right: 14px; z-index: 200; background: #8B2C2C; border: none; color: #fff; padding: 8px 14px; border-radius: 3px; cursor: pointer; font-size: 13px; font-family: sans-serif; font-weight: 700; }
+  .compare { grid-template-columns: 1fr; }
+}
+
+
+/* ── INDEX / COVER PAGE STYLES ───────────────────────────── */
+
+/* Book cover hero */
+.book-cover {
+  margin: 0 -56px;
+  padding: 0;
+  border-bottom: 2px solid #E2E2DC;
+  overflow: hidden;
+  position: relative;
+}
+
+.cover-inner {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  min-height: 420px;
+}
+
+/* Left: text content */
+.cover-text {
+  padding: 52px 48px 52px 56px;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.cover-text .publisher-tag {
+  font-family: sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: #8B2C2C; margin-bottom: 18px;
+  display: flex; align-items: center; gap: 10px;
+}
+.cover-text .publisher-tag::after {
+  content: ''; flex: 1; height: 1px; background: #E2E2DC;
+  max-width: 80px;
+}
+.cover-text h1 {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700; color: #1a1a1a;
+  line-height: 1.1; letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.cover-text .subtitle {
+  font-size: 18px; font-weight: 400;
+  color: #555; margin-bottom: 22px;
+  font-style: italic; letter-spacing: 0;
+}
+.cover-text .cover-desc {
+  font-size: 15px; color: #444;
+  line-height: 1.7; margin-bottom: 28px;
+  max-width: 480px;
+}
+.cover-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-cover-primary {
+  display: inline-block; font-family: sans-serif;
+  font-size: 13px; font-weight: 700;
+  padding: 10px 22px; background: #8B2C2C;
+  color: #fff; text-decoration: none;
+  letter-spacing: 0.04em; transition: background 0.15s;
+}
+.btn-cover-primary:hover { background: #6D2020; color: #fff; text-decoration: none; }
+.btn-cover-secondary {
+  display: inline-block; font-family: sans-serif;
+  font-size: 13px; font-weight: 600;
+  padding: 10px 22px; border: 1px solid #C9A87C;
+  color: #8B6914; text-decoration: none;
+  letter-spacing: 0.04em; transition: all 0.15s;
+  background: #FDFAF5;
+}
+.btn-cover-secondary:hover { background: #F5EFE0; text-decoration: none; }
+
+/* Right: decorative spine panel */
+.cover-spine {
+  background: #1a1a1a;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  padding: 40px 32px;
+  position: relative;
+  overflow: hidden;
+}
+.cover-spine::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent, transparent 40px,
+    rgba(255,255,255,0.015) 40px, rgba(255,255,255,0.015) 80px
+  );
+}
+.cover-spine::after {
+  content: '';
+  position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+  background: #8B2C2C;
+}
+.spine-top { position: relative; z-index: 1; }
+.spine-label {
+  font-family: 'Courier New', monospace;
+  font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(255,255,255,0.4);
+  margin-bottom: 20px; display: block;
+}
+.spine-title {
+  font-family: Georgia, serif;
+  font-size: 22px; font-weight: 700;
+  color: #fff; line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.spine-sub {
+  font-family: sans-serif; font-size: 12px;
+  color: rgba(255,255,255,0.5); font-weight: 400;
+  letter-spacing: 0.05em;
+}
+.spine-chapters {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.spine-ch {
+  display: flex; align-items: center; gap: 10px;
+  font-family: sans-serif; font-size: 11px;
+  color: rgba(255,255,255,0.35);
+}
+.spine-ch .s-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,0.2); flex-shrink: 0;
+}
+.spine-ch.ready { color: rgba(255,255,255,0.75); }
+.spine-ch.ready .s-dot { background: #C9A87C; }
+.spine-bottom {
+  position: relative; z-index: 1;
+}
+.spine-edition {
+  font-family: sans-serif; font-size: 11px;
+  color: rgba(255,255,255,0.3); letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.spine-dg {
+  font-family: sans-serif; font-size: 13px;
+  font-weight: 700; color: rgba(255,255,255,0.6);
+  margin-top: 6px; letter-spacing: 0.05em;
+}
+
+/* Stats strip */
+.stats-strip {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  border-bottom: 1px solid #E2E2DC;
+  margin: 0 -56px;
+}
+.stat-strip-cell {
+  padding: 18px 20px; text-align: center;
+  border-right: 1px solid #E2E2DC;
+}
+.stat-strip-cell:last-child { border-right: none; }
+.stat-strip-cell .sv {
+  font-size: 24px; font-weight: 700; color: #1a1a1a;
+  font-family: sans-serif; line-height: 1;
+}
+.stat-strip-cell .sl {
+  font-size: 10.5px; color: #888; font-family: sans-serif;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
+/* Section headers */
+.idx-section { padding: 44px 0; border-bottom: 1px solid #E2E2DC; }
+.idx-section:last-child { border-bottom: none; }
+.idx-section-head {
+  display: flex; align-items: baseline;
+  justify-content: space-between; margin-bottom: 20px;
+  padding-bottom: 10px; border-bottom: 1px solid #E2E2DC;
+}
+.idx-section-head h2 {
+  font-size: 21px; font-weight: 700; color: #1a1a1a;
+  margin: 0; border: none; padding: 0;
+}
+.idx-section-head .section-note {
+  font-family: sans-serif; font-size: 12px; color: #888;
+}
+
+/* Chapter table */
+.ch-table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 14px; }
+.ch-table thead th {
+  text-align: left; padding: 9px 12px;
+  font-size: 10.5px; text-transform: uppercase;
+  letter-spacing: 0.1em; color: #555;
+  border-bottom: 2px solid #1a1a1a; font-weight: 700;
+  background: #FAFAFA;
+}
+.ch-table tbody td {
+  padding: 12px 12px; border-bottom: 1px solid #E2E2DC;
+  color: #333; vertical-align: top;
+}
+.ch-table tbody tr:hover td { background: #FAFAF8; }
+.ch-table .ch-num {
+  font-family: 'Courier New', monospace; font-size: 11px;
+  color: #888; white-space: nowrap;
+}
+.ch-table .ch-title { font-weight: 600; color: #1a1a1a; }
+.ch-table .ch-title a { color: #8B2C2C; text-decoration: none; }
+.ch-table .ch-title a:hover { text-decoration: underline; }
+.ch-table .ch-desc { font-size: 12.5px; color: #555; margin-top: 3px; line-height: 1.5; }
+.ch-table .ch-status { white-space: nowrap; font-size: 11.5px; font-weight: 600; }
+.status-ready { color: #2E7D32; }
+.status-soon  { color: #999; }
+.ch-table .ch-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+.ch-table .tag {
+  font-size: 10px; padding: 1px 6px; border-radius: 3px;
+  font-weight: 600; border: 1px solid;
+}
+.tag-c { color: #1565C0; border-color: #90CAF9; background: #E3F2FD; }
+.tag-i { color: #2E7D32; border-color: #A5D6A7; background: #E8F5E9; }
+.tag-r { color: #7B1FA2; border-color: #CE93D8; background: #F3E5F5; }
+
+/* Pattern grid */
+.pattern-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 1px; background: #E2E2DC;
+  border: 1px solid #E2E2DC; margin: 20px 0;
+}
+.pattern-cell {
+  background: #fff; padding: 20px 18px;
+}
+.pattern-cell .icon { font-size: 20px; margin-bottom: 8px; }
+.pattern-cell .label {
+  font-size: 13px; font-weight: 700;
+  font-family: sans-serif; color: #1a1a1a; margin-bottom: 4px;
+}
+.pattern-cell .desc {
+  font-size: 12px; color: #666;
+  font-family: sans-serif; line-height: 1.5;
+}
+
+/* Callout */
+.callout {
+  border-left: 4px solid; padding: 14px 18px; margin: 22px 0;
+  font-family: sans-serif; font-size: 14.5px; line-height: 1.65;
+}
+.callout p { font-size: 14.5px; margin-bottom: 0; }
+.callout strong { color: #1a1a1a; }
+.callout-tip { background: #F1F8E9; border-color: #558B2F; }
+.callout-note { background: #EEF2FF; border-color: #3F51B5; }
+.callout-note .cl { color: #3F51B5; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; display: block; margin-bottom: 7px; }
+.callout-tip .cl { color: #33691E; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; display: block; margin-bottom: 7px; }
+
+/* Setup code */
+pre {
+  background: #F6F6F4; border: 1px solid #E2E2DC;
+  border-left: 3px solid #8B2C2C; padding: 18px 20px;
+  overflow-x: auto; font-family: 'Courier New', monospace;
+  font-size: 13px; line-height: 1.75; color: #1a1a1a; margin: 14px 0 20px;
+}
+code { background: #F0EDE8; padding: 1px 5px; border-radius: 2px; font-family: 'Courier New', monospace; font-size: 13px; color: #8B2C2C; }
+
+/* Author strip */
+.author-strip {
+  display: flex; align-items: center; gap: 20px;
+  padding: 20px 22px; background: #FAFAF8;
+  border: 1px solid #E2E2DC; margin: 24px 0;
+  font-family: sans-serif;
+}
+.author-strip .a-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: #8B2C2C; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700; color: #fff;
+  font-family: sans-serif;
+}
+.author-strip .a-info { flex: 1; }
+.author-strip .a-name {
+  font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 2px;
+}
+.author-strip .a-title {
+  font-size: 12.5px; color: #666; line-height: 1.4;
+}
+.author-strip .a-links { display: flex; gap: 10px; }
+.author-strip .a-links a {
+  font-size: 12px; font-weight: 600; color: #8B2C2C;
+  text-decoration: none;
+}
+.author-strip .a-links a:hover { text-decoration: underline; }
+
+/* Mobile */
+#menu-btn { display: none; }
+@media (max-width: 860px) {
+  #sidebar { transform: translateX(-100%); transition: transform 0.25s; }
+  #sidebar.open { transform: translateX(0); }
+  #main { margin-left: 0; padding: 0 20px 80px; }
+  #menu-btn { display: block; position: fixed; top: 12px; right: 14px; z-index: 200; background: #8B2C2C; border: none; color: #fff; padding: 8px 14px; border-radius: 3px; cursor: pointer; font-size: 13px; font-family: sans-serif; font-weight: 700; }
+  .cover-inner { grid-template-columns: 1fr; }
+  .cover-spine { display: none; }
+  .stats-strip { grid-template-columns: repeat(3,1fr); margin: 0; }
   .pattern-grid { grid-template-columns: 1fr 1fr; }
+  .book-cover { margin: 0 -20px; }
+  .stats-strip { margin: 0 -20px; }
+  .cover-text { padding: 36px 20px; }
 }
 </style>
 </head>
 <body>
-<button id="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
-
+<button id="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776; Menu</button>
 <div class="site-wrap">
 
 <!-- SIDEBAR -->
 <nav id="sidebar">
   <div class="sb-logo">
     <div class="site-name">Advanced Analytics</div>
-    <div class="course-name">Complete Mastery Book · 2026</div>
+    <div class="course-name">Complete Mastery Book &middot; 2026</div>
   </div>
-
+  <div class="nav-group">
+    <div class="nav-group-label">Book Index</div>
+    <a class="nav-link active" href="index.html"><span class="ch">00 &middot;</span> Table of Contents</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Part I &mdash; Foundations</div>
+    <a class="nav-link" href="ch01.html"><span class="ch">01 &middot;</span> Statistical Foundations</a>
+    <a class="nav-sub" href="ch01.html#concept">&#129504; Concept</a>
+    <a class="nav-sub" href="ch01.html#usecases">&#127981; Use Cases</a>
+    <a class="nav-sub" href="ch01.html#implementation">&#9881; Implementation</a>
+    <a class="nav-sub" href="ch01.html#research">&#128300; Research</a>
+    <a class="nav-link" href="ch02.html"><span class="ch">02 &middot;</span> EDA &amp; Feature Engineering</a>
+    <a class="nav-sub" href="ch02.html#concept">&#129504; Concept</a>
+    <a class="nav-sub" href="ch02.html#usecases">&#127981; Use Cases</a>
+    <a class="nav-sub" href="ch02.html#implementation">&#9881; Implementation</a>
+    <a class="nav-sub" href="ch02.html#research">&#128300; Research</a>
+    <a class="nav-link" href="ch03.html"><span class="ch">03 &middot;</span> Regression &amp; Prediction</a>
+    <a class="nav-sub" href="ch03.html#concept">&#129504; Concept</a>
+    <a class="nav-sub" href="ch03.html#usecases">&#127981; Use Cases</a>
+    <a class="nav-sub" href="ch03.html#implementation">&#9881; Implementation</a>
+    <a class="nav-sub" href="ch03.html#research">&#128300; Research</a>
+    <a class="nav-link locked"><span class="ch">04+ &middot;</span> More coming&hellip;</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Part II &mdash; Core Methods</div>
+    <a class="nav-link locked"><span class="ch">04 &middot;</span> Classification</a>
+    <a class="nav-link locked"><span class="ch">05 &middot;</span> Time Series</a>
+    <a class="nav-link locked"><span class="ch">06 &middot;</span> Clustering</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Part III &mdash; Advanced</div>
+    <a class="nav-link locked"><span class="ch">07 &middot;</span> Causal Inference</a>
+    <a class="nav-link locked"><span class="ch">08 &middot;</span> Bayesian Analytics</a>
+    <a class="nav-link locked"><span class="ch">09 &middot;</span> Graph Analytics</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Part IV &mdash; Production</div>
+    <a class="nav-link locked"><span class="ch">10 &middot;</span> NLP &amp; Text</a>
+    <a class="nav-link locked"><span class="ch">11 &middot;</span> MLOps</a>
+    <a class="nav-link locked"><span class="ch">12 &middot;</span> Data Pipelines</a>
+  </div>
   <div class="nav-group">
     <div class="nav-group-label">Book</div>
-    <a class="nav-link active" href="index.html"><span class="ch">00 ·</span> Table of Contents</a>
-  </div>
-
-  <div class="nav-group">
-    <div class="nav-group-label">Part I — Foundations</div>
-    <a class="nav-link" href="ch01.html"><span class="ch">01 ·</span> Statistical Foundations</a>
-    <a class="nav-link" href="ch02.html"><span class="ch">02 ·</span> EDA &amp; Feature Engineering</a>
-    <a class="nav-link locked"><span class="ch">03 ·</span> Regression &amp; Prediction</a>
-  </div>
-
-  <div class="nav-group">
-    <div class="nav-group-label">Part II — Core Methods</div>
-    <a class="nav-link locked"><span class="ch">04 ·</span> Classification</a>
-    <a class="nav-link locked"><span class="ch">05 ·</span> Time Series &amp; Forecasting</a>
-    <a class="nav-link locked"><span class="ch">06 ·</span> Clustering &amp; Dimensionality</a>
-  </div>
-
-  <div class="nav-group">
-    <div class="nav-group-label">Part III — Advanced</div>
-    <a class="nav-link locked"><span class="ch">07 ·</span> Causal Inference</a>
-    <a class="nav-link locked"><span class="ch">08 ·</span> Bayesian Analytics</a>
-    <a class="nav-link locked"><span class="ch">09 ·</span> Graph Analytics</a>
-  </div>
-
-  <div class="nav-group">
-    <div class="nav-group-label">Part IV — Production</div>
-    <a class="nav-link locked"><span class="ch">10 ·</span> NLP &amp; Text Analytics</a>
-    <a class="nav-link locked"><span class="ch">11 ·</span> ML in Production</a>
-    <a class="nav-link locked"><span class="ch">12 ·</span> Data Pipelines</a>
+    <a class="nav-link" href="about.html"><span class="ch">&#9432; &middot;</span> About &amp; Credits</a>
   </div>
 </nav>
 
 <!-- MAIN -->
 <main id="main">
 
-  <nav class="top-nav">
-    <a href="index.html" class="current">Home</a>
-    <a href="#chapters">Chapters</a>
-    <a href="#pattern">Structure</a>
-    <a href="#setup">Setup</a>
-  </nav>
+  <!-- ── BOOK COVER ─────────────────────────────────────────── -->
+  <div class="book-cover">
+    <div class="cover-inner">
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="kicker">Advanced Analytics · 2026 Edition</div>
-    <h1><strong>Advanced Analytics</strong><br>Complete Mastery Book</h1>
-    <p class="tagline">From statistical foundations to production ML systems. Every chapter covers concept, use cases, full implementation, and research frontiers — written to teach, not just list.</p>
-    <div class="hero-meta">
-      <span><strong>12</strong> Chapters</span>
-      <span><strong>4</strong> Sections each</span>
-      <span><strong>80+</strong> Code examples</span>
-      <span><strong>40+</strong> Research papers</span>
-      <span><strong>Free</strong> forever</span>
+      <!-- Left: text -->
+      <div class="cover-text">
+        <span class="publisher-tag">Data Glacier &middot; Education Series</span>
+        <h1>Advanced Analytics</h1>
+        <div class="subtitle">Complete Mastery Book</div>
+        <p class="cover-desc">A free, open-source textbook covering statistical foundations through production ML systems. Every chapter: concept &rarr; use cases &rarr; implementation &rarr; research frontiers. Written to teach, not just list.</p>
+        <div class="cover-cta">
+          <a class="btn-cover-primary" href="#chapters">Read the Book &darr;</a>
+          <a class="btn-cover-secondary" href="about.html">About &amp; Credits</a>
+        </div>
+      </div>
+
+      <!-- Right: spine decoration -->
+      <div class="cover-spine">
+        <div class="spine-top">
+          <span class="spine-label">Open Textbook &middot; 2026</span>
+          <div class="spine-title">Advanced<br>Analytics</div>
+          <div class="spine-sub">Complete Mastery Book</div>
+        </div>
+
+        <div class="spine-chapters">
+          <div class="spine-ch ready"><span class="s-dot"></span> Statistical Foundations</div>
+          <div class="spine-ch ready"><span class="s-dot"></span> EDA &amp; Feature Engineering</div>
+          <div class="spine-ch ready"><span class="s-dot"></span> Regression &amp; Prediction</div>
+          <div class="spine-ch"><span class="s-dot"></span> Classification</div>
+          <div class="spine-ch"><span class="s-dot"></span> Time Series</div>
+          <div class="spine-ch"><span class="s-dot"></span> Clustering</div>
+          <div class="spine-ch"><span class="s-dot"></span> Causal Inference</div>
+          <div class="spine-ch"><span class="s-dot"></span> Bayesian Analytics</div>
+          <div class="spine-ch"><span class="s-dot"></span> Graph Analytics</div>
+          <div class="spine-ch"><span class="s-dot"></span> NLP &amp; Text</div>
+          <div class="spine-ch"><span class="s-dot"></span> MLOps</div>
+          <div class="spine-ch"><span class="s-dot"></span> Data Pipelines</div>
+        </div>
+
+        <div class="spine-bottom">
+          <div class="spine-edition">MIT License &middot; Free Forever</div>
+          <div class="spine-dg">Data Glacier</div>
+        </div>
+      </div>
+
     </div>
-  </section>
+  </div>
 
-  <!-- CHAPTER PATTERN -->
-  <section class="section" id="pattern">
-    <h2>Every Chapter Follows This Structure</h2>
-    <p>No chapter is just theory. No chapter is just code. Each one is a complete, self-contained learning unit.</p>
+  <!-- ── STATS STRIP ────────────────────────────────────────── -->
+  <div class="stats-strip">
+    <div class="stat-strip-cell"><div class="sv">12</div><div class="sl">Chapters</div></div>
+    <div class="stat-strip-cell"><div class="sv">3</div><div class="sl">Published</div></div>
+    <div class="stat-strip-cell"><div class="sv">80+</div><div class="sl">Code Examples</div></div>
+    <div class="stat-strip-cell"><div class="sv">40+</div><div class="sl">Research Papers</div></div>
+    <div class="stat-strip-cell"><div class="sv">Free</div><div class="sl">Always</div></div>
+  </div>
 
+  <!-- ── CHAPTER STRUCTURE ──────────────────────────────────── -->
+  <div class="idx-section" id="structure">
+    <div class="idx-section-head">
+      <h2>Every Chapter Follows This Structure</h2>
+    </div>
+    <p style="margin-bottom:18px;color:#444;font-size:15.5px;">No chapter is just theory. No chapter is just code. Each one is a complete, self-contained learning unit built around four sections.</p>
     <div class="pattern-grid">
       <div class="pattern-cell">
-        <div class="icon">🧠</div>
+        <div class="icon">&#129504;</div>
         <div class="label">Concept</div>
-        <div class="desc">Deep theory, mental models, the "why" behind every method — not just definitions</div>
+        <div class="desc">Deep theory, mental models, the real "why" — not just definitions</div>
       </div>
       <div class="pattern-cell">
-        <div class="icon">🏭</div>
+        <div class="icon">&#127981;</div>
         <div class="label">Use Cases</div>
-        <div class="desc">Real industry examples by sector, when to use each approach, and when not to</div>
+        <div class="desc">Real industry examples by sector — when to use and when not to</div>
       </div>
       <div class="pattern-cell">
-        <div class="icon">⚙️</div>
+        <div class="icon">&#9881;</div>
         <div class="label">Implementation</div>
-        <div class="desc">Full annotated Python code, production patterns, common pitfalls, and exercises</div>
+        <div class="desc">Full annotated Python, production patterns, pitfalls, exercises</div>
       </div>
       <div class="pattern-cell">
-        <div class="icon">🔬</div>
+        <div class="icon">&#128300;</div>
         <div class="label">Research</div>
-        <div class="desc">Landmark papers, state-of-art results, open problems, and where the field is heading</div>
+        <div class="desc">Landmark papers, state-of-art results, open problems, future directions</div>
       </div>
     </div>
-
-    <div class="callout">
-      <span class="callout-label">How to use this book</span>
-      Read each chapter fully before moving on. After every implementation section, <strong>type and run the code yourself</strong> — not copy-paste. After every research section, read at least one paper's abstract and introduction. That discipline compounded over 12 chapters produces genuine expertise.
+    <div class="callout callout-tip">
+      <span class="cl">&#9989; How to use this book</span>
+      <p>Read each chapter fully before moving on. After implementation sections, <strong>type and run the code yourself</strong> — not copy-paste. After research sections, read at least one paper abstract. That discipline compounded over 12 chapters produces genuine expertise.</p>
     </div>
-  </section>
+  </div>
 
-  <!-- CHAPTER TABLE -->
-  <section class="section" id="chapters">
-    <h2>All 12 Chapters</h2>
-    <p>Chapters are published sequentially. Each is a complete, deep treatment — not a survey or a link list.</p>
+  <!-- ── CHAPTER TABLE ──────────────────────────────────────── -->
+  <div class="idx-section" id="chapters">
+    <div class="idx-section-head">
+      <h2>All 12 Chapters</h2>
+      <span class="section-note">3 of 12 published &middot; Updated regularly</span>
+    </div>
 
     <table class="ch-table">
       <thead>
         <tr>
-          <th>#</th>
+          <th style="width:80px">#</th>
           <th>Title &amp; Description</th>
-          <th>Status</th>
+          <th style="width:100px">Status</th>
         </tr>
       </thead>
       <tbody>
@@ -445,7 +656,7 @@ pre code { background: none; padding: 0; color: inherit; }
             <div class="ch-desc">Distributions, hypothesis testing, Bayesian vs frequentist, the central limit theorem, p-values done right, multiple testing, the replication crisis.</div>
             <div class="ch-tags"><span class="tag tag-c">Concept</span><span class="tag tag-i">Code</span><span class="tag tag-r">Research</span></div>
           </td>
-          <td class="ch-status status-ready">✓ Ready</td>
+          <td class="ch-status status-ready">&#10003; Ready</td>
         </tr>
         <tr>
           <td class="ch-num">Ch 02<br>Part I</td>
@@ -454,13 +665,13 @@ pre code { background: none; padding: 0; color: inherit; }
             <div class="ch-desc">Systematic EDA, distribution diagnostics, missing data mechanisms, outlier handling, five families of feature engineering, target leakage, SHAP-based selection.</div>
             <div class="ch-tags"><span class="tag tag-c">Concept</span><span class="tag tag-i">Code</span><span class="tag tag-r">Research</span></div>
           </td>
-          <td class="ch-status status-ready">✓ Ready</td>
+          <td class="ch-status status-ready">&#10003; Ready</td>
         </tr>
         <tr>
           <td class="ch-num">Ch 03<br>Part I</td>
           <td>
             <div class="ch-title"><a href="ch03.html">Regression &amp; Predictive Modeling (Beyond Basics)</a></div>
-            <div class="ch-desc">OLS assumptions and violations, regularization, polynomial regression, GAMs, quantile regression, heteroskedasticity, and model interpretation.</div>
+            <div class="ch-desc">OLS assumptions and all five violations, regularization (Ridge/Lasso/Elastic Net), GLMs, GAMs, quantile regression, heteroskedasticity, and robust standard errors.</div>
             <div class="ch-tags"><span class="tag tag-c">Concept</span><span class="tag tag-i">Code</span><span class="tag tag-r">Research</span></div>
           </td>
           <td class="ch-status status-ready">&#10003; Ready</td>
@@ -505,7 +716,7 @@ pre code { background: none; padding: 0; color: inherit; }
           <td class="ch-num">Ch 08<br>Part III</td>
           <td>
             <div class="ch-title">Bayesian Analytics</div>
-            <div class="ch-desc">Prior/posterior/likelihood, MCMC sampling, PyMC from scratch, Bayesian A/B testing, hierarchical models, and Bayesian vs frequentist in real decisions.</div>
+            <div class="ch-desc">Prior/posterior/likelihood, MCMC sampling, PyMC from scratch, Bayesian A/B testing, hierarchical models, Bayesian vs frequentist in real decisions.</div>
             <div class="ch-tags"><span class="tag tag-c">Concept</span><span class="tag tag-i">Code</span><span class="tag tag-r">Research</span></div>
           </td>
           <td class="ch-status status-soon">Coming soon</td>
@@ -548,54 +759,66 @@ pre code { background: none; padding: 0; color: inherit; }
         </tr>
       </tbody>
     </table>
-  </section>
+  </div>
 
-  <!-- SETUP -->
-  <section class="section" id="setup">
-    <h2>Prerequisites &amp; Setup</h2>
+  <!-- ── AUTHOR ─────────────────────────────────────────────── -->
+  <div class="idx-section" id="author">
+    <div class="idx-section-head">
+      <h2>About the Author</h2>
+    </div>
+    <div class="author-strip">
+      <div class="a-avatar">ST</div>
+      <div class="a-info">
+        <div class="a-name">Surya Tripathi</div>
+        <div class="a-title">Data Science &amp; AI Leader, IBM &middot; Contributing Expert, Data Glacier Education</div>
+      </div>
+      <div class="a-links">
+        <a href="https://in.linkedin.com/in/08surya" target="_blank" rel="noopener">LinkedIn &rarr;</a>
+        <a href="about.html">Full Credits &rarr;</a>
+      </div>
+    </div>
+    <p style="font-size:14.5px;color:#444;line-height:1.7;margin-top:4px;">Surya is a Data Science and AI Leader at IBM, contributing to Data Glacier&rsquo;s education vertical to bring industry-grade rigour to open learning. This book was designed to close the gap between academic statistics and what data practitioners actually need in production. Chapters are co-developed with Claude (Anthropic). <a href="about.html">Read more about the development process &rarr;</a></p>
+  </div>
 
-    <h3>What You Need</h3>
-    <p>Basic Python (variables, functions, loops, classes) and a memory of high-school statistics. Everything else is built here from first principles — no prior ML experience required.</p>
+  <!-- ── SETUP ──────────────────────────────────────────────── -->
+  <div class="idx-section" id="setup">
+    <div class="idx-section-head">
+      <h2>Prerequisites &amp; Setup</h2>
+    </div>
+    <p style="font-size:15px;color:#444;margin-bottom:20px;">Basic Python and high-school statistics. Everything else is built from first principles. All examples run on a laptop with 8 GB RAM using free, open-source libraries.</p>
 
-    <h3>Python Environment</h3>
-    <p>Every chapter uses this standard stack. Install it once, use it everywhere.</p>
-
-<pre># Create a dedicated environment
+<pre><span style="color:#9E9E9E;font-style:italic"># Create a clean environment</span>
 conda create -n analytics python=3.11
 conda activate analytics
 
-# Core stack — all chapters
+<span style="color:#9E9E9E;font-style:italic"># Core stack — used across all chapters</span>
 pip install numpy pandas scipy scikit-learn matplotlib seaborn
 pip install statsmodels plotly jupyter ipykernel
 
-# Chapter-specific (install when you reach that chapter)
-pip install xgboost lightgbm catboost       # Ch 3, 4
-pip install prophet neuralprophet           # Ch 5
-pip install umap-learn hdbscan              # Ch 6
-pip install pymc arviz                      # Ch 8
-pip install networkx pyvis                  # Ch 9
-pip install transformers datasets           # Ch 10
-pip install mlflow evidently                # Ch 11
-pip install dbt-core sqlalchemy             # Ch 12</pre>
+<span style="color:#9E9E9E;font-style:italic"># Chapter-specific (install when you reach that chapter)</span>
+pip install xgboost lightgbm catboost       <span style="color:#9E9E9E;font-style:italic"># Ch 3, 4</span>
+pip install prophet neuralprophet           <span style="color:#9E9E9E;font-style:italic"># Ch 5</span>
+pip install umap-learn hdbscan              <span style="color:#9E9E9E;font-style:italic"># Ch 6</span>
+pip install pymc arviz                      <span style="color:#9E9E9E;font-style:italic"># Ch 8</span>
+pip install networkx pyvis                  <span style="color:#9E9E9E;font-style:italic"># Ch 9</span>
+pip install transformers datasets           <span style="color:#9E9E9E;font-style:italic"># Ch 10</span>
+pip install mlflow evidently                <span style="color:#9E9E9E;font-style:italic"># Ch 11</span>
+pip install dbt-core sqlalchemy             <span style="color:#9E9E9E;font-style:italic"># Ch 12</span></pre>
 
-    <div class="callout">
-      <span class="callout-label">About the datasets</span>
-      Every code example uses either <strong>built-in datasets</strong> (sklearn, seaborn) or freely downloadable public datasets. No paid data required. All examples run on a laptop with 8GB RAM.
+    <div class="callout callout-note">
+      <span class="cl">&#128204; About the datasets</span>
+      <p>Every code example uses <strong>built-in datasets</strong> (sklearn, seaborn) or freely downloadable public data. No paid sources required. All examples are reproducible without any cloud environment.</p>
     </div>
-  </section>
+  </div>
 
 </main>
 </div>
-
 <script>
 document.querySelectorAll('.nav-link:not(.locked)').forEach(l => {
   if (l.href && l.href === window.location.href) {
     document.querySelectorAll('.nav-link').forEach(x => x.classList.remove('active'));
     l.classList.add('active');
   }
-});
-document.querySelectorAll('.nav-link').forEach(l => {
-  l.addEventListener('click', () => document.getElementById('sidebar').classList.remove('open'));
 });
 </script>
 </body>

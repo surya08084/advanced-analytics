@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>About &amp; Credits &mdash; Advanced Analytics Mastery Book</title>
+<style>
+/* Shared chapter styles — Stanford-inspired clean academic design */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: #FFFFFF;
+  color: #1a1a1a;
+  line-height: 1.8;
+  font-size: 16.5px;
+}
+.site-wrap { display: flex; min-height: 100vh; }
+
+/* SIDEBAR */
+#sidebar {
+  width: 240px; flex-shrink: 0; background: #F8F8F6;
+  border-right: 1px solid #E2E2DC; position: fixed;
+  top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 100;
+}
+.sb-logo { padding: 20px 20px 14px; border-bottom: 1px solid #E2E2DC; }
+.sb-logo .site-name { font-family: sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8B2C2C; margin-bottom: 4px; }
+.sb-logo .course-name { font-size: 13px; font-family: sans-serif; font-weight: 600; color: #1a1a1a; line-height: 1.4; }
+.nav-group { padding: 14px 0 4px; }
+.nav-group-label { padding: 0 20px 6px; font-size: 10px; font-family: sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: #999; }
+.nav-link { display: block; padding: 5px 20px; font-size: 12.5px; font-family: sans-serif; color: #333; text-decoration: none; border-left: 3px solid transparent; transition: all 0.12s; line-height: 1.4; }
+.nav-link:hover { color: #8B2C2C; background: #F0EDE8; border-left-color: #C9A87C; }
+.nav-link.active { color: #8B2C2C; border-left-color: #8B2C2C; background: #F5EDE6; font-weight: 600; }
+.nav-link.locked { color: #bbb; cursor: default; pointer-events: none; }
+.nav-link .ch { color: #aaa; margin-right: 4px; font-family: 'Courier New', monospace; font-size: 10px; }
+.nav-link.active .ch { color: #C9A87C; }
+.nav-sub { display: block; padding: 3px 20px 3px 32px; font-size: 11.5px; font-family: sans-serif; color: #777; text-decoration: none; transition: color 0.12s; }
+.nav-sub:hover { color: #8B2C2C; }
+
+/* MAIN */
+#main { margin-left: 240px; flex: 1; max-width: 820px; padding: 0 56px 100px; }
+
+/* TOP NAV */
+.top-nav { border-bottom: 1px solid #E2E2DC; display: flex; gap: 0; }
+.top-nav a { padding: 13px 16px; font-size: 13px; font-family: sans-serif; font-weight: 600; color: #555; text-decoration: none; border-bottom: 3px solid transparent; margin-bottom: -1px; transition: color 0.12s; }
+.top-nav a:hover { color: #8B2C2C; }
+.top-nav a.current { color: #8B2C2C; border-bottom-color: #8B2C2C; }
+
+/* CHAPTER HERO */
+.ch-hero { padding: 44px 0 32px; border-bottom: 2px solid #E2E2DC; }
+.ch-hero .eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; font-family: sans-serif; }
+.ch-hero .part-tag { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #888; font-weight: 700; }
+.ch-hero .ch-tag { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #8B2C2C; font-weight: 700; background: #FDF0EE; padding: 2px 8px; border-radius: 2px; border: 1px solid #F0C4BC; }
+.ch-hero h1 { font-size: 32px; font-weight: 400; line-height: 1.2; color: #1a1a1a; margin-bottom: 14px; letter-spacing: -0.01em; }
+.ch-hero h1 strong { font-weight: 700; }
+.ch-hero .ch-desc { font-size: 16px; color: #444; max-width: 640px; line-height: 1.7; margin-bottom: 22px; }
+.ch-hero .ch-meta { display: flex; gap: 24px; font-family: sans-serif; font-size: 13px; color: #666; flex-wrap: wrap; }
+.ch-hero .ch-meta strong { color: #8B2C2C; }
+
+/* SECTION BANNER */
+.section-banner { margin: 40px 0 24px; padding: 14px 18px; display: flex; align-items: center; gap: 14px; border-left: 4px solid; font-family: sans-serif; }
+.section-banner .s-num { font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 700; margin-bottom: 3px; }
+.section-banner .s-title { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+.section-banner .s-icon { font-size: 20px; }
+.sb-concept { background: #F0F4FF; border-color: #3F51B5; }
+.sb-concept .s-num { color: #3F51B5; }
+.sb-usecases { background: #F0FAF4; border-color: #2E7D32; }
+.sb-usecases .s-num { color: #2E7D32; }
+.sb-impl { background: #F0F9FF; border-color: #0277BD; }
+.sb-impl .s-num { color: #0277BD; }
+.sb-research { background: #FFF8E1; border-color: #F57F17; }
+.sb-research .s-num { color: #F57F17; }
+
+/* HEADINGS */
+h2 { font-size: 24px; font-weight: 700; color: #1a1a1a; margin: 40px 0 12px; border-bottom: 1px solid #E2E2DC; padding-bottom: 8px; }
+h3 { font-size: 19px; font-weight: 700; color: #1a1a1a; margin: 34px 0 12px; }
+h4 { font-size: 13px; font-weight: 700; font-family: sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: #8B2C2C; margin: 26px 0 8px; }
+h5 { font-size: 15.5px; font-weight: 700; font-family: sans-serif; color: #1a1a1a; margin: 20px 0 8px; }
+
+/* PROSE */
+p { margin-bottom: 16px; color: #222; }
+strong { color: #1a1a1a; font-weight: 700; }
+em { color: #555; font-style: italic; }
+a { color: #8B2C2C; text-decoration: none; }
+a:hover { text-decoration: underline; }
+ul, ol { padding-left: 24px; margin-bottom: 16px; }
+li { margin-bottom: 7px; color: #333; }
+li strong { color: #1a1a1a; }
+
+/* CALLOUTS */
+.callout { border-left: 4px solid; padding: 14px 18px; margin: 22px 0; font-family: sans-serif; font-size: 14.5px; line-height: 1.65; }
+.callout p { font-size: 14.5px !important; margin-bottom: 8px !important; }
+.callout p:last-child { margin-bottom: 0 !important; }
+.callout ul { margin-bottom: 0; }
+.callout li { font-size: 14px; margin-bottom: 6px; }
+.callout .cl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; display: block; margin-bottom: 7px; }
+.callout-concept { background: #EEF2FF; border-color: #3F51B5; }
+.callout-concept .cl { color: #3F51B5; }
+.callout-analogy { background: #FFF8E1; border-color: #F9A825; }
+.callout-analogy .cl { color: #F57F17; }
+.callout-warning { background: #FFF3E0; border-color: #E64A19; }
+.callout-warning .cl { color: #BF360C; }
+.callout-tip { background: #F1F8E9; border-color: #558B2F; }
+.callout-tip .cl { color: #33691E; }
+.callout-key { background: #E0F7FA; border-color: #00838F; }
+.callout-key .cl { color: #00696F; }
+.callout-research { background: #FFF8E1; border-color: #F57F17; }
+.callout-research .cl { color: #E65100; }
+
+/* CODE */
+pre { background: #F6F6F4; border: 1px solid #E2E2DC; border-left: 3px solid #8B2C2C; padding: 18px 20px; border-radius: 2px; overflow-x: auto; font-family: 'Courier New', 'Menlo', monospace; font-size: 13px; line-height: 1.75; color: #1a1a1a; margin: 14px 0 20px; }
+pre code { background: none !important; border: none !important; color: inherit !important; padding: 0 !important; font-size: inherit !important; }
+code { background: #F0EDE8; padding: 1px 5px; border-radius: 2px; font-family: 'Courier New', monospace; font-size: 13px; color: #8B2C2C; border: 1px solid #E8E0D8; }
+.code-label { font-family: sans-serif; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em; color: #888; margin-bottom: -8px; padding-top: 10px; display: flex; align-items: center; gap: 6px; }
+.code-label::before { content: ''; display: inline-block; width: 10px; height: 2px; background: #8B2C2C; }
+
+/* SYNTAX */
+.kw { color: #7B1FA2; } .fn { color: #1565C0; } .st { color: #2E7D32; }
+.nu { color: #E65100; } .cm { color: #9E9E9E; font-style: italic; }
+.cl2 { color: #006064; } .dc { color: #00838F; }
+
+/* FORMULA */
+.formula { background: #FAFAFA; border: 1px solid #E2E2DC; border-left: 3px solid #333; padding: 18px 22px; margin: 18px 0; font-family: 'Courier New', monospace; font-size: 14px; color: #1a1a1a; line-height: 2.2; overflow-x: auto; }
+.formula .f-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: #888; display: block; margin-bottom: 8px; font-family: sans-serif; text-align: left; }
+
+/* DIAGRAM */
+.diagram { background: #F8F8F6; border: 1px solid #E2E2DC; border-left: 3px solid #555; padding: 20px 22px; font-family: 'Courier New', monospace; font-size: 12.5px; line-height: 1.88; overflow-x: auto; margin: 18px 0; color: #333; }
+.dl { color: #8B2C2C; font-weight: 700; } .db { color: #2E7D32; font-weight: 600; }
+.dd { color: #1565C0; } .dv { color: #6A1B9A; }
+
+/* TABLES */
+.tbl-wrap { overflow-x: auto; margin: 18px 0; }
+table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13.5px; }
+th { text-align: left; padding: 9px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #555; border-bottom: 2px solid #1a1a1a; font-weight: 700; background: #FAFAFA; }
+td { padding: 10px 12px; border-bottom: 1px solid #E2E2DC; color: #333; vertical-align: top; }
+td strong { color: #8B2C2C; }
+td code { font-size: 12px; }
+tr:hover td { background: #FAFAF8; }
+
+/* QUIZ */
+.quiz { background: #FFFBF0; border: 1px solid #E8D8A0; padding: 20px 22px; margin: 28px 0; font-family: sans-serif; }
+.quiz .q-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; color: #8B6914; margin-bottom: 12px; display: block; }
+.quiz ol { padding-left: 20px; }
+.quiz li { color: #333; font-size: 14px; margin-bottom: 10px; line-height: 1.6; }
+.quiz .hint { margin-top: 14px; font-size: 12.5px; color: #888; font-style: italic; border-top: 1px solid #E8D8A0; padding-top: 12px; }
+
+/* STEPS */
+.steps { margin: 18px 0; }
+.step { display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start; }
+.step-n { min-width: 26px; height: 26px; border-radius: 50%; background: #8B2C2C; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; font-family: sans-serif; flex-shrink: 0; margin-top: 2px; }
+.step-body strong { display: block; font-family: sans-serif; font-size: 15px; color: #1a1a1a; margin-bottom: 4px; }
+.step-body p { color: #444; font-size: 14.5px; margin-bottom: 0; }
+
+/* COMPARE */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
+.compare-box { background: #FAFAFA; border: 1px solid #E2E2DC; padding: 16px 18px; }
+.compare-box h5 { margin-top: 0 !important; margin-bottom: 10px !important; font-family: sans-serif; }
+.compare-box ul { margin-bottom: 0; }
+.compare-box li { font-size: 13.5px; color: #444; margin-bottom: 6px; }
+
+/* PAPER */
+.paper { background: #FAFAFA; border: 1px solid #E2E2DC; border-left: 3px solid #F57F17; padding: 14px 16px; margin: 12px 0; font-family: sans-serif; }
+.paper .p-title { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 3px; }
+.paper .p-meta { font-size: 11.5px; color: #888; margin-bottom: 6px; }
+.paper .p-desc { font-size: 13px; color: #444; line-height: 1.6; }
+
+/* CHAPTER NAV */
+.ch-nav { display: flex; gap: 12px; margin-top: 48px; padding-top: 28px; border-top: 2px solid #E2E2DC; }
+.ch-nav a { flex: 1; padding: 14px 18px; background: #FAFAFA; border: 1px solid #E2E2DC; text-decoration: none; color: #333; font-family: sans-serif; font-size: 13px; transition: all 0.12s; display: block; }
+.ch-nav a:hover { border-color: #8B2C2C; color: #8B2C2C; }
+.ch-nav .nav-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 4px; }
+
+/* CONTENT SECTION DIVIDER */
+.content-section { padding: 44px 0; border-bottom: 1px solid #E2E2DC; }
+
+/* MOBILE */
+#menu-btn { display: none; }
+@media (max-width: 860px) {
+  #sidebar { transform: translateX(-100%); transition: transform 0.25s; }
+  #sidebar.open { transform: translateX(0); }
+  #main { margin-left: 0; padding: 0 20px 80px; }
+  #menu-btn { display: block; position: fixed; top: 12px; right: 14px; z-index: 200; background: #8B2C2C; border: none; color: #fff; padding: 8px 14px; border-radius: 3px; cursor: pointer; font-size: 13px; font-family: sans-serif; font-weight: 700; }
+  .compare { grid-template-columns: 1fr; }
+}
+
+
+/* ── ABOUT PAGE SPECIFIC STYLES ─────────────────────────── */
+
+/* Hero */
+.about-hero {
+  padding: 52px 0 44px;
+  border-bottom: 2px solid #E2E2DC;
+  background: #FAFAF8;
+  margin: 0 -56px;
+  padding-left: 56px;
+  padding-right: 56px;
+}
+.about-hero .kicker {
+  font-family: sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: #8B2C2C; margin-bottom: 14px; display: block;
+}
+.about-hero h1 {
+  font-size: 34px; font-weight: 400; line-height: 1.2;
+  color: #1a1a1a; margin-bottom: 14px; letter-spacing: -0.01em;
+}
+.about-hero h1 strong { font-weight: 700; }
+.about-hero .lead {
+  font-size: 17px; color: #444; max-width: 620px;
+  line-height: 1.75; margin-bottom: 0;
+}
+
+/* Section dividers */
+.about-section {
+  padding: 48px 0;
+  border-bottom: 1px solid #E2E2DC;
+}
+.about-section:last-child { border-bottom: none; }
+.about-section h2 {
+  font-size: 22px; font-weight: 700; color: #1a1a1a;
+  margin: 0 0 20px; padding-bottom: 10px;
+  border-bottom: 1px solid #E2E2DC;
+}
+
+/* Timeline / Process steps */
+.process-list { margin: 24px 0; }
+.process-item {
+  display: flex; gap: 20px; margin-bottom: 28px;
+  align-items: flex-start;
+}
+.process-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  background: #FDF0EE; border: 1px solid #F0C4BC;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-top: 2px;
+}
+.process-body h4 {
+  font-family: sans-serif; font-size: 15px; font-weight: 700;
+  color: #1a1a1a; margin: 0 0 6px; text-transform: none;
+  letter-spacing: 0; font-size: 15px;
+}
+.process-body p {
+  font-size: 14.5px; color: #444; margin: 0; line-height: 1.65;
+}
+
+/* Credit cards */
+.credits-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px; margin: 24px 0;
+}
+.credit-card {
+  border: 1px solid #E2E2DC; padding: 24px 22px;
+  background: #FAFAFA; position: relative;
+  transition: border-color 0.15s;
+}
+.credit-card:hover { border-color: #C9A87C; }
+.credit-card .role-badge {
+  display: inline-block; font-family: sans-serif;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.12em; color: #8B2C2C;
+  background: #FDF0EE; border: 1px solid #F0C4BC;
+  padding: 2px 8px; margin-bottom: 14px;
+}
+.credit-card .name {
+  font-size: 20px; font-weight: 700; color: #1a1a1a;
+  margin-bottom: 6px; font-family: sans-serif;
+}
+.credit-card .title-line {
+  font-size: 13px; color: #666; font-family: sans-serif;
+  margin-bottom: 14px; line-height: 1.5;
+}
+.credit-card .bio {
+  font-size: 14px; color: #444; line-height: 1.65;
+  margin-bottom: 16px;
+}
+.credit-card .links { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: sans-serif; font-size: 12.5px; font-weight: 600;
+  padding: 7px 14px; text-decoration: none;
+  border: 1px solid; transition: all 0.15s; cursor: pointer;
+}
+.btn-link:hover { text-decoration: none; }
+.btn-primary {
+  background: #8B2C2C; color: #fff; border-color: #8B2C2C;
+}
+.btn-primary:hover { background: #6D2020; border-color: #6D2020; color: #fff; }
+.btn-outline {
+  background: #fff; color: #8B2C2C; border-color: #8B2C2C;
+}
+.btn-outline:hover { background: #FDF0EE; }
+.btn-gold {
+  background: #C9A87C; color: #fff; border-color: #C9A87C;
+}
+.btn-gold:hover { background: #B8956A; border-color: #B8956A; color: #fff; }
+.btn-linkedin {
+  background: #0A66C2; color: #fff; border-color: #0A66C2;
+}
+.btn-linkedin:hover { background: #084E96; border-color: #084E96; color: #fff; }
+
+/* Sponsor section */
+.sponsor-box {
+  border: 1px solid #E2E2DC;
+  background: #FAFAF8;
+  padding: 32px 28px;
+  margin: 24px 0;
+}
+.sponsor-box .sponsor-header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 24px;
+  flex-wrap: wrap;
+}
+.sponsor-box h3 {
+  font-size: 20px; font-weight: 700; color: #1a1a1a;
+  margin: 0 0 8px;
+}
+.sponsor-box .sponsor-desc {
+  font-size: 15px; color: #444; line-height: 1.7;
+  max-width: 480px; margin: 0;
+}
+.sponsor-box .sponsor-cta { flex-shrink: 0; padding-top: 4px; }
+.sponsor-tiers {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 14px; margin-top: 24px;
+}
+.tier {
+  border: 1px solid #E2E2DC; padding: 16px 16px;
+  background: #fff; text-align: center;
+}
+.tier .tier-name {
+  font-family: sans-serif; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: #888; margin-bottom: 6px;
+}
+.tier .tier-amount {
+  font-size: 22px; font-weight: 700; color: #1a1a1a;
+  font-family: sans-serif; margin-bottom: 8px;
+}
+.tier .tier-desc {
+  font-size: 12.5px; color: #555; line-height: 1.55;
+  font-family: sans-serif;
+}
+.tier.tier-featured {
+  border-color: #C9A87C; background: #FDFAF5;
+}
+.tier.tier-featured .tier-name { color: #8B6914; }
+.tier.tier-featured .tier-amount { color: #8B2C2C; }
+
+/* Contact section */
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px; margin: 24px 0;
+}
+.contact-item {
+  border: 1px solid #E2E2DC; padding: 20px 20px;
+  background: #FAFAFA;
+}
+.contact-item .c-icon {
+  font-size: 22px; margin-bottom: 10px; display: block;
+}
+.contact-item h4 {
+  font-family: sans-serif; font-size: 14px; font-weight: 700;
+  color: #1a1a1a; margin: 0 0 6px; text-transform: none;
+  letter-spacing: 0;
+}
+.contact-item p {
+  font-size: 13.5px; color: #555; margin: 0 0 12px;
+  line-height: 1.55; font-family: sans-serif;
+}
+.contact-item a {
+  font-family: sans-serif; font-size: 13.5px;
+  font-weight: 600; color: #8B2C2C;
+}
+
+/* Stats row */
+.stats-row {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 1px; background: #E2E2DC; border: 1px solid #E2E2DC;
+  margin: 24px 0;
+}
+.stat-cell {
+  background: #fff; padding: 20px 16px; text-align: center;
+}
+.stat-cell .val {
+  font-size: 28px; font-weight: 700; color: #8B2C2C;
+  font-family: sans-serif; line-height: 1; margin-bottom: 4px;
+}
+.stat-cell .lbl {
+  font-size: 11.5px; color: #666; font-family: sans-serif;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+/* Philosophy quote */
+.pull-quote {
+  border-left: 4px solid #8B2C2C;
+  padding: 18px 22px;
+  margin: 28px 0;
+  background: #FAFAF8;
+}
+.pull-quote p {
+  font-size: 17px; font-style: italic; color: #333;
+  line-height: 1.75; margin: 0;
+}
+.pull-quote .attr {
+  font-size: 12px; font-family: sans-serif; color: #888;
+  margin-top: 10px; display: block; font-style: normal;
+}
+
+/* Technology stack */
+.tech-row {
+  display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0;
+}
+.tech-tag {
+  font-family: sans-serif; font-size: 12px; font-weight: 600;
+  padding: 4px 12px; background: #F0EDE8;
+  border: 1px solid #E2E2DC; color: #444;
+}
+
+/* Mobile */
+@media (max-width: 760px) {
+  .credits-grid, .contact-grid { grid-template-columns: 1fr; }
+  .sponsor-tiers { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .about-hero { margin: 0 -20px; padding-left: 20px; padding-right: 20px; }
+}
+</style>
+</head>
+<body>
+<button id="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776; Menu</button>
+<div class="site-wrap">
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <div class="site-name">Advanced Analytics</div>
+    <div class="course-name">Complete Mastery Book &middot; 2026</div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Navigation</div>
+    <a class="nav-link" href="index.html"><span class="ch">00 &middot;</span> Table of Contents</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Part I &mdash; Foundations</div>
+    <a class="nav-link" href="ch01.html"><span class="ch">01 &middot;</span> Statistical Foundations</a>
+    <a class="nav-sub" href="ch01.html#concept">&#129504; Concept</a>
+    <a class="nav-sub" href="ch01.html#usecases">&#127981; Use Cases</a>
+    <a class="nav-sub" href="ch01.html#implementation">&#9881; Implementation</a>
+    <a class="nav-sub" href="ch01.html#research">&#128300; Research</a>
+    <a class="nav-link" href="ch02.html"><span class="ch">02 &middot;</span> EDA &amp; Feature Engineering</a>
+    <a class="nav-sub" href="ch02.html#concept">&#129504; Concept</a>
+    <a class="nav-sub" href="ch02.html#usecases">&#127981; Use Cases</a>
+    <a class="nav-sub" href="ch02.html#implementation">&#9881; Implementation</a>
+    <a class="nav-sub" href="ch02.html#research">&#128300; Research</a>
+    <a class="nav-link" href="ch03.html"><span class="ch">03 &middot;</span> Regression &amp; Prediction</a>
+    <a class="nav-sub" href="ch03.html#concept">&#129504; Concept</a>
+    <a class="nav-sub" href="ch03.html#usecases">&#127981; Use Cases</a>
+    <a class="nav-sub" href="ch03.html#implementation">&#9881; Implementation</a>
+    <a class="nav-sub" href="ch03.html#research">&#128300; Research</a>
+    <a class="nav-link locked"><span class="ch">04+ &middot;</span> More coming&hellip;</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Part II &mdash; Core Methods</div>
+    <a class="nav-link locked"><span class="ch">04 &middot;</span> Classification</a>
+    <a class="nav-link locked"><span class="ch">05 &middot;</span> Time Series</a>
+    <a class="nav-link locked"><span class="ch">06 &middot;</span> Clustering</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Part III &mdash; Advanced</div>
+    <a class="nav-link locked"><span class="ch">07 &middot;</span> Causal Inference</a>
+    <a class="nav-link locked"><span class="ch">08 &middot;</span> Bayesian Analytics</a>
+    <a class="nav-link locked"><span class="ch">09 &middot;</span> Graph Analytics</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Part IV &mdash; Production</div>
+    <a class="nav-link locked"><span class="ch">10 &middot;</span> NLP &amp; Text</a>
+    <a class="nav-link locked"><span class="ch">11 &middot;</span> MLOps</a>
+    <a class="nav-link locked"><span class="ch">12 &middot;</span> Data Pipelines</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Book</div>
+    <a class="nav-link active" href="about.html"><span class="ch">&#9432; &middot;</span> About &amp; Credits</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+  <nav class="top-nav">
+    <a href="index.html">Home</a>
+    <a href="index.html#chapters">Chapters</a>
+    <a href="#credits">Credits</a>
+    <a href="#sponsor">Sponsor</a>
+    <a href="#contact" class="current">Contact</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="about-hero">
+    <span class="kicker">About This Book</span>
+    <h1><strong>Built in the Open.</strong><br>Free for Everyone.</h1>
+    <p class="lead">Advanced Analytics Complete Mastery Book is a free, open-source textbook written to close the gap between knowing statistics and applying it in production. Every chapter is peer-quality content available to anyone, anywhere, at no cost.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="about-section" id="overview">
+    <div class="stats-row">
+      <div class="stat-cell"><div class="val">12</div><div class="lbl">Chapters</div></div>
+      <div class="stat-cell"><div class="val">3</div><div class="lbl">Published</div></div>
+      <div class="stat-cell"><div class="val">80+</div><div class="lbl">Code Examples</div></div>
+      <div class="stat-cell"><div class="val">100%</div><div class="lbl">Free</div></div>
+    </div>
+
+    <div class="pull-quote">
+      <p>"Most analytics education teaches you what tools exist. This book teaches you when each tool is right, when it fails, and why &mdash; using real data, real code, and research from the field."</p>
+      <span class="attr">&mdash; The philosophy behind the book</span>
+    </div>
+
+    <p>Each of the 12 chapters follows the same four-part structure: <strong>Concept</strong> (the deep theory and mental models), <strong>Use Cases</strong> (real industry applications across sectors), <strong>Implementation</strong> (production-grade Python code), and <strong>Research Frontiers</strong> (landmark papers and open problems). The result is a textbook that works whether you are learning from scratch or deepening expertise you already have.</p>
+
+    <p>The book lives at <a href="https://book-aa.dataglacier.org">book-aa.dataglacier.org</a> and is published under the MIT License. All source files are open on GitHub. Pull requests, corrections, and suggestions are welcome.</p>
+  </div>
+
+  <!-- HOW IT WAS BUILT -->
+  <div class="about-section" id="how-built">
+    <h2>How This Book Was Developed</h2>
+
+    <p>This book is an experiment in a new kind of authorship &mdash; one human expert working in close collaboration with an AI system, each contributing what they do best. The process is transparent by design.</p>
+
+    <div class="process-list">
+
+      <div class="process-item">
+        <div class="process-icon">&#128161;</div>
+        <div class="process-body">
+          <h4>Domain Expertise &amp; Editorial Vision</h4>
+          <p>Surya Tripathi defined the complete curriculum, selected every topic, determined the depth and ordering of each concept, and validated every technical claim against real-world analytics practice. As a Data Science and AI Leader at IBM contributing to Data Glacier&rsquo;s education vertical, the book reflects his experience bridging enterprise AI practice and the gaps he observed in analytics education. All editorial decisions &mdash; what to include, what to cut, what matters in practice &mdash; are human judgments.</p>
+        </div>
+      </div>
+
+      <div class="process-item">
+        <div class="process-icon">&#9997;&#65039;</div>
+        <div class="process-body">
+          <h4>Content Drafting with Claude (Anthropic)</h4>
+          <p>Each chapter was drafted in close collaboration with Claude, Anthropic&rsquo;s AI assistant. The process worked like a highly capable research and writing partner: Surya provided the structure, examples, and judgments; Claude synthesised them into detailed prose, generated code examples, surfaced relevant research papers, and maintained consistent depth across all sections. Every output was reviewed, corrected, and shaped by Surya before publication.</p>
+        </div>
+      </div>
+
+      <div class="process-item">
+        <div class="process-icon">&#128196;</div>
+        <div class="process-body">
+          <h4>Code Validation &amp; Testing</h4>
+          <p>Every Python code block in the book was written to be immediately runnable. The implementation sections use real datasets (California housing, sklearn built-ins, synthetic data) so readers can execute examples without any setup beyond a standard Python environment. Code patterns follow production conventions, not textbook simplifications.</p>
+        </div>
+      </div>
+
+      <div class="process-item">
+        <div class="process-icon">&#127760;</div>
+        <div class="process-body">
+          <h4>Open Publication on GitHub Pages</h4>
+          <p>The book is hosted on GitHub Pages with a custom domain via Data Glacier. The entire site is static HTML &mdash; no database, no paywalls, no accounts. The Stanford CS224N course site was the design inspiration: clean serif typography, a structured sidebar, and content that earns attention through quality rather than visual complexity. The source is MIT-licensed and fully open.</p>
+        </div>
+      </div>
+
+      <div class="process-item">
+        <div class="process-icon">&#128260;</div>
+        <div class="process-body">
+          <h4>Ongoing Iteration</h4>
+          <p>Chapters are published sequentially as they reach publication quality. This is a living document &mdash; corrections are made, examples are updated as libraries evolve, and new chapters are added on a regular schedule. Readers who find errors or have suggestions are encouraged to open a GitHub issue or send a note to the contact below.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tech-row">
+      <span class="tech-tag">Python</span>
+      <span class="tech-tag">scikit-learn</span>
+      <span class="tech-tag">statsmodels</span>
+      <span class="tech-tag">NumPy / Pandas</span>
+      <span class="tech-tag">pygam</span>
+      <span class="tech-tag">GitHub Pages</span>
+      <span class="tech-tag">HTML / CSS</span>
+      <span class="tech-tag">Claude (Anthropic)</span>
+      <span class="tech-tag">MIT License</span>
+    </div>
+  </div>
+
+  <!-- CREDITS -->
+  <div class="about-section" id="credits">
+    <h2>Credits &amp; Acknowledgements</h2>
+
+    <p>This book is the product of two collaborators: one human, one AI. Both are credited here with transparency about what each contributed.</p>
+
+    <div class="credits-grid">
+
+      <!-- Surya -->
+      <div class="credit-card">
+        <span class="role-badge">Author &amp; Editor</span>
+        <div class="name">Surya Tripathi</div>
+        <div class="title-line">Data Science &amp; AI Leader at IBM<br>Contributing Expert, Data Glacier Education</div>
+        <p class="bio">Surya is a Data Science and AI Leader at IBM, where he works at the intersection of enterprise AI, advanced analytics, and large-scale data systems. He contributes to Data Glacier&rsquo;s education vertical to bring industry-grade rigor to open learning. He conceived and designed this book based on gaps he observed between academic training and what practitioners actually need &mdash; strong theory paired with production-ready application. He defines the curriculum, validates every technical claim, and shapes the depth and tone of each chapter.</p>
+        <div class="links">
+          <a class="btn-link btn-linkedin" href="https://in.linkedin.com/in/08surya" target="_blank" rel="noopener">
+            &#128101; LinkedIn
+          </a>
+          <a class="btn-link btn-outline" href="https://dataglacier.org" target="_blank" rel="noopener">
+            &#127760; Data Glacier
+          </a>
+        </div>
+      </div>
+
+      <!-- Claude -->
+      <div class="credit-card">
+        <span class="role-badge">AI Writing Partner</span>
+        <div class="name">Claude</div>
+        <div class="title-line">AI Assistant by Anthropic<br>Used for drafting &amp; research synthesis</div>
+        <p class="bio">Claude (by Anthropic) served as the primary writing and research partner across all chapters. It synthesised Surya&rsquo;s expertise into structured prose, generated annotated code examples, identified relevant research papers, and maintained consistent depth and tone. Claude does not make editorial decisions &mdash; it executes them. Every chapter was reviewed and shaped by Surya before publication.</p>
+        <div class="links">
+          <a class="btn-link btn-outline" href="https://anthropic.com" target="_blank" rel="noopener">
+            &#128640; Anthropic
+          </a>
+          <a class="btn-link btn-outline" href="https://claude.ai" target="_blank" rel="noopener">
+            &#129302; Claude.ai
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="callout callout-key" style="margin-top:28px;">
+      <span class="cl">&#9432; A note on AI-assisted authorship</span>
+      <p>This book is explicit about its use of AI. Surya is the author: he provides the domain knowledge, editorial judgment, and quality bar. Claude is a writing tool: it does not decide what is true, what matters, or what belongs in the book. We believe this transparency is important as AI-assisted writing becomes common in technical education. The standard is not whether AI was used &mdash; it is whether the content is accurate, rigorous, and useful.</p>
+    </div>
+  </div>
+
+  <!-- SPONSOR -->
+  <div class="about-section" id="sponsor">
+    <h2>Support This Project</h2>
+
+    <p>The book is and will always remain free. Writing and maintaining it takes significant time. If it has been useful to you &mdash; in a job interview, a project, a course, or just learning &mdash; consider supporting its continued development.</p>
+
+    <div class="sponsor-box">
+      <div class="sponsor-header">
+        <div>
+          <h3>Sponsor the Book</h3>
+          <p class="sponsor-desc">Sponsorships fund new chapters, keep the site maintained, and allow Surya to dedicate more time to the project. All sponsors are acknowledged on this page. There are no ads, no paywalls, and no tracking &mdash; your support is the only revenue model.</p>
+        </div>
+        <div class="sponsor-cta">
+          <a class="btn-link btn-gold" href="mailto:info@dataglacier.org?subject=Sponsorship%20Enquiry%20%E2%80%94%20Advanced%20Analytics%20Book" style="font-size:14px;padding:10px 20px;">
+            &#9733; Sponsor Us
+          </a>
+        </div>
+      </div>
+
+      <div class="sponsor-tiers">
+        <div class="tier">
+          <div class="tier-name">Supporter</div>
+          <div class="tier-amount">&#8377; / $ Any</div>
+          <div class="tier-desc">One-time contribution of any amount. Named acknowledgement on this page.</div>
+        </div>
+        <div class="tier tier-featured">
+          <div class="tier-name">&#9733; Chapter Sponsor</div>
+          <div class="tier-amount">Chapter Level</div>
+          <div class="tier-desc">Sponsor a specific chapter. Your name or company listed at the top of that chapter as the supporting sponsor.</div>
+        </div>
+        <div class="tier">
+          <div class="tier-name">Organisation Partner</div>
+          <div class="tier-amount">Team Level</div>
+          <div class="tier-desc">Organisation-level partnership. Includes logo placement, team acknowledgement, and a note in the relevant chapters.</div>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:14px;color:#666;font-family:sans-serif;margin-top:8px;">To discuss sponsorship, email <a href="mailto:info@dataglacier.org">info@dataglacier.org</a> with the subject line <em>Sponsorship Enquiry</em>. All tiers are flexible &mdash; reach out and we will find something that works.</p>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="about-section" id="contact">
+    <h2>Get in Touch</h2>
+
+    <p>Whether you have spotted an error, want to suggest a topic, are interested in sponsorship, or just want to say the book was useful &mdash; we would genuinely like to hear from you.</p>
+
+    <div class="contact-grid">
+
+      <div class="contact-item">
+        <span class="c-icon">&#9993;&#65039;</span>
+        <h4>General Enquiries &amp; Feedback</h4>
+        <p>Questions about the book, topic suggestions, corrections, or anything else.</p>
+        <a href="mailto:info@dataglacier.org">info@dataglacier.org</a>
+      </div>
+
+      <div class="contact-item">
+        <span class="c-icon">&#9733;</span>
+        <h4>Sponsorship</h4>
+        <p>Interested in supporting the project as an individual or organisation?</p>
+        <a href="mailto:info@dataglacier.org?subject=Sponsorship%20Enquiry">info@dataglacier.org</a>
+      </div>
+
+      <div class="contact-item">
+        <span class="c-icon">&#128101;</span>
+        <h4>Connect with Surya</h4>
+        <p>Reach out on LinkedIn for professional enquiries, collaborations, or to discuss analytics.</p>
+        <a href="https://in.linkedin.com/in/08surya" target="_blank" rel="noopener">linkedin.com/in/08surya</a>
+      </div>
+
+      <div class="contact-item">
+        <span class="c-icon">&#128030;</span>
+        <h4>Report an Error</h4>
+        <p>Found a bug in the code or a factual error? GitHub issues are the fastest path to a fix.</p>
+        <a href="https://github.com/surya08084/advanced-analytics/issues" target="_blank" rel="noopener">Open a GitHub Issue</a>
+      </div>
+
+    </div>
+
+    <div style="margin-top:32px;padding:22px 24px;background:#FAFAF8;border:1px solid #E2E2DC;font-family:sans-serif;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;font-weight:700;color:#888;margin-bottom:10px;">Response Time</div>
+      <p style="font-size:14px;color:#444;margin:0;line-height:1.65;">We aim to respond to all messages within 2&ndash;3 working days. For urgent corrections to factual content, please mark your subject line <strong>CORRECTION</strong> and we will prioritise it.</p>
+    </div>
+  </div>
+
+  <!-- FOOTER NOTE -->
+  <div style="padding:36px 0 0;font-family:sans-serif;font-size:13px;color:#888;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid #E2E2DC;margin-top:8px;">
+    <span>&copy; 2026 <a href="https://in.linkedin.com/in/08surya" style="color:#8B2C2C;">Surya Tripathi</a> &amp; <a href="https://dataglacier.org" style="color:#8B2C2C;">Data Glacier</a>. MIT License.</span>
+    <span>Built with &#9749; and <a href="https://claude.ai" style="color:#8B2C2C;">Claude</a> &mdash; <a href="index.html" style="color:#8B2C2C;">Back to Book</a></span>
+  </div>
+
+</main>
+</div>
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(l => {
+  l.addEventListener('click', () => document.getElementById('sidebar').classList.remove('open'));
+});
+</script>
+</body>
+</html>
