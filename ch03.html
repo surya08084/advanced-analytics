@@ -1,0 +1,769 @@
+<main id="main">
+
+  <nav class="top-nav">
+    <a href="index.html">Home</a>
+    <a href="index.html#chapters">Chapters</a>
+    <a href="#concept" class="current">Chapter 03</a>
+    <a href="#">Next &rarr;</a>
+  </nav>
+
+  <div class="ch-hero">
+    <div class="eyebrow">
+      <span class="ch-tag">Chapter 03</span>
+      <span class="part-tag">Part I &middot; Foundations</span>
+    </div>
+    <h1><strong>Regression &amp; Predictive Modeling</strong><br>Beyond the Basics</h1>
+    <p class="ch-desc">Regression is the workhorse of predictive analytics. Most practitioners know how to fit a line. Far fewer understand when that line is wrong, why it fails, and how to fix it. This chapter covers the complete theory, every assumption, all major violations, and production-grade implementation across five regression families.</p>
+    <div class="ch-meta">
+      <span>&#128214; <strong>~70 min</strong> reading</span>
+      <span>&#128187; <strong>14</strong> code examples</span>
+      <span>&#128300; <strong>6</strong> research papers</span>
+      <span>&#129504; <strong>6</strong> core concepts</span>
+    </div>
+  </div>
+
+  <!-- SECTION 1: CONCEPT -->
+  <section class="content-section" id="concept">
+    <div class="section-banner sb-concept">
+      <span class="s-icon">&#129504;</span>
+      <div><div class="s-num">Section 1 of 4</div><div class="s-title">Concept &mdash; The Deep Theory</div></div>
+    </div>
+
+    <h2>What Regression Is Actually Doing</h2>
+
+    <p>Regression finds the function <em>f</em> such that <strong>E[Y | X] = f(X)</strong> &mdash; the expected value of Y given X. That is all regression is. Every technique we add (regularization, polynomial terms, link functions) is in service of estimating this conditional expectation more accurately or under weaker assumptions.</p>
+
+    <p>Most practitioners treat regression as a black box. They call <code>LinearRegression().fit(X, y)</code>, look at R&sup2;, and move on. This produces models that appear to work on training data but fail silently in production &mdash; because the assumptions that make OLS the best possible estimator were never checked, and in real business data they are routinely violated.</p>
+
+    <div class="callout callout-concept">
+      <span class="cl">&#128273; The Core Mental Model</span>
+      <p>Linear regression makes a specific claim: <strong>the relationship between X and Y is linear, additive, and errors are random noise with constant variance.</strong> When that claim is approximately true, OLS is the Best Linear Unbiased Estimator (Gauss-Markov theorem). When it is false, OLS gives systematically wrong answers with no warning. Your job is to verify the claim holds &mdash; or to use a method that makes weaker claims.</p>
+    </div>
+
+    <h3>3.1 OLS &mdash; The Foundation</h3>
+
+    <p>OLS minimizes the sum of squared residuals. Why squared? It penalizes large errors disproportionately, produces a unique closed-form solution, and equals the maximum likelihood estimator under Gaussian errors.</p>
+
+    <div class="formula">
+      <span class="f-label">OLS closed-form solution</span>
+&beta; = (X'X)<sup>-1</sup> X'y
+
+X = design matrix (n observations &times; p features)
+y = target vector (n &times; 1)
+&beta; = coefficient vector (p &times; 1)
+
+Geometrically: projects y onto the column space of X.
+Residuals e = y - X&beta; are orthogonal to every column of X.
+    </div>
+
+    <h4>The Gauss-Markov Theorem &mdash; Five Assumptions</h4>
+    <p>Under these five conditions, OLS is BLUE: the Best Linear Unbiased Estimator. Violating any condition degrades the estimator in a specific, predictable way.</p>
+
+    <div class="tbl-wrap"><table>
+      <tr><th>#</th><th>Assumption</th><th>What It Means</th><th>Consequence of Violation</th><th>How to Test</th></tr>
+      <tr><td><strong>GM1</strong></td><td>Linearity</td><td>E[Y|X] is linear in X</td><td>Systematic bias; non-random residual patterns</td><td>Residual vs fitted plot; RESET test</td></tr>
+      <tr><td><strong>GM2</strong></td><td>No perfect multicollinearity</td><td>No predictor is exact linear combo of others</td><td>X'X is singular; coefficients undefined</td><td>VIF per feature</td></tr>
+      <tr><td><strong>GM3</strong></td><td>Strict exogeneity</td><td>E[&epsilon;|X] = 0 (no omitted variable bias)</td><td>Biased and inconsistent coefficients</td><td>Domain knowledge; instrumental variables</td></tr>
+      <tr><td><strong>GM4</strong></td><td>Homoskedasticity</td><td>Var(&epsilon;|X) = &sigma;&sup2; constant</td><td>Wrong standard errors; invalid CIs and t-tests</td><td>Breusch-Pagan test; scale-location plot</td></tr>
+      <tr><td><strong>GM5</strong></td><td>No autocorrelation</td><td>Cov(&epsilon;<sub>i</sub>, &epsilon;<sub>j</sub>) = 0</td><td>SEs underestimated; spurious significance</td><td>Durbin-Watson; ACF plot of residuals</td></tr>
+    </table></div>
+
+    <h3>3.2 The Four Diagnostic Plots &mdash; Your Most Important Tool</h3>
+
+    <p>Every regression analysis must include residual diagnostics. These four plots tell you exactly which assumption is failing and how to fix it. Never skip them.</p>
+
+    <div class="diagram">
+<span class="dl">Plot 1: Residuals vs Fitted Values</span>
+  Good pattern:   random scatter around zero, no structure
+  Nonlinearity:   systematic curve (S or U shape)
+  Heteroskedas.:  funnel shape (variance grows with fitted value)
+
+<span class="dl">Plot 2: Q-Q Plot of Residuals</span>
+  Good pattern:   points fall on the diagonal line
+  Heavy tails:    S-curve shape at both ends
+  Right skew:     points curve above the line on the right
+  Note: non-normal residuals affect CIs only, not coefficient estimates
+
+<span class="dl">Plot 3: Scale-Location (sqrt|residuals| vs fitted)</span>
+  Good pattern:   flat horizontal red line
+  Heteroskedas.:  upward slope (variance increases with fitted value)
+
+<span class="dl">Plot 4: Residuals vs Leverage (Cook's Distance)</span>
+  Leverage:       how far an observation is from the center of X-space
+  Cook's D > 4/n: observation is unduly influencing the fit
+  High lev + high resid: dangerous influential point, investigate
+    </div>
+
+    <h3>3.3 Multicollinearity &mdash; The Hidden Problem</h3>
+
+    <p>Multicollinearity occurs when predictors are highly correlated. It does not bias coefficient estimates but <strong>inflates their variance dramatically</strong> &mdash; making them unstable, sensitive to small data changes, and statistically insignificant even when the feature is genuinely important.</p>
+
+    <div class="callout callout-warning">
+      <span class="cl">&#9888;&#65039; Why This Matters in Practice</span>
+      <p>Suppose you have <code>age</code> and <code>years_of_experience</code> (r=0.95). The model cannot separate which one deserves the coefficient &mdash; it can put all weight on age and none on experience, or vice versa, and get roughly the same predictions. Both coefficients become unstable and may flip signs with one additional observation. <strong>The predictions may be fine. The coefficients are meaningless.</strong> When interpretability is required (credit scoring, healthcare, regulatory compliance) this is a serious problem.</p>
+    </div>
+
+    <div class="formula">
+      <span class="f-label">Variance Inflation Factor (VIF)</span>
+VIF(j) = 1 / (1 - R&sup2;<sub>j</sub>)
+
+R&sup2;<sub>j</sub> = R&sup2; from regressing feature j on all other features.
+
+VIF = 1:     No correlation with other features (ideal)
+VIF 1-5:     Acceptable
+VIF 5-10:    Moderate multicollinearity (investigate)
+VIF > 10:    Severe multicollinearity (take action)
+VIF = &infin;: Perfect collinearity (model will fail)
+
+Fixes: remove one correlated feature, combine via PCA,
+       or use Ridge regression (naturally handles collinearity).
+    </div>
+
+    <h3>3.4 Regularization &mdash; The Solution to Overfitting</h3>
+
+    <p>Regularization adds a penalty to the loss function that discourages large coefficients. This introduces a small bias but reduces variance substantially &mdash; the classic bias-variance tradeoff. The result generalizes better to new data.</p>
+
+    <div class="formula">
+      <span class="f-label">Ridge (L2): shrinks all coefficients toward zero</span>
+Loss = &sum;(y<sub>i</sub> - &ycirc;<sub>i</sub>)&sup2; + &lambda; &sum; &beta;<sub>j</sub>&sup2;
+
+All coefficients shrink toward zero smoothly. None become exactly zero.
+Keeps all features. Best when all features may be relevant.
+Handles multicollinearity well (adds &lambda;I to X'X before inversion).
+
+<span class="f-label">Lasso (L1): drives some coefficients to exactly zero</span>
+Loss = &sum;(y<sub>i</sub> - &ycirc;<sub>i</sub>)&sup2; + &lambda; &sum; |&beta;<sub>j</sub>|
+
+Performs automatic feature selection.
+Unstable when features are highly correlated (picks one arbitrarily).
+Best when you believe most features are irrelevant.
+
+<span class="f-label">Elastic Net: combines L1 and L2</span>
+Loss = &sum;(y<sub>i</sub> - &ycirc;<sub>i</sub>)&sup2; + &lambda;<sub>1</sub> &sum; |&beta;<sub>j</sub>| + &lambda;<sub>2</sub> &sum; &beta;<sub>j</sub>&sup2;
+
+Sparse like Lasso, stable like Ridge. Best default for p >> n.
+    </div>
+
+    <div class="callout callout-analogy">
+      <span class="cl">&#128161; Why L1 Produces Sparsity But L2 Does Not</span>
+      <p>The geometry explains it. The L2 penalty is a sphere &mdash; smooth, no corners. When the loss ellipse touches the sphere, it touches at a smooth point where no coefficient is exactly zero. The L1 penalty is a diamond with corners on the axes. The loss ellipse almost always touches those corners first, which drives that coefficient to exactly zero. This is why Lasso produces automatic feature selection and Ridge does not.</p>
+    </div>
+
+    <h3>3.5 Heteroskedasticity &mdash; When Error Variance Is Not Constant</h3>
+
+    <p>Heteroskedasticity means the variance of errors depends on X. In business data this is the rule, not the exception. Revenue prediction errors are larger for high-revenue customers. Ignoring this produces <strong>wrong standard errors</strong>, invalidating all t-tests and confidence intervals.</p>
+
+    <div class="tbl-wrap"><table>
+      <tr><th>Pattern</th><th>Common Cause</th><th>Correct Fix</th></tr>
+      <tr><td><strong>Variance &prop; E[Y]&sup2;</strong></td><td>Multiplicative process (revenue, income)</td><td>Log-transform Y; use log-linear model or Gamma GLM</td></tr>
+      <tr><td><strong>Variance &prop; E[Y]</strong></td><td>Count data, proportions</td><td>WLS with weights 1/&ycirc;; Poisson or Gamma GLM</td></tr>
+      <tr><td><strong>Different variance per group</strong></td><td>Different subpopulations</td><td>Cluster-robust standard errors (HC3 by cluster)</td></tr>
+      <tr><td><strong>Unknown structure</strong></td><td>General business data</td><td>White HC3 robust standard errors (default choice)</td></tr>
+    </table></div>
+
+    <h3>3.6 Regression Family: When to Use Each</h3>
+
+    <h4>Polynomial Regression</h4>
+    <p>Add polynomial terms when the relationship is nonlinear but smooth. Key risk: high-degree polynomials oscillate wildly at boundaries (Runge's phenomenon). Prefer splines or GAMs over degree &gt;3 polynomials for smooth nonlinear relationships.</p>
+
+    <h4>Quantile Regression</h4>
+    <p>OLS models the <em>mean</em> of Y given X. Quantile regression models any <em>percentile</em>. Use it when you care about tail behavior (worst-case delivery time, 95th percentile latency, Value at Risk), when data is heavily skewed and log-transform doesn't help, or when different user segments have heterogeneous effects.</p>
+
+    <h4>Generalized Linear Models (GLMs)</h4>
+    <p>GLMs extend OLS to non-normal response variables through a link function that connects the linear predictor to E[Y|X].</p>
+
+    <div class="tbl-wrap"><table>
+      <tr><th>Response Type</th><th>Distribution</th><th>Link</th><th>Business Example</th></tr>
+      <tr><td>Binary (0/1)</td><td>Binomial</td><td>Logit</td><td>Churn, click, default, fraud</td></tr>
+      <tr><td>Count (&ge;0)</td><td>Poisson</td><td>Log</td><td>Support tickets, purchases, events per day</td></tr>
+      <tr><td>Overdispersed count</td><td>Negative Binomial</td><td>Log</td><td>Purchases per customer (variance &gt; mean)</td></tr>
+      <tr><td>Positive continuous</td><td>Gamma</td><td>Log</td><td>Revenue, LTV, claim amounts, duration</td></tr>
+      <tr><td>Rate (0 to 1)</td><td>Beta</td><td>Logit</td><td>Conversion rate, market share, CTR</td></tr>
+      <tr><td>Zero + continuous</td><td>Zero-Inflated (two-part)</td><td>Mixed</td><td>App purchases (most = 0)</td></tr>
+    </table></div>
+
+    <h4>Generalized Additive Models (GAMs)</h4>
+    <p>GAMs replace linear terms &beta;<sub>j</sub>X<sub>j</sub> with smooth functions f<sub>j</sub>(X<sub>j</sub>) fit using splines. This provides nonlinear flexibility while maintaining full interpretability &mdash; you can plot each f<sub>j</sub> to see exactly how each feature affects the outcome. Best for &gt;1000 observations per feature and relationships known to be nonlinear.</p>
+
+    <h3>3.7 The Bias-Variance Tradeoff</h3>
+
+    <div class="formula">
+      <span class="f-label">Expected prediction error decomposition</span>
+E[(Y - &ycirc;)&sup2;] = Bias&sup2; + Variance + Irreducible Noise
+
+Bias&sup2;:  Systematic error from wrong model form (underfitting)
+Variance:  Error from sensitivity to training data (overfitting)
+Noise:     Cannot be reduced regardless of model complexity
+
+Goal: minimize total error, not just bias.
+Regularization trades small bias for large variance reduction.
+    </div>
+
+    <div class="tbl-wrap"><table>
+      <tr><th>Model</th><th>Bias</th><th>Variance</th><th>Train Error</th><th>Test Error</th></tr>
+      <tr><td>Too simple (underfit)</td><td>High</td><td>Low</td><td>High</td><td>High</td></tr>
+      <tr><td>Just right</td><td>Low</td><td>Low</td><td>Low</td><td>Low</td></tr>
+      <tr><td>Too complex (overfit)</td><td>Low</td><td>High</td><td>Very low</td><td>High</td></tr>
+    </table></div>
+
+    <div class="callout callout-key">
+      <span class="cl">&#128204; When to Use Each Regression Type</span>
+      <p><strong>OLS:</strong> Continuous Y, approximately linear relationship, need coefficient interpretation. Always use HC3 robust SEs. <strong>Ridge:</strong> Many features, possible multicollinearity, need all features retained. <strong>Lasso/Elastic Net:</strong> Believe most features are irrelevant, want automatic selection. <strong>GLM:</strong> Non-normal response (binary, count, positive continuous). <strong>Quantile:</strong> Tail prediction, heteroskedastic data, risk estimation. <strong>GAM:</strong> Known nonlinear relationships, interpretability required, enough data.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 2: USE CASES -->
+  <section class="content-section" id="usecases">
+    <div class="section-banner sb-usecases">
+      <span class="s-icon">&#127981;</span>
+      <div><div class="s-num">Section 2 of 4</div><div class="s-title">Use Cases &mdash; Industry Applications</div></div>
+    </div>
+
+    <h2>Regression Across Industries</h2>
+
+    <h3>3.8 E-Commerce &mdash; Customer Lifetime Value Prediction</h3>
+    <p>Predicting 12-month revenue from each customer to allocate acquisition spend. One of the highest-value regression problems in business.</p>
+
+    <p><strong>Why naive OLS fails:</strong></p>
+    <ul>
+      <li>LTV is right-skewed &mdash; most customers contribute very little, a few enormously. OLS is distorted by high-LTV outliers</li>
+      <li>LTV is bounded below at zero. OLS can and will predict negative values</li>
+      <li>Variance of errors is proportional to predicted value &mdash; heteroskedasticity is guaranteed</li>
+    </ul>
+
+    <p><strong>Production approach:</strong></p>
+    <ul>
+      <li><strong>Two-part model:</strong> Part 1 classifies zero-LTV vs positive-LTV (logistic). Part 2 models log(LTV | LTV &gt; 0) via Gamma GLM. Multiply: P(LTV &gt; 0) &times; E[LTV | LTV &gt; 0]</li>
+      <li><strong>Gamma GLM with log link:</strong> Naturally handles positive right-skewed data, heteroskedasticity is in the likelihood, predictions always positive</li>
+      <li><strong>Quantile regression at median:</strong> More robust than mean for skewed distributions, less distorted by whale customers</li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <span class="cl">&#9989; Industry Standard at Subscription Companies</span>
+      <p>Spotify, Netflix, and DoorDash use <strong>Gamma GLM with log link</strong> for LTV. The Gamma distribution naturally handles positive continuous right-skewed data, variance proportional to mean&sup2; is built into the likelihood, and the log link ensures always-positive predictions. No need for manual log-transform and no smearing correction required.</p>
+    </div>
+
+    <h3>3.9 Real Estate &mdash; Hedonic Property Valuation</h3>
+    <p>Predicting property prices from features (size, location, age, amenities).</p>
+    <ul>
+      <li><strong>Spatial autocorrelation:</strong> Nearby properties have correlated errors (GM5 violation). Standard SEs are underestimated. Use Moran's I test; correct with spatial lag models or cluster-robust SEs by neighborhood</li>
+      <li><strong>Log-linear specification (hedonic pricing):</strong> Price = exp(&beta;<sub>0</sub> + &beta;<sub>1</sub>&times;log(size) + ...). Coefficients are elasticities: "1% increase in size increases price by &beta;<sub>1</sub>%"</li>
+      <li><strong>Interaction terms essential:</strong> The value of an extra bedroom depends heavily on neighborhood. OLS without the interaction will average across neighborhoods and mislead</li>
+      <li><strong>GAM for age:</strong> The age-price relationship is often U-shaped (new is premium, mid-age discounted, historic is premium). Linear terms cannot capture this; GAMs handle it naturally</li>
+    </ul>
+
+    <h3>3.10 Healthcare &mdash; Hospital Length of Stay</h3>
+    <p>Predicting days in hospital for capacity planning.</p>
+    <ul>
+      <li>Length of stay is a count variable (integer &ge;1) &rarr; use Negative Binomial GLM, not OLS</li>
+      <li>Strong right skew: most stays 2&ndash;5 days, some 30+ days. A few complex cases dominate the mean &mdash; OLS predictions for typical patients are biased upward</li>
+      <li><strong>Censoring problem:</strong> Some patients are still admitted when data is pulled &mdash; their true LOS is unknown. Standard OLS ignores this. Use survival models (Cox regression) or Tobit regression for censored data</li>
+    </ul>
+
+    <h3>3.11 Finance &mdash; Probability of Loan Default</h3>
+    <p>Binary outcome (default yes/no) requires logistic regression, not OLS.</p>
+    <ul>
+      <li>Severe class imbalance: 1&ndash;5% default rate. Naive logistic regression predicts "no default" for everyone, achieving 95%+ accuracy while being completely useless. Use class weights or threshold tuning</li>
+      <li>Regulatory requirement for <strong>monotone WoE features</strong>: each feature must have monotonic relationship with default probability for auditability</li>
+      <li><strong>The scorecard transformation:</strong> Model coefficients are converted into integer points per feature so loan officers can compute scores manually. Still used because regulators can audit it completely</li>
+    </ul>
+
+    <h3>3.12 Ride-sharing &mdash; Dynamic Pricing</h3>
+    <p>Predicting the surge multiplier to balance supply and demand in real-time.</p>
+    <ul>
+      <li>Target: positive continuous multiplier &rarr; Gamma GLM or log-linear model</li>
+      <li>Surge 5 minutes ago predicts surge now better than almost any other feature &mdash; temporal autocorrelation is severe. Must include lagged features and use time-series-aware cross-validation</li>
+      <li>Quantile regression at 90th&ndash;95th percentile estimates worst-case surge for customer-facing communication ("expect up to 3.5x surcharge")</li>
+    </ul>
+
+    <div class="callout callout-warning">
+      <span class="cl">&#9888;&#65039; When Regression Is the Wrong Tool Entirely</span>
+      <ul>
+        <li><strong>You need to establish causality:</strong> Regression on observational data estimates correlation, not causation. Use Ch 7 (Causal Inference)</li>
+        <li><strong>Your outcome is a category:</strong> Use classification (Ch 4). Linear regression on binary outcomes produces values outside [0,1]</li>
+        <li><strong>Structural breaks exist:</strong> If the X-Y relationship changes at a threshold or over time, a single model averages the regimes and misleads both</li>
+        <li><strong>Complex interactions across many features:</strong> Gradient boosting (Ch 4) will outperform linear regression significantly. Use regression when interpretability matters more than accuracy</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SECTION 3: IMPLEMENTATION -->
+  <section class="content-section" id="implementation">
+    <div class="section-banner sb-impl">
+      <span class="s-icon">&#9881;</span>
+      <div><div class="s-num">Section 3 of 4</div><div class="s-title">Implementation &mdash; Full Python Code</div></div>
+    </div>
+
+    <h2>Production Regression Toolkit</h2>
+
+    <h3>3.13 Complete Regression Diagnostics</h3>
+    <div class="code-label">Python &mdash; Test all five Gauss-Markov assumptions automatically</div>
+    <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> scipy.stats <span class="kw">as</span> stats
+<span class="kw">import</span> statsmodels.api <span class="kw">as</span> sm
+<span class="kw">from</span> statsmodels.stats.diagnostic <span class="kw">import</span> het_breuschpagan, linear_reset
+<span class="kw">from</span> statsmodels.stats.stattools <span class="kw">import</span> durbin_watson
+<span class="kw">from</span> statsmodels.stats.outliers_influence <span class="kw">import</span> variance_inflation_factor
+
+<span class="kw">def</span> <span class="fn">full_regression_diagnostics</span>(X, y, model_name=<span class="st">"OLS"</span>):
+    <span class="cm">"""
+    Run all five Gauss-Markov assumption tests.
+    Returns: dict of pass/fail per test + recommended fixes.
+    Requires: X as pandas DataFrame with column names.
+    """</span>
+    X_c = sm.add_constant(X)
+    model = sm.OLS(y, X_c).fit()
+    residuals = model.resid
+    n, p = X.shape
+    report = {}
+
+    <span class="cm"># 1. Linearity: Ramsey RESET test
+    # H0: model correctly specified. p &gt; 0.05 means OK.</span>
+    reset = linear_reset(model, power=<span class="nu">2</span>)
+    report[<span class="st">"linearity_ok"</span>]    = reset.pvalue &gt; <span class="nu">0.05</span>
+    report[<span class="st">"linearity_p"</span>]     = reset.pvalue
+
+    <span class="cm"># 2. Homoskedasticity: Breusch-Pagan test
+    # H0: constant variance. p &gt; 0.05 means OK.</span>
+    _, bp_p, _, _ = het_breuschpagan(residuals, X_c)
+    report[<span class="st">"homosked_ok"</span>]     = bp_p &gt; <span class="nu">0.05</span>
+    report[<span class="st">"homosked_p"</span>]      = bp_p
+
+    <span class="cm"># 3. Normality of residuals (mainly for small n)
+    # For n &gt; 500, CLT makes this less critical.</span>
+    sample = residuals.sample(min(<span class="nu">5000</span>, n), random_state=<span class="nu">42</span>)
+    _, norm_p = stats.shapiro(sample)
+    report[<span class="st">"normality_ok"</span>]    = norm_p &gt; <span class="nu">0.05</span> <span class="kw">or</span> n &gt; <span class="nu">500</span>
+    report[<span class="st">"normality_p"</span>]     = norm_p
+
+    <span class="cm"># 4. No autocorrelation: Durbin-Watson
+    # Value near 2 = no autocorrelation. &lt;1.5 or &gt;2.5 is a concern.</span>
+    dw = durbin_watson(residuals)
+    report[<span class="st">"autocorr_ok"</span>]     = <span class="nu">1.5</span> &lt; dw &lt; <span class="nu">2.5</span>
+    report[<span class="st">"durbin_watson"</span>]   = dw
+
+    <span class="cm"># 5. Multicollinearity: VIF per feature</span>
+    vif = pd.DataFrame({
+        <span class="st">"feature"</span>: X.columns,
+        <span class="st">"VIF"</span>: [variance_inflation_factor(X_c.values, i+<span class="nu">1</span>)
+                <span class="kw">for</span> i <span class="kw">in</span> range(p)]
+    }).sort_values(<span class="st">"VIF"</span>, ascending=<span class="kw">False</span>)
+    report[<span class="st">"max_vif"</span>]         = vif[<span class="st">"VIF"</span>].max()
+    report[<span class="st">"multicollin_ok"</span>]  = report[<span class="st">"max_vif"</span>] &lt; <span class="nu">10</span>
+    report[<span class="st">"vif_table"</span>]       = vif
+
+    <span class="cm"># 6. Influential points: Cook's Distance &gt; 4/n</span>
+    cooks_d = model.get_influence().cooks_distance[<span class="nu">0</span>]
+    n_influe = (cooks_d &gt; <span class="nu">4</span>/n).sum()
+    report[<span class="st">"influential_ok"</span>]  = n_influe &lt; n * <span class="nu">0.05</span>
+    report[<span class="st">"n_influential"</span>]   = n_influe
+
+    <span class="cm"># Print readable summary</span>
+    checks = [
+        (<span class="st">"Linearity (RESET)"</span>,       report[<span class="st">"linearity_ok"</span>],
+         f<span class="st">"p={report['linearity_p']:.3f}"</span>,       <span class="st">"Add polynomial terms or use GAM"</span>),
+        (<span class="st">"Homoskedasticity (BP)"</span>,    report[<span class="st">"homosked_ok"</span>],
+         f<span class="st">"p={report['homosked_p']:.3f}"</span>,        <span class="st">"Use HC3 robust SEs, WLS, or log(Y)"</span>),
+        (<span class="st">"Normality (Shapiro-Wilk)"</span>, report[<span class="st">"normality_ok"</span>],
+         f<span class="st">"p={report['normality_p']:.3f}"</span>,       <span class="st">"Check outliers; OK if n&gt;500"</span>),
+        (<span class="st">"No autocorrelation (DW)"</span>,  report[<span class="st">"autocorr_ok"</span>],
+         f<span class="st">"DW={report['durbin_watson']:.2f}"</span>,    <span class="st">"Add lagged features; use HAC SEs"</span>),
+        (<span class="st">"No multicollinearity"</span>,     report[<span class="st">"multicollin_ok"</span>],
+         f<span class="st">"maxVIF={report['max_vif']:.1f}"</span>,      <span class="st">"Remove correlated features or use Ridge"</span>),
+        (<span class="st">"No influential outliers"</span>,  report[<span class="st">"influential_ok"</span>],
+         f<span class="st">"n={report['n_influential']}"</span>,         <span class="st">"Investigate Cook's D &gt; 4/n points"</span>),
+    ]
+    print(<span class="st">"="</span>*<span class="nu">58</span>); print(f<span class="st">" DIAGNOSTICS: {model_name}"</span>); print(<span class="st">"="</span>*<span class="nu">58</span>)
+    <span class="kw">for</span> name, ok, stat, fix <span class="kw">in</span> checks:
+        icon = <span class="st">"PASS"</span> <span class="kw">if</span> ok <span class="kw">else</span> <span class="st">"FAIL"</span>
+        print(f<span class="st">"  [{icon}] {name:<30} {stat}"</span>)
+        <span class="kw">if not</span> ok: print(f<span class="st">"         Fix: {fix}"</span>)
+    print(f<span class="st">"\n  R2={model.rsquared:.3f}  AdjR2={model.rsquared_adj:.3f}  AIC={model.aic:.1f}"</span>)
+    <span class="kw">return</span> report, model
+
+<span class="cm"># Usage</span>
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> fetch_california_housing
+housing = fetch_california_housing(as_frame=<span class="kw">True</span>)
+report, model = full_regression_diagnostics(housing.data, housing.target)
+<span class="cm"># Expected: FAIL linearity (relationships are nonlinear)
+#           FAIL homoskedasticity (variance grows with price)
+#           Both tell you: log-transform Y or use Gamma GLM</span></code></pre>
+
+    <h3>3.14 Regularized Regression with Cross-Validated Lambda</h3>
+    <div class="code-label">Python &mdash; Ridge, Lasso, Elastic Net with proper pipeline</div>
+    <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> RidgeCV, LassoCV, ElasticNetCV
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> fetch_california_housing
+
+housing = fetch_california_housing(as_frame=<span class="kw">True</span>)
+X_tr, X_te, y_tr, y_te = train_test_split(
+    housing.data, housing.target, test_size=<span class="nu">0.2</span>, random_state=<span class="nu">42</span>)
+
+alphas = np.logspace(-<span class="nu">4</span>, <span class="nu">4</span>, <span class="nu">100</span>)   <span class="cm"># search 0.0001 to 10000</span>
+
+models = {
+    <span class="st">"Ridge"</span>:      RidgeCV(alphas=alphas, cv=<span class="nu">5</span>),
+    <span class="st">"Lasso"</span>:      LassoCV(alphas=alphas, cv=<span class="nu">5</span>, max_iter=<span class="nu">10000</span>),
+    <span class="st">"ElasticNet"</span>: ElasticNetCV(
+                    alphas=alphas,
+                    l1_ratio=[<span class="nu">.1</span>, <span class="nu">.5</span>, <span class="nu">.7</span>, <span class="nu">.9</span>, <span class="nu">1.0</span>],  <span class="cm"># CV picks best ratio too</span>
+                    cv=<span class="nu">5</span>, max_iter=<span class="nu">10000</span>)
+}
+
+<span class="cm"># IMPORTANT: always scale before regularization.
+# Without scaling, features with large magnitude get penalized more
+# just because of their units, not their actual importance.</span>
+print(f<span class="st">f"{'Model':12} {'RMSE':&gt;8} {'R2':&gt;7} {'Best alpha':&gt;12} {'Non-zero':&gt;10}"</span>)
+print(<span class="st">"-"</span>*<span class="nu">55</span>)
+
+<span class="kw">for</span> name, reg <span class="kw">in</span> models.items():
+    pipe = Pipeline([(<span class="st">"scale"</span>, StandardScaler()), (<span class="st">"reg"</span>, reg)])
+    pipe.fit(X_tr, y_tr)
+    y_pred = pipe.predict(X_te)
+    rmse = np.sqrt(np.mean((y_te - y_pred)**<span class="nu">2</span>))
+    r2   = <span class="nu">1</span> - np.mean((y_te - y_pred)**<span class="nu">2</span>) / np.var(y_te)
+    alpha_best = getattr(reg, <span class="st">'alpha_'</span>, <span class="st">'N/A'</span>)
+    nz = (np.abs(reg.coef_) &gt; <span class="nu">1e-6</span>).sum()
+    print(f<span class="st">f"{name:12} {rmse:8.4f} {r2:7.3f} {str(alpha_best):&gt;12} {nz:&gt;10}/{X_tr.shape[1]}"</span>)
+
+<span class="cm"># Lasso feature selection: which features survived?</span>
+lasso_coefs = pd.Series(models[<span class="st">"Lasso"</span>].coef_, index=X_tr.columns)
+survived = lasso_coefs[lasso_coefs != <span class="nu">0</span>].sort_values(key=abs, ascending=<span class="kw">False</span>)
+print(f<span class="st">"\nLasso kept {len(survived)} features (sorted by |coefficient|):"</span>)
+print(survived.round(<span class="nu">4</span>))</code></pre>
+
+    <h3>3.15 Robust Standard Errors &mdash; HC3 by Default</h3>
+    <div class="code-label">Python &mdash; When and how to use heteroskedasticity-robust SEs</div>
+    <pre><code><span class="kw">import</span> statsmodels.api <span class="kw">as</span> sm
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="kw">def</span> <span class="fn">regression_with_robust_ses</span>(X, y):
+    <span class="cm">"""
+    Fit OLS and compare naive vs HC3-robust standard errors.
+
+    Recommendation: use HC3 by default for all cross-sectional data.
+    HC3 is conservative (slightly wider CIs) but always valid.
+    Naive OLS SEs are only valid under exact homoskedasticity,
+    which almost never holds in practice.
+
+    SE types available in statsmodels:
+    'HC0' - White (1980): original robust SE
+    'HC1' - small-sample correction
+    'HC3' - default recommendation: better for small n, most conservative
+    'HAC' - Newey-West: also corrects for autocorrelation
+    """</span>
+    X_c = sm.add_constant(X)
+    naive  = sm.OLS(y, X_c).fit()
+    robust = sm.OLS(y, X_c).fit(cov_type=<span class="st">'HC3'</span>)
+
+    comparison = pd.DataFrame({
+        <span class="st">"coef"</span>:       naive.params,
+        <span class="st">"SE_naive"</span>:   naive.bse,
+        <span class="st">"SE_HC3"</span>:     robust.bse,
+        <span class="st">"SE_ratio"</span>:   robust.bse / naive.bse,  <span class="cm"># &gt;1 means naive SEs too small</span>
+        <span class="st">"sig_naive"</span>:  naive.pvalues &lt; <span class="nu">0.05</span>,
+        <span class="st">"sig_robust"</span>: robust.pvalues &lt; <span class="nu">0.05</span>,
+    })
+
+    <span class="cm"># Most important: which results change significance?</span>
+    changed = comparison[comparison[<span class="st">"sig_naive"</span>] != comparison[<span class="st">"sig_robust"</span>]]
+    <span class="kw">if</span> len(changed) &gt; <span class="nu">0</span>:
+        print(<span class="st">"WARNING: significance changes with robust SEs:"</span>)
+        print(changed[[<span class="st">"coef"</span>,<span class="st">"SE_naive"</span>,<span class="st">"SE_HC3"</span>,<span class="st">"sig_naive"</span>,<span class="st">"sig_robust"</span>]])
+        print(<span class="st">"These results were false positives with naive SEs."</span>)
+    <span class="kw">else</span>:
+        print(<span class="st">"No significance changes. Robust SEs confirm all results."</span>)
+    <span class="kw">return</span> robust, comparison
+
+<span class="cm"># Practical rule: if Breusch-Pagan p &lt; 0.05, MUST use HC3.
+# In practice: just always use HC3. The cost is near-zero.</span></code></pre>
+
+    <h3>3.16 Gamma GLM for Revenue and LTV</h3>
+    <div class="code-label">Python &mdash; The correct model for positive right-skewed outcomes</div>
+    <pre><code><span class="kw">import</span> statsmodels.api <span class="kw">as</span> sm
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="kw">def</span> <span class="fn">fit_gamma_glm</span>(X, y):
+    <span class="cm">"""
+    Gamma GLM with log link for positive continuous right-skewed Y.
+
+    Why this is better than log(Y) + OLS:
+    1. Predictions always positive (enforced by log link)
+    2. Heteroskedasticity (var proportional to mean^2) is built in
+    3. No smearing correction needed when interpreting predictions
+    4. Coefficients: exp(beta_j) = multiplicative effect on E[Y]
+       e.g. exp(0.15) = 1.16 means feature increases Y by 16%
+    """</span>
+    X_c = sm.add_constant(X)
+    glm = sm.GLM(
+        y, X_c,
+        family=sm.families.Gamma(link=sm.families.links.Log())
+    ).fit()
+
+    coef_df = pd.DataFrame({
+        <span class="st">"coef"</span>:       glm.params,
+        <span class="st">"exp_coef"</span>:   np.exp(glm.params),   <span class="cm"># multiplicative effect</span>
+        <span class="st">"pvalue"</span>:     glm.pvalues,
+        <span class="st">"significant"</span>: glm.pvalues &lt; <span class="nu">0.05</span>
+    }).sort_values(<span class="st">"pvalue"</span>)
+
+    print(f<span class="st">"Gamma GLM Results"</span>)
+    print(f<span class="st">"Pseudo R2 (deviance): {1 - glm.deviance/glm.null_deviance:.4f}"</span>)
+    print(f<span class="st">"AIC: {glm.aic:.2f}"</span>)
+    print(f<span class="st">"Dispersion: {glm.scale:.4f}"</span>)
+    print(f<span class="st">"\nCoefficients (exp(coef) = multiplicative effect on Y):"</span>)
+    print(coef_df.round(<span class="nu">4</span>))
+    <span class="kw">return</span> glm, coef_df
+
+<span class="cm"># Interpreting Gamma GLM coefficients:
+# coef = 0.12 for feature X means:
+# When X increases by 1 unit, E[Y] is multiplied by exp(0.12) = 1.127
+# i.e., Y increases by 12.7%
+# This is the log-linear interpretation — natural for business metrics.</span></code></pre>
+
+    <h3>3.17 Quantile Regression &mdash; Modeling the Tails</h3>
+    <div class="code-label">Python &mdash; When you need more than just the mean</div>
+    <pre><code><span class="kw">import</span> statsmodels.api <span class="kw">as</span> sm
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">quantile_regression_suite</span>(X, y, quantiles=<span class="kw">None</span>):
+    <span class="cm">"""
+    Fit quantile regression at multiple quantiles.
+
+    Use cases:
+    - q=0.5 (median): robust alternative to OLS mean
+    - q=0.9: worst-case prediction (delivery SLA, load estimates)
+    - Comparing coefficients across quantiles reveals heterogeneous effects:
+      if beta_j changes a lot from q=0.1 to q=0.9, feature j has
+      different effects for low vs high Y values.
+    """</span>
+    <span class="kw">if</span> quantiles <span class="kw">is None</span>:
+        quantiles = [<span class="nu">0.10</span>, <span class="nu">0.25</span>, <span class="nu">0.50</span>, <span class="nu">0.75</span>, <span class="nu">0.90</span>]
+    X_c = sm.add_constant(X)
+    results = {}
+    <span class="kw">for</span> q <span class="kw">in</span> quantiles:
+        qr = sm.QuantReg(y, X_c).fit(q=q)
+        results[q] = qr.params
+
+    coef_table = pd.DataFrame(results).T
+    coef_table.index.name = <span class="st">"quantile"</span>
+    print(<span class="st">"Coefficients across quantiles:"</span>)
+    print(coef_table.round(<span class="nu">4</span>))
+
+    <span class="cm"># Heterogeneous effect detection: large spread = effect varies by Y level</span>
+    spread = coef_table.max() - coef_table.min()
+    het = spread[spread &gt; coef_table.abs().mean() * <span class="nu">0.5</span>]
+    <span class="kw">if</span> len(het) &gt; <span class="nu">0</span>:
+        print(f<span class="st">"\nHeterogeneous effects detected for: {list(het.index)}"</span>)
+        print(<span class="st">"These features affect low and high Y values differently."</span>)
+    <span class="kw">return</span> coef_table
+
+<span class="cm"># Practical note: quantile regression minimizes the pinball loss
+# L(q, y, y_hat) = q*(y-y_hat) if y>=y_hat, else (1-q)*(y_hat-y)
+# This asymmetric loss is why predictions converge to quantile q.</span></code></pre>
+
+    <h3>3.18 The Log-Transform and Smearing Correction</h3>
+    <div class="code-label">Python &mdash; The correct way to back-transform predictions</div>
+    <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression
+
+<span class="kw">def</span> <span class="fn">log_linear_with_smearing</span>(X_train, y_train, X_test):
+    <span class="cm">"""
+    Log-linear model with Duan's smearing correction.
+
+    THE MISTAKE everyone makes:
+        model.fit(X, log(y))
+        predictions = exp(model.predict(X_test))   # WRONG
+
+    WHY IT'S WRONG:
+        E[Y | X] != exp(E[log(Y) | X])
+        exp(E[log Y]) = median(Y), not mean(Y)
+        For right-skewed Y, mean >> median
+        So naive back-transform systematically under-predicts the mean
+
+    CORRECT (Duan 1983):
+        E[Y | X] = exp(fitted_log_y) * E[exp(residuals)]
+        The factor E[exp(residuals)] is the smearing correction.
+    """</span>
+    log_y = np.log(y_train)
+    model = LinearRegression().fit(X_train, log_y)
+
+    log_pred_train = model.predict(X_train)
+    residuals = log_y - log_pred_train
+
+    <span class="cm"># Duan smearing factor: nonparametric, works for any residual distribution</span>
+    smearing_factor = np.mean(np.exp(residuals))
+
+    log_pred_test = model.predict(X_test)
+    y_pred_correct = np.exp(log_pred_test) * smearing_factor
+    y_pred_naive   = np.exp(log_pred_test)           <span class="cm"># wrong for mean prediction</span>
+    y_pred_median  = np.exp(log_pred_test)           <span class="cm"># actually correct for median</span>
+
+    print(f<span class="st">"Smearing factor: {smearing_factor:.4f}"</span>)
+    print(f<span class="st">"Mean prediction (naive):   {y_pred_naive.mean():.2f}  &lt;-- too low"</span>)
+    print(f<span class="st">"Mean prediction (correct): {y_pred_correct.mean():.2f}  &lt;-- use this"</span>)
+    print(f<span class="st">"If smearing factor is 1.0: residuals are symmetric, naive is fine"</span>)
+    <span class="kw">return</span> y_pred_correct, smearing_factor</code></pre>
+
+    <h3>3.19 GAM &mdash; Nonlinear and Interpretable</h3>
+    <div class="code-label">Python &mdash; Fit a GAM and identify which features are nonlinear</div>
+    <pre><code><span class="cm"># pip install pygam</span>
+<span class="kw">from</span> pygam <span class="kw">import</span> LinearGAM, s
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="kw">def</span> <span class="fn">fit_and_interpret_gam</span>(X, y, feature_names, n_splines=<span class="nu">20</span>):
+    <span class="cm">"""
+    GAM: E[Y|X] = intercept + f1(X1) + f2(X2) + ... + fp(Xp)
+    Each f_j is a smooth spline fit by penalized regression.
+
+    Key diagnostic: Effective Degrees of Freedom (EDF) per term.
+    EDF = 1:      linear relationship (f_j is just a line)
+    EDF = 2-3:    mild nonlinearity
+    EDF > 4:      strong nonlinearity (U-shape, thresholds, etc.)
+    """</span>
+    X = np.array(X); p = X.shape[<span class="nu">1</span>]
+    terms = sum(s(i, n_splines=n_splines) <span class="kw">for</span> i <span class="kw">in</span> range(p))
+    gam = LinearGAM(terms).gridsearch(X, y)  <span class="cm"># GCV finds optimal smoothing</span>
+
+    print(<span class="st">"GAM Results:"</span>)
+    print(f<span class="st">"Pseudo R2: {gam.statistics_['pseudo_r2']['explained_deviance']:.4f}"</span>)
+    print(f<span class="st">"AIC:       {gam.statistics_['AIC']:.2f}"</span>)
+    print(f<span class="st">"\nEffective degrees of freedom per feature:"</span>)
+    edfs = gam.statistics_[<span class="st">'edof_per_coef'</span>]
+
+    <span class="kw">for</span> i, name <span class="kw">in</span> enumerate(feature_names):
+        edf = edfs[i]  <span class="cm"># approximate; exact slicing depends on pygam version</span>
+        status = <span class="st">"LINEAR"</span> <span class="kw">if</span> edf &lt; <span class="nu">2</span> <span class="kw">else</span> <span class="st">"NONLINEAR"</span>
+        print(f<span class="st">"  {name:25} EDF={edf:.2f}  ({status})"</span>)
+
+    <span class="cm"># Plot partial dependence for each feature</span>
+    fig, axes = plt.subplots(<span class="nu">1</span>, p, figsize=(<span class="nu">4</span>*p, <span class="nu">3</span>), sharey=<span class="kw">False</span>)
+    <span class="kw">for</span> i, (ax, name) <span class="kw">in</span> enumerate(zip(axes, feature_names)):
+        XX = gam.generate_X_grid(term=i)
+        pdep, confi = gam.partial_dependence(term=i, X=XX, width=<span class="nu">0.95</span>)
+        ax.plot(XX[:, i], pdep, lw=<span class="nu">2</span>, color=<span class="st">'#8B2C2C'</span>)
+        ax.fill_between(XX[:, i], confi[:,<span class="nu">0</span>], confi[:,<span class="nu">1</span>], alpha=<span class="nu">0.15</span>, color=<span class="st">'#8B2C2C'</span>)
+        ax.axhline(<span class="nu">0</span>, color=<span class="st">'gray'</span>, lw=<span class="nu">0.8</span>, linestyle=<span class="st">'--'</span>)
+        ax.set_xlabel(name); ax.set_ylabel(<span class="st">"f(feature)"</span>)
+    plt.tight_layout()
+    <span class="kw">return</span> gam</code></pre>
+
+    <div class="quiz">
+      <span class="q-title">&#129504; Section 3 &mdash; Check Your Understanding</span>
+      <ol>
+        <li>You run <code>full_regression_diagnostics()</code> and get FAIL on homoskedasticity (BP p=0.001), PASS on everything else. Your business requires valid confidence intervals. What are your three options in priority order?</li>
+        <li>Lasso eliminates 12 of 30 features (RMSE=0.42). Ridge keeps all 30 (RMSE=0.41). Which do you deploy and why? Under what circumstances would you change your answer?</li>
+        <li>You predict customer revenue using log(revenue) + OLS. Predictions seem systematically too low by about 20%. Your colleague says "just multiply predictions by 1.2." What is the actual problem, and what is the principled fix?</li>
+        <li>A GAM returns EDF=7.8 for the <code>customer_age</code> feature. What does this tell you about the age-revenue relationship? Could a linear regression or even a 2nd-degree polynomial capture this?</li>
+      </ol>
+      <div class="hint">Hint for Q3: The issue is the smearing problem. exp(E[log Y]) = median(Y), not mean(Y). For right-skewed distributions mean &gt; median, so naive back-transformation under-predicts the mean. The fix is Duan's smearing correction: multiply exp(fitted) by mean(exp(residuals_train)). Your colleague's "1.2" approximation might accidentally be close to the correct smearing factor, but it won't generalize to new data segments.</div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: RESEARCH -->
+  <section class="content-section" id="research">
+    <div class="section-banner sb-research">
+      <span class="s-icon">&#128300;</span>
+      <div><div class="s-num">Section 4 of 4</div><div class="s-title">Research Frontiers &mdash; Where the Field Is Going</div></div>
+    </div>
+
+    <h2>The Cutting Edge of Regression and Prediction</h2>
+
+    <h3>Double Machine Learning &mdash; Causal Coefficients at Scale</h3>
+    <p>Classical regression coefficients in observational data are not causal &mdash; they are contaminated by confounders. Double Machine Learning uses ML to partial out confounders and produces coefficient estimates that are both causal and valid in high dimensions.</p>
+
+    <div class="paper">
+      <div class="p-title">Double/Debiased Machine Learning for Treatment and Structural Parameters</div>
+      <div class="p-meta">Chernozhukov, Chetverikov, Demirer, Duflo, Hansen, Newey &amp; Robins &middot; Econometrics Journal, 2018</div>
+      <div class="p-desc">The DML algorithm: to estimate the causal effect of treatment D on outcome Y controlling for high-dimensional X, fit ML models to predict Y from X (get residuals e_Y) and D from X (get residuals e_D), then regress e_Y on e_D. The resulting coefficient is causal and debiased from regularization bias. Used at Amazon, Microsoft, and LinkedIn for pricing and policy evaluation. The DoubleML Python library implements the full framework including inference.</div>
+    </div>
+
+    <h3>Conformal Prediction &mdash; Valid Intervals Without Assumptions</h3>
+
+    <div class="paper">
+      <div class="p-title">A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification</div>
+      <div class="p-meta">Angelopoulos &amp; Bates &middot; Berkeley, 2022</div>
+      <div class="p-desc">Classical prediction intervals assume normally distributed residuals. Conformal prediction produces intervals guaranteed to cover the true value with exactly 1-&alpha; probability, for any model, on any data, with no distributional assumptions. The only requirement is exchangeability (approximately i.i.d.). The MAPIE Python library wraps any sklearn model. Increasingly the standard for production forecasting uncertainty.</div>
+    </div>
+
+    <h3>Neural Additive Models &mdash; Deep Learning with GAM Interpretability</h3>
+
+    <div class="paper">
+      <div class="p-title">Neural Additive Models: Interpretable Machine Learning with Neural Nets</div>
+      <div class="p-meta">Agarwal, Melnick, Frosst, Zhang, Lengerich, Caruana &amp; Hinton &middot; NeurIPS 2021 &middot; Google Brain</div>
+      <div class="p-desc">NAMs replace each f_j in a GAM with a neural network, allowing highly complex nonlinear feature-level functions while maintaining full interpretability. Each feature's effect can be plotted exactly as in a classic GAM. On tabular datasets, NAMs match gradient boosting accuracy while providing GAM-level interpretability &mdash; partial dependence plots that are exact, not approximate. The neural-additive-models Python package implements this.</div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title">GAMLSS: Generalized Additive Models for Location, Scale and Shape</div>
+      <div class="p-meta">Rigby &amp; Stasinopoulos &middot; Journal of the Royal Statistical Society, 2005</div>
+      <div class="p-desc">GAMLSS models all parameters of the response distribution simultaneously &mdash; mean, variance, skewness, and kurtosis &mdash; each as a smooth function of covariates. This captures heteroskedasticity and distributional shape changes that standard regression ignores. For example: customer spend may have higher variance on weekends or a heavier tail for new customers. The state of practice for distributional forecasting in insurance and supply chain.</div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title">Why do tree-based models still outperform deep learning on tabular data?</div>
+      <div class="p-meta">Grinsztajn, Oyallon &amp; Varoquaux &middot; NeurIPS 2022</div>
+      <div class="p-desc">A rigorous benchmark across 45 tabular datasets finding gradient boosting (XGBoost, LightGBM) still outperforms deep learning on tabular regression in most settings. Tree models are robust to uninformative features and handle irregular target functions naturally. Practical implication: for tabular regression use regularized linear models for interpretability, gradient boosting for accuracy, and deep learning only for very large datasets (&gt;100K rows) with sufficient tuning budget.</div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title">Post-Selection Inference for Lasso and Related Procedures</div>
+      <div class="p-meta">Lee, Sun, Sun &amp; Taylor &middot; Annals of Statistics, 2016</div>
+      <div class="p-desc">When Lasso is used for feature selection and OLS is then run on selected features, the standard errors are invalid &mdash; the selection process inflates apparent significance. This paper derives exact inference procedures that account for the selection step. Practically: if you use Lasso to select and then OLS to estimate, t-tests and CIs from the OLS output are misleading. Use the selectiveInference R package or statsmodels post-selection procedures for valid inference after Lasso.</div>
+    </div>
+
+    <h3>Open Research Problems</h3>
+    <ul>
+      <li><strong>Automatic model specification:</strong> Choosing transformations, interactions, and link functions is still largely manual expertise. Symbolic regression (via genetic programming, e.g. PySR) can discover mathematical relationships from data but is not yet reliable enough to replace domain judgment.</li>
+      <li><strong>Regression under distribution shift:</strong> A model calibrated on Q1 2023 may be poorly calibrated on Q1 2024. Invariant Risk Minimization (IRM) and related methods try to find regression coefficients stable across environments but have not yet found wide practical adoption.</li>
+      <li><strong>Causal coefficient estimation at scale:</strong> DML handles low-dimensional treatments well. Extending it to settings with many simultaneous treatments and interference between units is an active research area.</li>
+      <li><strong>Regression for graph-structured data:</strong> When observations are nodes in a network and errors are correlated by adjacency, standard regression SEs are wrong in ways that are hard to correct without knowing the network. Spatial econometrics and network regression methods exist but are not yet mainstream in industry.</li>
+    </ul>
+
+    <h3>Recommended Library Stack for 2026</h3>
+    <div class="tbl-wrap"><table>
+      <tr><th>Task</th><th>Library</th><th>Key Function</th></tr>
+      <tr><td>OLS + diagnostics + robust SEs</td><td><strong>statsmodels</strong></td><td><code>sm.OLS().fit(cov_type='HC3')</code></td></tr>
+      <tr><td>Regularized regression</td><td><strong>scikit-learn</strong></td><td><code>ElasticNetCV</code>, <code>LassoCV</code>, <code>RidgeCV</code></td></tr>
+      <tr><td>GLMs (Gamma, Poisson, NegBin)</td><td><strong>statsmodels</strong></td><td><code>sm.GLM(family=Gamma())</code></td></tr>
+      <tr><td>Quantile regression</td><td><strong>statsmodels</strong></td><td><code>sm.QuantReg().fit(q=0.9)</code></td></tr>
+      <tr><td>GAMs</td><td><strong>pygam</strong></td><td><code>LinearGAM(s(0)+s(1)).gridsearch()</code></td></tr>
+      <tr><td>Conformal prediction intervals</td><td><strong>MAPIE</strong></td><td><code>MapieRegressor</code></td></tr>
+      <tr><td>Double Machine Learning</td><td><strong>DoubleML</strong></td><td><code>DoubleMLPLR</code> (partially linear)</td></tr>
+      <tr><td>Neural Additive Models</td><td><strong>neural-additive-models</strong></td><td><code>NAMClassifier</code>, <code>NAMRegressor</code></td></tr>
+    </table></div>
+
+    <div class="quiz">
+      <span class="q-title">&#129504; Chapter 3 &mdash; Final Questions</span>
+      <ol>
+        <li>You are building a model to predict insurance claim amounts for 50,000 policies. 70% have zero claims; the rest are log-normally distributed. Walk through your complete modeling strategy. What model(s) would you use, and why?</li>
+        <li>A colleague fits OLS on customer revenue data and gets R&sup2;=0.81 training, 0.79 test. They declare the model production-ready. What four specific things would you check before agreeing, and how would you check each one?</li>
+        <li>You need to estimate the causal effect of an email campaign on purchase probability, controlling for 150 behavioral features. Why can't you just run logistic regression with all 150 features as controls? When does Double Machine Learning become necessary?</li>
+        <li>Your GAM has EDF=8.3 for the <code>days_since_signup</code> feature. Plotting the partial dependence shows the effect is positive up to day 30, then flat, then positive again around day 90 and day 365. What business process might explain this pattern, and how would you communicate it to a non-technical stakeholder?</li>
+      </ol>
+      <div class="hint">Hint for Q1: Two-part (hurdle) model. Part 1: logistic regression to predict P(claim &gt; 0). Part 2: Gamma GLM with log link to predict E[claim | claim &gt; 0]. Final prediction: P(claim &gt; 0) &times; E[claim | claim &gt; 0]. This is the industry standard in non-life insurance actuarial modeling (Tweedie distributions are a related single-model approach).</div>
+    </div>
+  </section>
+
+  <nav class="ch-nav">
+    <a href="ch02.html"><div class="nav-lbl">&larr; Previous</div>Ch 02: EDA &amp; Feature Engineering</a>
+    <a href="#" style="opacity:0.45;pointer-events:none;"><div class="nav-lbl">Next &rarr;</div>Ch 04: Classification (Coming Soon)</a>
+  </nav>
+
+</main>
+</div>
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(l => {
+  l.addEventListener('click', () => document.getElementById('sidebar').classList.remove('open'));
+});
+</script>
+</body>
+</html>
