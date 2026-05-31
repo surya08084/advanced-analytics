@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Advanced Analytics — Complete Mastery Book</title>
+<style>
+:root {
+  --bg:        #07090F;
+  --surface:   #0D1120;
+  --surface2:  #121828;
+  --surface3:  #18203A;
+  --border:    rgba(100,120,255,0.18);
+  --border-hi: rgba(100,120,255,0.38);
+
+  --body:      #DDE3F8;
+  --body-dim:  #98A8CC;
+  --body-faint:#4E5C80;
+
+  --h1: #FFFFFF;
+  --h2: #7B8FFF;
+  --h3: #00E5FF;
+  --h4: #FFB300;
+  --h5: #A6E3A1;
+
+  --indigo: #6366F1;
+  --cyan:   #06B6D4;
+  --amber:  #F59E0B;
+  --green:  #10B981;
+  --pink:   #EC4899;
+  --violet: #8B5CF6;
+  --orange: #F97316;
+
+  --code-bg:  #04060D;
+  --sidebar-w: 290px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:#07090F!important;color-scheme:dark}
+body{
+  background:#07090F!important;
+  color:var(--body)!important;
+  font-family:'Georgia','Times New Roman',serif;
+  font-size:17px;line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh!important;
+}
+
+/* ── SIDEBAR ─────────────────────────────────────── */
+#sidebar{
+  position:fixed;top:0;left:0;
+  width:var(--sidebar-w);height:100vh;
+  background:#08091A!important;
+  border-right:1px solid #1A2550;
+  overflow-y:auto;z-index:100;
+  display:flex;flex-direction:column;
+}
+#sb-header{
+  padding:22px 18px 16px;
+  background:linear-gradient(160deg,#0C1535,#0D1120)!important;
+  border-bottom:1px solid #1A2550;
+}
+#sb-header .logo{
+  font-family:'Courier New',monospace;
+  font-size:9.5px;letter-spacing:.25em;
+  color:#00E5FF!important;font-weight:800;
+  text-transform:uppercase;margin-bottom:8px;
+}
+#sb-header h2{
+  font-size:13px;font-weight:700;
+  font-family:sans-serif;color:#FFFFFF!important;
+  line-height:1.4;
+}
+.nav-part{
+  padding:14px 0 4px;
+}
+.nav-part-label{
+  padding:4px 18px;font-size:9px;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:#2E3A60!important;font-family:sans-serif;font-weight:800;
+}
+.nav-ch{
+  display:block;padding:6px 18px;
+  font-size:12px;color:#6070A0!important;
+  text-decoration:none;font-family:sans-serif;
+  border-left:2px solid transparent;
+  transition:all .15s;line-height:1.4;
+}
+.nav-ch:hover{color:#C8D4F8!important;background:rgba(99,102,241,.10);border-left-color:#6366F1;}
+.nav-ch.active{color:#00E5FF!important;border-left-color:#00E5FF;background:rgba(0,229,255,.09);font-weight:700;}
+.nav-ch.locked{color:#2E3A60!important;cursor:default;}
+.nav-ch .ch-num{
+  font-family:'Courier New',monospace;
+  font-size:9px;color:#3A4870!important;
+  margin-right:6px;letter-spacing:.1em;
+}
+.nav-ch.active .ch-num{color:#00E5FF!important;}
+.nav-ch.locked .ch-num{color:#1E2840!important;}
+
+/* ── MAIN ────────────────────────────────────────── */
+#main{
+  margin-left:var(--sidebar-w);
+  max-width:880px;
+  padding:0 52px 120px;
+}
+
+/* ── HERO ────────────────────────────────────────── */
+.hero{
+  padding:72px 0 52px;
+  border-bottom:1px solid #10182E;
+  margin-bottom:0;
+  background:linear-gradient(180deg,rgba(99,102,241,.09) 0%,transparent 65%)!important;
+}
+.hero .badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:5px 14px;
+  background:rgba(99,102,241,.22)!important;
+  border:1px solid #6366F1;border-radius:20px;
+  font-size:11px;color:#A5B4FC!important;
+  font-family:sans-serif;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px;
+}
+.hero h1{
+  font-size:clamp(30px,5vw,52px);
+  line-height:1.1;margin-bottom:18px;
+  color:#FFFFFF!important;
+}
+.hero h1 .grad{
+  background:linear-gradient(110deg,#818CF8 0%,#00E5FF 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero .sub{
+  font-size:16px;color:#8898C0!important;
+  max-width:600px;line-height:1.75;margin-bottom:28px;
+}
+.hero-stats{
+  display:flex;gap:32px;flex-wrap:wrap;
+  margin-top:20px;
+}
+.hero-stats .stat{
+  text-align:center;
+  background:rgba(99,102,241,.12)!important;
+  border:1px solid rgba(99,102,241,.30);
+  border-radius:10px;padding:14px 20px;min-width:90px;
+}
+.hero-stats .stat .val{
+  font-size:26px;font-weight:800;
+  color:#FFFFFF!important;font-family:sans-serif;
+  line-height:1;
+}
+.hero-stats .stat .lbl{
+  font-size:10px;color:#4E5C80!important;
+  text-transform:uppercase;letter-spacing:.12em;
+  font-family:sans-serif;margin-top:4px;
+}
+
+/* ── CHAPTER GRID (index page) ──────────────────── */
+.ch-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(380px,1fr));
+  gap:16px;margin:40px 0;
+}
+.ch-card{
+  background:var(--surface)!important;
+  border:1px solid #1A2550;
+  border-radius:14px;padding:22px 24px;
+  text-decoration:none;display:block;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.ch-card::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--c1,#6366F1),var(--c2,#06B6D4));
+  opacity:.7;transition:opacity .2s;
+}
+.ch-card:hover{border-color:#6366F1;transform:translateY(-2px);box-shadow:0 8px 32px rgba(99,102,241,.18);}
+.ch-card:hover::before{opacity:1;}
+.ch-card .card-num{
+  font-family:'Courier New',monospace;font-size:10px;
+  color:#3A4870!important;letter-spacing:.15em;
+  text-transform:uppercase;margin-bottom:8px;
+}
+.ch-card h3{
+  font-size:17px;color:#FFFFFF!important;
+  font-family:sans-serif;font-weight:700;
+  margin-bottom:8px;margin-top:0;border:none!important;
+  padding:0!important;text-shadow:none!important;
+  letter-spacing:-.01em;
+}
+.ch-card p{
+  font-size:13px;color:#6070A0!important;
+  line-height:1.6;margin-bottom:12px;font-style:normal!important;
+}
+.ch-card .tags{display:flex;gap:6px;flex-wrap:wrap;}
+.ch-card .tag{
+  font-size:10px;font-family:sans-serif;
+  padding:2px 8px;border-radius:10px;
+  font-weight:600;letter-spacing:.06em;
+}
+.ch-card .tag-concept {background:rgba(99,102,241,.18);color:#818CF8!important;}
+.ch-card .tag-impl    {background:rgba(16,185,129,.18);color:#34D399!important;}
+.ch-card .tag-research{background:rgba(245,158,11,.18);color:#FBBF24!important;}
+.ch-card.locked{opacity:.5;pointer-events:none;}
+.ch-card .lock-badge{
+  position:absolute;top:12px;right:14px;
+  font-size:10px;font-family:sans-serif;
+  background:rgba(255,255,255,.06);color:#3A4870!important;
+  padding:2px 8px;border-radius:8px;letter-spacing:.08em;
+}
+.ch-card .ready-badge{
+  position:absolute;top:12px;right:14px;
+  font-size:10px;font-family:sans-serif;
+  background:rgba(16,185,129,.18);color:#34D399!important;
+  padding:2px 8px;border-radius:8px;font-weight:700;
+}
+
+/* ── SECTIONS (about, how-to-use) ───────────────── */
+.section{padding:52px 0;border-bottom:1px solid #10182E;}
+.section::before{
+  content:'';display:block;height:2px;
+  background:linear-gradient(90deg,#6366F1 0%,#00E5FF 55%,transparent 100%);
+  margin-bottom:28px;border-radius:2px;
+}
+.section h2{
+  font-size:30px;color:#7B8FFF!important;
+  margin-bottom:10px;letter-spacing:-.01em;
+}
+.section h3{
+  font-size:20px;color:#00E5FF!important;
+  margin:36px 0 14px;
+  border-bottom:1px solid rgba(0,229,255,.25)!important;
+  padding-bottom:8px!important;
+  text-shadow:0 0 24px rgba(0,229,255,.3)!important;
+}
+.section p{color:#DDE3F8!important;margin-bottom:18px;font-size:16px;}
+.section strong{color:#FFFFFF!important;}
+.section em{color:#FFB300!important;}
+
+/* ── PATTERN BOX ─────────────────────────────────── */
+.pattern-box{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:12px;margin:28px 0;
+}
+.pattern-item{
+  background:var(--surface2)!important;
+  border:1px solid #1A2550;border-radius:12px;
+  padding:18px 16px;text-align:center;
+}
+.pattern-item .p-icon{font-size:24px;margin-bottom:8px;}
+.pattern-item .p-title{
+  font-size:13px;font-weight:700;font-family:sans-serif;
+  color:#FFFFFF!important;margin-bottom:4px;
+}
+.pattern-item .p-desc{
+  font-size:11px;color:#4E5C80!important;
+  line-height:1.5;font-family:sans-serif;
+}
+.pattern-item:nth-child(1){border-top:2px solid #6366F1;}
+.pattern-item:nth-child(2){border-top:2px solid #10B981;}
+.pattern-item:nth-child(3){border-top:2px solid #F59E0B;}
+.pattern-item:nth-child(4){border-top:2px solid #EC4899;}
+
+/* ── CALLOUT ─────────────────────────────────────── */
+.callout{
+  border-radius:10px;padding:16px 20px;
+  margin:24px 0;border-left:4px solid;
+  font-family:sans-serif;font-size:14.5px;line-height:1.75;
+}
+.callout p{font-size:14.5px!important;margin-bottom:0!important;}
+.callout-tip{background:rgba(16,185,129,.14)!important;border-color:#10B981;}
+.callout-tip .cl{color:#34D399!important;}
+.callout-note{background:rgba(99,102,241,.14)!important;border-color:#6366F1;}
+.callout-note .cl{color:#818CF8!important;}
+.cl{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;display:block;margin-bottom:6px;}
+.callout p,.callout div{color:#DDE3F8!important;}
+
+/* ── MENU BTN ────────────────────────────────────── */
+#menu-btn{display:none;}
+@media(max-width:900px){
+  #sidebar{transform:translateX(-100%);transition:transform .3s;}
+  #sidebar.open{transform:translateX(0);}
+  #main{margin-left:0;padding:0 18px 80px;}
+  #menu-btn{
+    display:block;position:fixed;top:12px;right:14px;z-index:200;
+    background:#6366F1!important;border:none;color:#FFFFFF!important;
+    padding:9px 16px;border-radius:8px;cursor:pointer;
+    font-size:13px;font-family:sans-serif;font-weight:700;
+    box-shadow:0 4px 16px rgba(99,102,241,.5);
+  }
+}
+*{scrollbar-width:thin;scrollbar-color:#1E2850 #050810;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:#050810;}
+::-webkit-scrollbar-thumb{background:#1E2850;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#6366F1;}
+</style>
+</head>
+<body style="background:#07090F!important;color:#DDE3F8!important;">
+<button id="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div id="sb-header">
+    <div class="logo">Advanced Analytics · 2026</div>
+    <h2>Complete Mastery Book</h2>
+  </div>
+
+  <div class="nav-part">
+    <div class="nav-part-label">Book Index</div>
+    <a class="nav-ch active" href="index.html"><span class="ch-num">00 ·</span> Table of Contents</a>
+  </div>
+
+  <div class="nav-part">
+    <div class="nav-part-label">Part I — Foundations</div>
+    <a class="nav-ch" href="ch01.html"><span class="ch-num">01 ·</span> Statistical Foundations</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">02 ·</span> Exploratory Data Analysis</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">03 ·</span> Regression & Prediction</a>
+  </div>
+
+  <div class="nav-part">
+    <div class="nav-part-label">Part II — Core Methods</div>
+    <a class="nav-ch locked" href="#"><span class="ch-num">04 ·</span> Classification & Imbalanced Learning</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">05 ·</span> Time Series & Forecasting</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">06 ·</span> Clustering & Dimensionality Reduction</a>
+  </div>
+
+  <div class="nav-part">
+    <div class="nav-part-label">Part III — Advanced</div>
+    <a class="nav-ch locked" href="#"><span class="ch-num">07 ·</span> Causal Inference & A/B Testing</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">08 ·</span> Bayesian Analytics</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">09 ·</span> Graph Analytics & Networks</a>
+  </div>
+
+  <div class="nav-part">
+    <div class="nav-part-label">Part IV — Production</div>
+    <a class="nav-ch locked" href="#"><span class="ch-num">10 ·</span> NLP & Text Analytics</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">11 ·</span> ML in Production & MLOps</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">12 ·</span> Analytics Engineering & Pipelines</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">📊 Complete Textbook · 2026 Edition</div>
+  <h1><span class="grad">Advanced Analytics</span><br>Mastery Book</h1>
+  <p class="sub">From statistical foundations to production ML systems. Every chapter covers concept, use cases, full implementation, and research frontiers. Written to actually teach — not just list.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="val">12</div><div class="lbl">Chapters</div></div>
+    <div class="stat"><div class="val">4</div><div class="lbl">Sections Each</div></div>
+    <div class="stat"><div class="val">80+</div><div class="lbl">Code Examples</div></div>
+    <div class="stat"><div class="val">Free</div><div class="lbl">Forever</div></div>
+  </div>
+</section>
+
+<!-- CHAPTER PATTERN -->
+<section class="section" id="pattern">
+  <h2>Every Chapter Follows This Pattern</h2>
+  <p>No chapter is just theory. No chapter is just code. Each one is a complete learning unit.</p>
+  <div class="pattern-box">
+    <div class="pattern-item">
+      <div class="p-icon">🧠</div>
+      <div class="p-title">Concept</div>
+      <div class="p-desc">Deep theory, mental models, the real "why" — not just definitions</div>
+    </div>
+    <div class="pattern-item">
+      <div class="p-icon">🏭</div>
+      <div class="p-title">Use Cases</div>
+      <div class="p-desc">Real industry examples, when to use, when NOT to use</div>
+    </div>
+    <div class="pattern-item">
+      <div class="p-icon">⚙️</div>
+      <div class="p-title">Implementation</div>
+      <div class="p-desc">Full Python code, production patterns, common pitfalls</div>
+    </div>
+    <div class="pattern-item">
+      <div class="p-icon">🔬</div>
+      <div class="p-title">Research</div>
+      <div class="p-desc">Latest papers, open problems, where the field is going</div>
+    </div>
+  </div>
+  <div class="callout callout-tip">
+    <span class="cl">✅ How to use this book</span>
+    <p>Read each chapter fully before moving on. After every implementation section, <strong>type and run the code yourself</strong> — not copy-paste. After every research section, pick one paper and read its abstract. That discipline compounds over 12 chapters into genuine expertise.</p>
+  </div>
+</section>
+
+<!-- CHAPTER INDEX -->
+<section class="section" id="chapters">
+  <h2>All 12 Chapters</h2>
+  <p>Chapters are published one at a time. Each is a complete, deep treatment — not a survey.</p>
+
+  <div class="ch-grid">
+
+    <a class="ch-card" href="ch01.html" style="--c1:#6366F1;--c2:#8B5CF6;">
+      <div class="ready-badge">✓ Ready</div>
+      <div class="card-num">Chapter 01 · Part I: Foundations</div>
+      <h3>Statistical Foundations &amp; Probability Theory</h3>
+      <p>Distributions, hypothesis testing, Bayesian vs frequentist, the central limit theorem, p-values done right, and why most analytics gets statistics wrong.</p>
+      <div class="tags">
+        <span class="tag tag-concept">Concept</span>
+        <span class="tag tag-impl">Code</span>
+        <span class="tag tag-research">Research</span>
+      </div>
+    </a>
+
+    <a class="ch-card locked" href="#" style="--c1:#06B6D4;--c2:#0EA5E9;">
+      <div class="lock-badge">Coming Soon</div>
+      <div class="card-num">Chapter 02 · Part I: Foundations</div>
+      <h3>Exploratory Data Analysis &amp; Feature Engineering</h3>
+      <p>Systematic EDA, distribution diagnostics, feature creation, encoding strategies, handling missing data at scale, and the leakage problem.</p>
+      <div class="tags">
+        <span class="tag tag-concept">Concept</span>
+        <span class="tag tag-impl">Code</span>
+        <span class="tag tag-research">Research</span>
+      </div>
+    </a>
+
+    <a class="ch-card locked" href="#" style="--c1:#10B981;--c2:#06B6D4;">
+      <div class="lock-badge">Coming Soon</div>
+      <div class="card-num">Chapter 03 · Part I: Foundations</div>
+      <h3>Regression &amp; Predictive Modeling (Beyond Basics)</h3>
+      <p>OLS assumptions and violations, regularization, polynomial regression, GAMs, quantile regression, heteroskedasticity, and model interpretation.</p>
+      <div class="tags">
+        <span class="tag tag-concept">Concept</span>
+        <span class="tag tag-impl">Code</span>
+        <span class="tag tag-research">Research</span>
+      </div>
+    </a>
+
+    <a class="ch-card locked" href="#" style="--c1:#F59E0B;--c2:#F97316;">
+      <div class="lock-badge">Coming Soon</div>
+      <div class="card-num">Chapter 04 · Part II: Core Methods</div>
+      <h3>Classification &amp; Imbalanced Learning</h3>
+      <p>Decision trees to gradient boosting, ROC/AUC deep dive, SMOTE and advanced resampling, threshold optimization, and multi-label classification.</p>
+      <div class="tags">
+        <span class="tag tag-concept">Concept</span>
+        <span class="tag tag-impl">Code</span>
+        <span class="tag tag-research">Research</span>
+      </div>
+    </a>
+
+    <a class="ch-card locked" href="#" style="--c1:#EC4899;--c2:#8B5CF6;">
+      <div class="lock-badge">Coming Soon</div>
+      <div class="card-num">Chapter 05 · Part II: Core Methods</div>
+      <h3>Time Series Analysis &amp; Forecasting</h3>
+      <p>Stationarity, ARIMA, SARIMA, Prophet, temporal cross-validation, anomaly detection in time series, and neural forecasting with N-BEATS/TFT.</p>
+      <div class="tags">
+        <span class="tag tag-concept">Concept</span>
+        <span class="tag tag-impl">Code</span>
+        <span class="tag tag-research">Research</span>
+      </div>
+    </a>
+
+    <a class="ch-card locked" href="#" style="--c1:#8B5CF6;--c2:#6366F1;">
+      <div class="lock-badge">Coming Soon</div>
+      <div class="card-num">Chapter 06 · Part II: Core Methods</div>
+      <h3>Clustering &amp; Dimensionality Reduction</h3>
+      <p>K-means internals, DBSCAN, hierarchical clustering, PCA from scratch, t-SNE vs UMAP, cluster validation, and when unsupervised fails.</p>
+      <div class="tags">
+        <span class="tag tag-concept">Concept</span>
+        <span class="tag tag-impl">Code</span>
+        <span class="tag tag-research">Research</span>
+      </div>
+    </a>
+
+    <a class="ch-card locked" href="#" style="--c1:#06B6D4;--c2:#10B981;">
+      <div class="lock-badge">Coming Soon</div>
+      <div class="card-num">Chapter 07 · Part III: Advanced</div>
+      <h3>Causal Inference &amp; A/B Testing</h3>
+      <p>Correlation vs causation, DAGs, RCTs, difference-in-differences, instrumental variables, propensity scoring, and the statistics of A/B tests done right.</p>
+      <div class="tags">
+        <span class="tag tag-concept">Concept</span>
+        <span class="tag tag-impl">Code</span>
+        <span class="tag tag-research">Research</span>
+      </div>
+    </a>
+
+    <a class="ch-card locked" href="#" style="--c1:#F97316;--c2:#F59E0B;">
+      <div class="lock-badge">Coming Soon</div>
+      <div class="card-num">Chapter 08 · Part III: Advanced</div>
+      <h3>Bayesian Analytics</h3>
+      <p>Prior/posterior/likelihood, MCMC sampling, PyMC from scratch, Bayesian A/B testing, hierarchical models, and Bayesian vs frequentist in practice.</p>
+      <div class="tags">
+        <span class="tag tag-concept">Concept</span>
+        <span class="tag tag-impl">Code</span>
+        <span class="tag tag-research">Research</span>
+      </div>
+    </a>
+
+    <a class="ch-card locked" href="#" style="--c1:#EC4899;--c2:#F97316;">
+      <div class="lock-badge">Coming Soon</div>
+      <div class="card-num">Chapter 09 · Part III: Advanced</div>
+      <h3>Graph Analytics &amp; Network Analysis</h3>
+      <p>Graph theory, centrality measures, community detection, PageRank, NetworkX and PyG, knowledge graphs, and graph neural networks.</p>
+      <div class="tags">
+        <span class="tag tag-concept">Concept</span>
+        <span class="tag tag-impl">Code</span>
+        <span class="tag tag-research">Research</span>
+      </div>
+    </a>
+
+    <a class="ch-card locked" href="#" style="--c1:#6366F1;--c2:#EC4899;">
+      <div class="lock-badge">Coming Soon</div>
+      <div class="card-num">Chapter 10 · Part IV: Production</div>
+      <h3>NLP &amp; Text Analytics</h3>
+      <p>TF-IDF to transformers, sentiment analysis, topic modeling, NER, text classification pipelines, and LLMs for analytics tasks.</p>
+      <div class="tags">
+        <span class="tag tag-concept">Concept</span>
+        <span class="tag tag-impl">Code</span>
+        <span class="tag tag-research">Research</span>
+      </div>
+    </a>
+
+    <a class="ch-card locked" href="#" style="--c1:#10B981;--c2:#06B6D4;">
+      <div class="lock-badge">Coming Soon</div>
+      <div class="card-num">Chapter 11 · Part IV: Production</div>
+      <h3>ML in Production &amp; MLOps</h3>
+      <p>Model serving, drift detection, retraining pipelines, A/B model testing, feature stores, monitoring, and the full MLOps stack.</p>
+      <div class="tags">
+        <span class="tag tag-concept">Concept</span>
+        <span class="tag tag-impl">Code</span>
+        <span class="tag tag-research">Research</span>
+      </div>
+    </a>
+
+    <a class="ch-card locked" href="#" style="--c1:#8B5CF6;--c2:#06B6D4;">
+      <div class="lock-badge">Coming Soon</div>
+      <div class="card-num">Chapter 12 · Part IV: Production</div>
+      <h3>Analytics Engineering &amp; Data Pipelines</h3>
+      <p>dbt, data modeling, Medallion architecture, streaming analytics, data quality, the modern data stack, and analytics as code.</p>
+      <div class="tags">
+        <span class="tag tag-concept">Concept</span>
+        <span class="tag tag-impl">Code</span>
+        <span class="tag tag-research">Research</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- PREREQUISITES -->
+<section class="section" id="prereqs">
+  <h2>Prerequisites &amp; Setup</h2>
+  <h3>What You Need to Know</h3>
+  <p>Basic Python (lists, dicts, functions, classes) and a vague memory of high-school statistics. That's it. Everything else is built here from first principles.</p>
+  <h3>Python Environment Setup</h3>
+  <p>Every chapter uses this standard stack. Set it up once, use it everywhere.</p>
+  <pre style="background:#04060D!important;border:1px solid #1E2850!important;border-top:3px solid #6366F1!important;color:#CDD6F4!important;font-family:'Courier New',monospace!important;font-size:13px!important;line-height:1.75!important;padding:20px 22px!important;border-radius:8px!important;overflow-x:auto!important;"><span style="color:#6272A4;font-style:italic"># Create a clean environment</span>
+conda create -n analytics python=3.11
+conda activate analytics
+
+<span style="color:#6272A4;font-style:italic"># Core stack — used across all chapters</span>
+pip install numpy pandas scipy scikit-learn matplotlib seaborn
+pip install statsmodels plotly jupyter notebook ipykernel
+
+<span style="color:#6272A4;font-style:italic"># Chapter-specific (install when needed)</span>
+pip install xgboost lightgbm catboost          <span style="color:#6272A4;font-style:italic"># Ch 3, 4</span>
+pip install prophet neuralprophet              <span style="color:#6272A4;font-style:italic"># Ch 5</span>
+pip install umap-learn hdbscan                 <span style="color:#6272A4;font-style:italic"># Ch 6</span>
+pip install pymc arviz                         <span style="color:#6272A4;font-style:italic"># Ch 8</span>
+pip install networkx pyvis                     <span style="color:#6272A4;font-style:italic"># Ch 9</span>
+pip install transformers datasets              <span style="color:#6272A4;font-style:italic"># Ch 10</span>
+pip install mlflow evidently                   <span style="color:#6272A4;font-style:italic"># Ch 11</span>
+pip install dbt-core sqlalchemy                <span style="color:#6272A4;font-style:italic"># Ch 12</span></pre>
+
+  <div class="callout callout-note">
+    <span class="cl">📌 Note on Datasets</span>
+    <p>Every code example uses either <strong>built-in datasets</strong> (sklearn, seaborn) or freely downloadable public datasets. No paid data sources. All examples are reproducible on a laptop with 8GB RAM.</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+const links = document.querySelectorAll('.nav-ch:not(.locked)');
+links.forEach(l => {
+  if(l.href && window.location.href.includes(l.getAttribute('href'))) {
+    document.querySelectorAll('.nav-ch').forEach(x=>x.classList.remove('active'));
+    l.classList.add('active');
+  }
+});
+</script>
+</body>
+</html>

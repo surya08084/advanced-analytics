@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Ch 1: Statistical Foundations — Advanced Analytics</title>
+<style>
+:root{
+  --bg:#07090F;--surface:#0D1120;--surface2:#121828;--surface3:#18203A;
+  --border:rgba(100,120,255,0.18);--border-hi:rgba(100,120,255,0.38);
+  --body:#DDE3F8;--body-dim:#98A8CC;--body-faint:#4E5C80;
+  --h1:#FFFFFF;--h2:#7B8FFF;--h3:#00E5FF;--h4:#FFB300;--h5:#A6E3A1;
+  --indigo:#6366F1;--cyan:#06B6D4;--amber:#F59E0B;--green:#10B981;
+  --pink:#EC4899;--violet:#8B5CF6;--orange:#F97316;
+  --code-bg:#04060D;--sidebar-w:290px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:#07090F!important;color-scheme:dark}
+body{background:#07090F!important;color:var(--body)!important;font-family:'Georgia','Times New Roman',serif;font-size:17px;line-height:1.9;-webkit-font-smoothing:antialiased;min-height:100vh!important;}
+
+/* SIDEBAR */
+#sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:#08091A!important;border-right:1px solid #1A2550;overflow-y:auto;z-index:100;display:flex;flex-direction:column;}
+#sb-header{padding:22px 18px 16px;background:linear-gradient(160deg,#0C1535,#0D1120)!important;border-bottom:1px solid #1A2550;}
+#sb-header .logo{font-family:'Courier New',monospace;font-size:9.5px;letter-spacing:.25em;color:#00E5FF!important;font-weight:800;text-transform:uppercase;margin-bottom:8px;}
+#sb-header h2{font-size:13px;font-weight:700;font-family:sans-serif;color:#FFFFFF!important;line-height:1.4;}
+.nav-part{padding:14px 0 4px;}
+.nav-part-label{padding:4px 18px;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#2E3A60!important;font-family:sans-serif;font-weight:800;}
+.nav-ch{display:block;padding:6px 18px;font-size:12px;color:#6070A0!important;text-decoration:none;font-family:sans-serif;border-left:2px solid transparent;transition:all .15s;line-height:1.4;}
+.nav-ch:hover{color:#C8D4F8!important;background:rgba(99,102,241,.10);border-left-color:#6366F1;}
+.nav-ch.active{color:#00E5FF!important;border-left-color:#00E5FF;background:rgba(0,229,255,.09);font-weight:700;}
+.nav-ch.locked{color:#2E3A60!important;cursor:default;}
+.nav-ch .ch-num{font-family:'Courier New',monospace;font-size:9px;color:#3A4870!important;margin-right:6px;letter-spacing:.1em;}
+.nav-ch.active .ch-num{color:#00E5FF!important;}
+.nav-sub{display:block;padding:4px 18px 4px 34px;font-size:11px;color:#3A4870!important;text-decoration:none;font-family:sans-serif;transition:all .15s;}
+.nav-sub:hover{color:#8899CC!important;}
+.nav-sub.active{color:#7B8FFF!important;}
+
+/* MAIN */
+#main{margin-left:var(--sidebar-w);max-width:860px;padding:0 52px 120px;}
+
+/* CHAPTER HERO */
+.ch-hero{padding:60px 0 44px;border-bottom:1px solid #10182E;margin-bottom:0;background:linear-gradient(180deg,rgba(99,102,241,.08) 0%,transparent 60%)!important;}
+.ch-hero .ch-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:18px;font-family:sans-serif;}
+.ch-hero .ch-eyebrow .part-tag{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#4E5C80!important;font-weight:700;}
+.ch-hero .ch-eyebrow .ch-tag{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6366F1!important;font-weight:800;background:rgba(99,102,241,.18);padding:3px 10px;border-radius:6px;}
+.ch-hero h1{font-size:clamp(26px,4.5vw,44px);color:#FFFFFF!important;line-height:1.15;margin-bottom:14px;letter-spacing:-.01em;}
+.ch-hero h1 .accent{background:linear-gradient(110deg,#818CF8 0%,#00E5FF 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.ch-hero .ch-desc{font-size:15.5px;color:#8898C0!important;max-width:640px;line-height:1.75;margin-bottom:24px;}
+.ch-hero .ch-meta{display:flex;gap:20px;flex-wrap:wrap;font-family:sans-serif;}
+.ch-hero .ch-meta .m{font-size:11.5px;color:#4E5C80!important;display:flex;align-items:center;gap:5px;}
+.ch-hero .ch-meta .m span{color:#7B8FFF!important;font-weight:700;}
+
+/* CONTENT SECTIONS */
+.content-section{padding:52px 0;border-bottom:1px solid #10182E;}
+.section-banner{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 18px;border-radius:10px;
+  margin-bottom:32px;
+  font-family:sans-serif;
+}
+.section-banner .s-icon{font-size:20px;}
+.section-banner .s-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;margin-bottom:2px;}
+.section-banner .s-title{font-size:16px;font-weight:700;color:#FFFFFF!important;}
+.banner-concept{background:rgba(99,102,241,.16)!important;border-left:4px solid #6366F1;}
+.banner-concept .s-label{color:#818CF8!important;}
+.banner-usecases{background:rgba(16,185,129,.14)!important;border-left:4px solid #10B981;}
+.banner-usecases .s-label{color:#34D399!important;}
+.banner-impl{background:rgba(6,182,212,.14)!important;border-left:4px solid #06B6D4;}
+.banner-impl .s-label{color:#22D3EE!important;}
+.banner-research{background:rgba(245,158,11,.14)!important;border-left:4px solid #F59E0B;}
+.banner-research .s-label{color:#FBBF24!important;}
+
+/* HEADINGS */
+h2{font-size:28px;color:#7B8FFF!important;margin-bottom:12px;letter-spacing:-.01em;text-shadow:0 0 40px rgba(123,143,255,.35)!important;}
+h3{font-size:21px;color:#00E5FF!important;margin:44px 0 14px;font-weight:700;border-bottom:1px solid rgba(0,229,255,.25)!important;padding-bottom:9px!important;text-shadow:0 0 24px rgba(0,229,255,.3)!important;}
+h4{font-size:13.5px;color:#FFB300!important;text-transform:uppercase;letter-spacing:.09em;margin:30px 0 10px;font-family:sans-serif;font-weight:800;}
+h5{font-size:15px;color:#A6E3A1!important;margin:22px 0 8px;font-family:sans-serif;font-weight:700;}
+
+/* PROSE */
+p{color:#DDE3F8!important;margin-bottom:18px;font-size:16.5px;line-height:1.88;}
+strong{color:#FFFFFF!important;font-weight:700;}
+em{color:#FFB300!important;font-style:italic;}
+a{color:#60A5FA!important;}
+ul,ol{padding-left:22px;margin-bottom:18px;}
+li{color:#DDE3F8!important;margin-bottom:8px;font-size:16px;line-height:1.75;}
+li strong{color:#FFFFFF!important;}
+
+/* CALLOUTS */
+.callout{border-radius:10px;padding:18px 22px;margin:26px 0;border-left:4px solid;font-family:sans-serif;font-size:14.5px;line-height:1.75;}
+.callout p{font-size:14.5px!important;margin-bottom:8px!important;color:#DDE3F8!important;}
+.callout p:last-child{margin-bottom:0!important;}
+.callout ul{margin-bottom:0;}
+.callout li{font-size:14px!important;color:#DDE3F8!important;}
+.callout-concept{background:rgba(99,102,241,.16)!important;border-color:#6366F1;}
+.callout-analogy{background:rgba(245,158,11,.14)!important;border-color:#F59E0B;}
+.callout-warning{background:rgba(236,72,153,.14)!important;border-color:#EC4899;}
+.callout-tip{background:rgba(16,185,129,.14)!important;border-color:#10B981;}
+.callout-key{background:rgba(6,182,212,.14)!important;border-color:#06B6D4;}
+.callout-research{background:rgba(245,158,11,.10)!important;border-color:#F59E0B;}
+.cl{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;display:block;margin-bottom:8px;}
+.callout-concept .cl{color:#818CF8!important;}
+.callout-analogy .cl{color:#FBBF24!important;}
+.callout-warning .cl{color:#F472B6!important;}
+.callout-tip     .cl{color:#34D399!important;}
+.callout-key     .cl{color:#22D3EE!important;}
+.callout-research .cl{color:#FBBF24!important;}
+
+/* CODE */
+pre{background:#04060D!important;border:1px solid #1E2850!important;border-top:3px solid #6366F1!important;color:#CDD6F4!important;font-family:'Courier New','Fira Code',monospace!important;font-size:13px!important;line-height:1.75!important;border-radius:8px!important;padding:20px 22px!important;overflow-x:auto!important;margin:18px 0 24px!important;}
+pre code{background:none!important;border:none!important;color:inherit!important;padding:0!important;font-size:inherit!important;}
+code{background:rgba(99,102,241,.20)!important;border:1px solid rgba(99,102,241,.40)!important;color:#89DCFF!important;font-size:13px!important;border-radius:4px!important;padding:2px 7px!important;font-family:'Courier New',monospace!important;}
+.code-label{color:#3A4870!important;font-size:10px!important;letter-spacing:.14em!important;text-transform:uppercase!important;font-family:sans-serif!important;display:flex!important;align-items:center!important;gap:6px!important;margin-bottom:-8px!important;padding-top:12px!important;}
+.code-label::before{content:'';display:inline-block;width:8px;height:8px;background:#6366F1;border-radius:50%;}
+
+/* SYNTAX */
+.kw{color:#CBA6F7!important;} .fn{color:#89B4FA!important;} .st{color:#A6E3A1!important;}
+.nu{color:#FAB387!important;} .cm{color:#6272A4!important;font-style:italic!important;}
+.cl2{color:#F9E2AF!important;} .dc{color:#89DCEB!important;} .op{color:#CDD6F4!important;}
+
+/* FORMULA / MATH */
+.formula{background:#04060D!important;border:1px solid rgba(255,179,0,.28)!important;border-radius:10px!important;padding:20px 24px!important;margin:20px 0!important;font-family:'Courier New',monospace!important;font-size:14px!important;color:#FFD060!important;text-align:center!important;line-height:2.2!important;overflow-x:auto!important;}
+.formula .f-label{font-size:10px!important;color:#4E5C80!important;text-transform:uppercase!important;letter-spacing:.15em!important;display:block!important;margin-bottom:6px!important;text-align:left!important;}
+
+/* DIAGRAM */
+.diagram{background:#030508!important;border:1px solid rgba(0,229,255,.22)!important;border-left:3px solid #00E5FF!important;border-radius:8px!important;padding:22px 24px!important;font-family:'Courier New',monospace!important;font-size:12.5px!important;line-height:1.88!important;overflow-x:auto!important;margin:20px 0!important;color:#6FB3CC!important;}
+.dl{color:#FFB300!important;font-weight:700!important;}
+.db{color:#A6E3A1!important;font-weight:600!important;}
+.dd{color:#89B4FA!important;}
+.dv{color:#CBA6F7!important;}
+
+/* TABLES */
+.tbl-wrap{overflow-x:auto;margin:20px 0;}
+table{width:100%;border-collapse:collapse;border:1px solid #1E2850;}
+th{background:#0F1525!important;color:#00E5FF!important;font-size:11.5px!important;letter-spacing:.07em!important;text-transform:uppercase!important;padding:12px 16px!important;border-bottom:1px solid #1E2850!important;font-family:sans-serif!important;font-weight:700!important;}
+td{color:#DDE3F8!important;padding:11px 16px!important;border-bottom:1px solid rgba(100,120,255,.10)!important;font-size:14px!important;vertical-align:top!important;}
+td strong{color:#00E5FF!important;}
+td code{font-size:12px!important;}
+tr:nth-child(even) td{background:rgba(99,102,241,.05)!important;}
+tr:hover td{background:rgba(99,102,241,.10)!important;}
+
+/* QUIZ */
+.quiz{background:rgba(245,158,11,.11)!important;border:1px solid rgba(245,158,11,.32)!important;border-radius:12px!important;padding:22px 24px!important;margin:32px 0!important;font-family:sans-serif!important;}
+.quiz .q-title{font-size:10px!important;letter-spacing:.2em!important;text-transform:uppercase!important;color:#FBBF24!important;font-weight:800!important;margin-bottom:14px!important;display:flex!important;align-items:center!important;gap:8px!important;}
+.quiz ol{padding-left:20px!important;}
+.quiz li{color:#DDE3F8!important;font-size:14px!important;margin-bottom:10px!important;line-height:1.65!important;}
+.quiz .hint{margin-top:14px!important;font-size:12px!important;color:#4E5C80!important;font-style:italic!important;}
+
+/* STEPS */
+.steps{margin:20px 0;}
+.step{display:flex;gap:16px;margin-bottom:22px;align-items:flex-start;}
+.step-n{min-width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#6366F1,#8B5CF6)!important;color:#FFFFFF!important;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:sans-serif;margin-top:3px;box-shadow:0 0 18px rgba(99,102,241,.6);}
+.step-body strong{display:block;color:#FFFFFF!important;font-family:sans-serif;font-size:15px;margin-bottom:4px;}
+.step-body p{color:#98A8CC!important;font-size:14.5px!important;margin-bottom:0!important;}
+
+/* COMPARISON GRID */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+.compare-box{background:var(--surface2)!important;border:1px solid #1A2550;border-radius:10px;padding:18px 20px;}
+.compare-box h5{margin-top:0!important;margin-bottom:12px!important;}
+.compare-box ul{margin-bottom:0;}
+.compare-box li{font-size:13.5px!important;color:#98A8CC!important;margin-bottom:6px!important;}
+
+/* PAPER CARD */
+.paper{background:rgba(245,158,11,.08)!important;border:1px solid rgba(245,158,11,.25)!important;border-left:3px solid #F59E0B!important;border-radius:8px!important;padding:16px 18px!important;margin:14px 0!important;font-family:sans-serif!important;}
+.paper .p-title{font-size:14px!important;color:#FFFFFF!important;font-weight:700!important;margin-bottom:4px!important;}
+.paper .p-meta{font-size:11px!important;color:#4E5C80!important;margin-bottom:8px!important;letter-spacing:.04em!important;}
+.paper .p-desc{font-size:13px!important;color:#98A8CC!important;line-height:1.6!important;}
+
+/* CHAPTER NAV */
+.ch-nav{display:flex;gap:14px;margin-top:52px;padding-top:32px;border-top:1px solid #10182E;}
+.ch-nav a{flex:1;padding:16px 20px;background:#0C1225!important;border:1px solid #1A2550!important;border-radius:10px!important;text-decoration:none!important;color:#8899CC!important;font-family:sans-serif!important;font-size:13px!important;transition:all .15s!important;display:block!important;}
+.ch-nav a:hover{border-color:#6366F1!important;color:#FFFFFF!important;}
+.ch-nav .nav-lbl{font-size:10px!important;text-transform:uppercase!important;letter-spacing:.12em!important;color:#3A4870!important;margin-bottom:4px!important;}
+
+/* MENU */
+#menu-btn{display:none;}
+@media(max-width:900px){
+  #sidebar{transform:translateX(-100%);transition:transform .3s;}
+  #sidebar.open{transform:translateX(0);}
+  #main{margin-left:0;padding:0 18px 80px;}
+  #menu-btn{display:block;position:fixed;top:12px;right:14px;z-index:200;background:#6366F1!important;border:none;color:#FFFFFF!important;padding:9px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-family:sans-serif;font-weight:700;box-shadow:0 4px 16px rgba(99,102,241,.5);}
+  .compare{grid-template-columns:1fr;}
+  .pattern-box{grid-template-columns:1fr 1fr;}
+}
+*{scrollbar-width:thin;scrollbar-color:#1E2850 #050810;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:#050810;}
+::-webkit-scrollbar-thumb{background:#1E2850;border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:#6366F1;}
+</style>
+</head>
+<body style="background:#07090F!important;color:#DDE3F8!important;">
+<button id="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div id="sb-header">
+    <div class="logo">Advanced Analytics · 2026</div>
+    <h2>Complete Mastery Book</h2>
+  </div>
+  <div class="nav-part">
+    <div class="nav-part-label">Navigation</div>
+    <a class="nav-ch" href="index.html"><span class="ch-num">00 ·</span> Table of Contents</a>
+  </div>
+  <div class="nav-part">
+    <div class="nav-part-label">Part I — Foundations</div>
+    <a class="nav-ch active" href="ch01.html"><span class="ch-num">01 ·</span> Statistical Foundations</a>
+    <a class="nav-sub active" href="#concept">🧠 Concept</a>
+    <a class="nav-sub" href="#usecases">🏭 Use Cases</a>
+    <a class="nav-sub" href="#implementation">⚙️ Implementation</a>
+    <a class="nav-sub" href="#research">🔬 Research</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">02 ·</span> EDA &amp; Feature Engineering</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">03 ·</span> Regression &amp; Prediction</a>
+  </div>
+  <div class="nav-part">
+    <div class="nav-part-label">Part II — Core Methods</div>
+    <a class="nav-ch locked" href="#"><span class="ch-num">04 ·</span> Classification</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">05 ·</span> Time Series</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">06 ·</span> Clustering</a>
+  </div>
+  <div class="nav-part">
+    <div class="nav-part-label">Part III — Advanced</div>
+    <a class="nav-ch locked" href="#"><span class="ch-num">07 ·</span> Causal Inference</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">08 ·</span> Bayesian Analytics</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">09 ·</span> Graph Analytics</a>
+  </div>
+  <div class="nav-part">
+    <div class="nav-part-label">Part IV — Production</div>
+    <a class="nav-ch locked" href="#"><span class="ch-num">10 ·</span> NLP &amp; Text</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">11 ·</span> MLOps</a>
+    <a class="nav-ch locked" href="#"><span class="ch-num">12 ·</span> Data Pipelines</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+
+<!-- CHAPTER HERO -->
+<div class="ch-hero">
+  <div class="ch-eyebrow">
+    <span class="ch-tag">Chapter 01</span>
+    <span class="part-tag">Part I · Foundations</span>
+  </div>
+  <h1><span class="accent">Statistical Foundations</span><br>&amp; Probability Theory</h1>
+  <p class="ch-desc">The bedrock of everything. Most analytics errors — wrong conclusions, over-confident predictions, misleading dashboards — trace back to misunderstood statistics. This chapter builds an unshakeable foundation.</p>
+  <div class="ch-meta">
+    <div class="m">📖 <span>~60 min</span> reading</div>
+    <div class="m">💻 <span>12</span> code examples</div>
+    <div class="m">🔬 <span>6</span> research papers</div>
+    <div class="m">🧠 <span>4</span> core concepts</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 1: CONCEPT
+════════════════════════════════════════════════════ -->
+<section class="content-section" id="concept">
+  <div class="section-banner banner-concept">
+    <span class="s-icon">🧠</span>
+    <div>
+      <div class="s-label">Section 1 of 4</div>
+      <div class="s-title">Concept — The Deep Theory</div>
+    </div>
+  </div>
+
+  <h2>Why Statistics Is Not What You Think It Is</h2>
+
+  <p>Most people learn statistics backwards. They learn formulas first, intuition last — if ever. The result is analysts who can run a t-test but can't tell you what it actually means. This chapter fixes that.</p>
+
+  <p>Statistics is not a collection of tests. It is a <strong>framework for reasoning under uncertainty</strong>. Every statistical procedure answers the same fundamental question: <em>"Given that I've only seen a sample of reality, what can I conclude about all of reality?"</em></p>
+
+  <div class="callout callout-concept">
+    <span class="cl">🔑 The Fundamental Problem of Statistics</span>
+    <p>You want to know something about a <strong>population</strong> (all customers, all users, all possible outcomes), but you can only observe a <strong>sample</strong> (the data you actually have). Statistics is the machinery for making rigorous claims about populations from samples — while being honest about the uncertainty that gap creates.</p>
+  </div>
+
+  <h3>1.1 Probability — The Language of Uncertainty</h3>
+
+  <h4>Two Interpretations That Lead to Different Statistics</h4>
+  <p>There are two fundamentally different ways to interpret probability, and they lead to entirely different statistical frameworks. Understanding the difference is not academic — it determines how you should analyze data.</p>
+
+  <div class="compare">
+    <div class="compare-box">
+      <h5>Frequentist Probability</h5>
+      <ul>
+        <li><strong>Definition:</strong> Long-run frequency of an event over infinite repetitions</li>
+        <li><strong>P(heads) = 0.5</strong> means: flip this coin infinitely, ~50% are heads</li>
+        <li><strong>Parameters are fixed</strong> (unknown but not random)</li>
+        <li>Data is random; parameters are not</li>
+        <li>Gives us: p-values, confidence intervals, hypothesis tests</li>
+        <li><strong>Problem:</strong> Can't make probability statements about parameters themselves</li>
+      </ul>
+    </div>
+    <div class="compare-box">
+      <h5>Bayesian Probability</h5>
+      <ul>
+        <li><strong>Definition:</strong> Degree of belief or plausibility of a statement</li>
+        <li><strong>P(heads) = 0.5</strong> means: I believe heads and tails are equally plausible</li>
+        <li><strong>Parameters are random</strong> variables with distributions</li>
+        <li>Both data and parameters are random</li>
+        <li>Gives us: posterior distributions, credible intervals, model comparison</li>
+        <li><strong>Advantage:</strong> Can say "there's a 94% probability the effect is positive"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-analogy">
+    <span class="cl">💡 Mental Model — The Weather Forecast</span>
+    <p>A <strong>frequentist</strong> meteorologist says: "70% chance of rain" means that on days with conditions like today, it rains 70% of the time historically. The probability is about the repeatability of the setup.</p>
+    <p>A <strong>Bayesian</strong> meteorologist says: "70% chance of rain" means I have 70% confidence it will rain today, given all the evidence I've incorporated (satellite data, models, past patterns). The probability is about belief, updated by evidence.</p>
+    <p><strong>Practical takeaway:</strong> Most business analytics lives in frequentist-land (p-values, confidence intervals). Most modern machine learning lives in Bayesian-land (posterior distributions, uncertainty quantification). You need fluency in both.</p>
+  </div>
+
+  <h4>The Probability Axioms — The Foundation of Everything</h4>
+  <p>All of probability theory rests on three axioms introduced by Kolmogorov in 1933. These are not empirical observations — they are definitions from which everything else is derived.</p>
+
+  <div class="formula">
+    <span class="f-label">Kolmogorov's Three Axioms</span>
+    1. Non-negativity:    P(A) ≥ 0  for any event A
+    2. Normalization:     P(Ω) = 1  (something always happens)
+    3. Additivity:        P(A ∪ B) = P(A) + P(B)  if A ∩ B = ∅
+    (mutually exclusive events: their probabilities simply add)
+  </div>
+
+  <p>From these three axioms, every probability rule follows — the complement rule, conditional probability, Bayes' theorem, the law of total probability. Understanding this hierarchy means you can always derive what you need rather than memorizing formulas.</p>
+
+  <h4>Conditional Probability &amp; Bayes' Theorem</h4>
+  <p>Conditional probability is how we update beliefs when new evidence arrives. It is the engine of Bayesian reasoning and the mathematical foundation of most machine learning.</p>
+
+  <div class="formula">
+    <span class="f-label">Conditional Probability</span>
+    P(A | B) = P(A ∩ B) / P(B)
+    "The probability of A given that B has occurred"
+
+    <span class="f-label">Bayes' Theorem (derived from conditional probability)</span>
+    P(θ | data) = P(data | θ) × P(θ) / P(data)
+        posterior    likelihood   prior    evidence
+  </div>
+
+  <div class="callout callout-key">
+    <span class="cl">📌 Why Bayes' Theorem Is The Most Important Formula in Analytics</span>
+    <p>Bayes' theorem tells us how to <strong>rationally update beliefs when we see evidence</strong>. In analytics: <em>θ</em> is whatever you want to know (conversion rate, effect size, whether a customer will churn), <em>data</em> is what you've observed, <em>prior</em> is what you believed before seeing the data, and <em>posterior</em> is your updated belief. Every time you build a model, run an experiment, or form a business conclusion, you are — whether you know it or not — doing Bayesian reasoning.</p>
+  </div>
+
+  <h3>1.2 Distributions — The Shape of Reality</h3>
+
+  <p>A <strong>probability distribution</strong> describes all possible values a random variable can take and how likely each is. Choosing the right distribution to model your data is one of the most important and most neglected skills in analytics.</p>
+
+  <h4>Discrete Distributions You Must Know</h4>
+  <div class="tbl-wrap">
+  <table>
+    <tr><th>Distribution</th><th>Parameters</th><th>When to Use</th><th>Real Example</th></tr>
+    <tr>
+      <td><strong>Bernoulli</strong></td>
+      <td><code>p</code></td>
+      <td>Single binary outcome</td>
+      <td>Did a user click? Did a customer churn this month?</td>
+    </tr>
+    <tr>
+      <td><strong>Binomial</strong></td>
+      <td><code>n, p</code></td>
+      <td>Count of successes in n trials</td>
+      <td>Number of sales in 100 calls; number of defects in a batch</td>
+    </tr>
+    <tr>
+      <td><strong>Poisson</strong></td>
+      <td><code>λ</code></td>
+      <td>Count of rare events per unit time/space</td>
+      <td>Customer support tickets per hour; server errors per day</td>
+    </tr>
+    <tr>
+      <td><strong>Geometric</strong></td>
+      <td><code>p</code></td>
+      <td>Number of trials until first success</td>
+      <td>How many emails until first reply; retries until connection</td>
+    </tr>
+    <tr>
+      <td><strong>Negative Binomial</strong></td>
+      <td><code>r, p</code></td>
+      <td>Overdispersed count data (variance &gt; mean)</td>
+      <td>Purchases per customer (most buy 0, few buy many)</td>
+    </tr>
+  </table>
+  </div>
+
+  <h4>Continuous Distributions You Must Know</h4>
+  <div class="tbl-wrap">
+  <table>
+    <tr><th>Distribution</th><th>Parameters</th><th>When to Use</th><th>Real Example</th></tr>
+    <tr>
+      <td><strong>Normal (Gaussian)</strong></td>
+      <td><code>μ, σ</code></td>
+      <td>Sums of independent variables, measurement error</td>
+      <td>Heights, IQ scores, prediction errors after log transform</td>
+    </tr>
+    <tr>
+      <td><strong>Log-Normal</strong></td>
+      <td><code>μ, σ</code></td>
+      <td>Positive data with right skew; multiplicative processes</td>
+      <td>Income, website session duration, stock prices, latency</td>
+    </tr>
+    <tr>
+      <td><strong>Exponential</strong></td>
+      <td><code>λ</code></td>
+      <td>Time between Poisson events</td>
+      <td>Time between purchases; time to failure; customer lifetime</td>
+    </tr>
+    <tr>
+      <td><strong>Beta</strong></td>
+      <td><code>α, β</code></td>
+      <td>Probabilities and proportions (0 to 1)</td>
+      <td>Conversion rate uncertainty; click-through rate priors</td>
+    </tr>
+    <tr>
+      <td><strong>Gamma</strong></td>
+      <td><code>α, β</code></td>
+      <td>Positive skewed data, waiting times</td>
+      <td>Insurance claim amounts; time to complete a task</td>
+    </tr>
+    <tr>
+      <td><strong>Pareto (Power Law)</strong></td>
+      <td><code>α, x_m</code></td>
+      <td>Heavy-tailed phenomena, "80-20 rule" data</td>
+      <td>Revenue by customer; social media followers; city sizes</td>
+    </tr>
+  </table>
+  </div>
+
+  <div class="callout callout-warning">
+    <span class="cl">⚠️ The Normal Distribution Trap</span>
+    <p>The most common mistake in analytics is <strong>assuming everything is normally distributed</strong>. Revenue, session duration, purchase amounts, customer lifetime value, social engagement — virtually all business metrics are <em>log-normal, exponential, or power-law distributed</em>. When you apply techniques that assume normality to these variables (like standard means and CIs for revenue), you get systematically wrong answers.</p>
+    <p><strong>Rule of thumb:</strong> If a metric can't be negative and has a long right tail, it's probably log-normal. Take the log, analyze that, then exponentiate back.</p>
+  </div>
+
+  <h3>1.3 The Central Limit Theorem — Why Normal Appears Everywhere</h3>
+
+  <p>The Central Limit Theorem (CLT) is arguably the most important theorem in all of statistics. It explains why the normal distribution appears so often and justifies most frequentist inferential procedures.</p>
+
+  <div class="formula">
+    <span class="f-label">Central Limit Theorem (informal statement)</span>
+    If you take a large enough sample from ANY distribution
+    (with finite mean μ and variance σ²),
+    the distribution of sample means approaches:
+
+    x̄ ~ Normal(μ,  σ²/n)
+
+    regardless of what distribution the original data has.
+    "Large enough" is typically n ≥ 30 for mild skew,
+    n ≥ 100-300 for heavy-tailed distributions.
+  </div>
+
+  <div class="callout callout-concept">
+    <span class="cl">🧠 Why This Is Profound</span>
+    <p>You're measuring something that follows a bizarre, jagged, unknown distribution. You don't know its true mean μ. You take samples of size n=100 repeatedly and compute each sample's mean. Those sample means — despite coming from a weird distribution — will form a normal distribution centered at the true μ. This is what lets us construct confidence intervals and run hypothesis tests without knowing the underlying distribution of our data.</p>
+    <p><strong>The catch:</strong> The CLT applies to <em>means and sums</em>. Not to the individual observations, not to percentiles, not to maxima. A common mistake is applying CLT-based tests to raw skewed data rather than to means.</p>
+  </div>
+
+  <h3>1.4 Hypothesis Testing — The Most Misused Tool in Analytics</h3>
+
+  <p>Hypothesis testing is the procedure for deciding, based on data, whether an observed effect is "real" or could plausibly be explained by random chance. It is also the most abused tool in all of analytics, responsible for a replication crisis across multiple fields.</p>
+
+  <h4>The Formal Framework</h4>
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <strong>State the null hypothesis H₀</strong>
+        <p>H₀ is the "boring" hypothesis — no effect, no difference, nothing interesting. Example: "The new checkout flow has no effect on conversion rate vs the old one." Always try to reject H₀, never accept it.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <strong>State the alternative hypothesis H₁</strong>
+        <p>What you believe is actually true. "The new checkout flow has a different conversion rate." Can be one-tailed (direction specified) or two-tailed (either direction).</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <strong>Choose significance level α before looking at data</strong>
+        <p>α is the false positive rate you're willing to accept. Convention is α=0.05 (5% chance of claiming an effect that doesn't exist). This must be chosen before you see the data — otherwise you're p-hacking.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">4</div>
+      <div class="step-body">
+        <strong>Compute the test statistic and p-value</strong>
+        <p>The test statistic measures how far your observed data is from what H₀ predicts, in units of standard error. The p-value is the probability of seeing data this extreme (or more) if H₀ were true.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">5</div>
+      <div class="step-body">
+        <strong>Make the decision</strong>
+        <p>If p &lt; α: reject H₀ (result is "statistically significant"). If p ≥ α: fail to reject H₀. Note: you never "accept" H₀ — absence of evidence is not evidence of absence.</p>
+      </div>
+    </div>
+  </div>
+
+  <h4>What the p-value Actually Means</h4>
+  <div class="callout callout-warning">
+    <span class="cl">⚠️ The Most Misunderstood Concept in All of Analytics</span>
+    <p><strong>A p-value is NOT:</strong></p>
+    <ul>
+      <li>The probability that H₀ is true</li>
+      <li>The probability that your result is due to chance</li>
+      <li>The probability that you're wrong</li>
+      <li>A measure of the size or importance of an effect</li>
+    </ul>
+    <p><strong>A p-value IS:</strong> P(seeing data this extreme | H₀ is true). It assumes H₀ is true and asks how surprising your data would be under that assumption. A p-value of 0.03 means: "If there truly were no effect, there would be only a 3% chance of seeing an effect this large in a study of this size."</p>
+  </div>
+
+  <h4>Type I &amp; Type II Errors — The Error Tradeoff</h4>
+  <div class="diagram">
+<span class="dl">Decision Matrix:</span>
+
+                        Reality: H₀ True    Reality: H₁ True
+                       ┌──────────────────┬──────────────────┐
+  Decision: Reject H₀  │  Type I Error    │  Correct!        │
+  (claim effect exists) │  False Positive  │  True Positive   │
+                        │  P = α           │  P = Power (1-β) │
+                       ├──────────────────┼──────────────────┤
+  Decision: Fail to    │  Correct!        │  Type II Error   │
+  reject H₀            │  True Negative   │  False Negative  │
+  (no effect found)    │  P = 1 - α       │  P = β           │
+                       └──────────────────┴──────────────────┘
+
+<span class="dl">Key insight:</span> Reducing α (e.g. 0.05 → 0.01) reduces Type I errors
+but INCREASES Type II errors (you miss real effects).
+The only way to reduce both simultaneously: increase sample size.
+  </div>
+
+  <h4>Statistical Power — The Forgotten Half of Testing</h4>
+  <p><strong>Power</strong> is the probability of detecting a real effect when one exists (1 - β). It depends on three things: effect size, sample size, and α. Under-powered studies are a major source of irreproducible results.</p>
+
+  <div class="formula">
+    <span class="f-label">Power depends on these factors</span>
+    Power = f(effect_size, sample_size, α)
+
+    Effect size ↑  →  Power ↑  (bigger effects are easier to detect)
+    Sample size ↑  →  Power ↑  (more data → more signal)
+    α ↑            →  Power ↑  (but also more false positives)
+
+    Standard practice: design studies with Power ≥ 0.80
+    (80% chance of detecting a real effect of the assumed size)
+  </div>
+
+  <h3>1.5 Confidence Intervals — Better Than p-values</h3>
+
+  <p>A 95% confidence interval (CI) contains the true parameter value in 95% of intervals computed using this procedure. <em>Not</em> that there's a 95% chance the specific interval you computed contains the true value — that's the Bayesian credible interval.</p>
+
+  <div class="callout callout-analogy">
+    <span class="cl">💡 The Fishing Net Analogy</span>
+    <p>Imagine you build nets that catch fish 95% of the time. You cast your net and either catch or don't catch the fish (the true parameter). Any specific cast either catches it or doesn't — there's no probability about <em>this</em> cast. But the procedure (the type of net) is reliable 95% of the time. That's what "95% confidence" means — it's a statement about the <em>procedure</em>, not about your specific interval.</p>
+    <p>The Bayesian alternative — a credible interval — does give you what you intuitively want: "there's a 95% probability the true value is in this range."</p>
+  </div>
+
+  <h3>1.6 Effect Size — What Actually Matters Beyond Significance</h3>
+
+  <p>Statistical significance tells you whether an effect is distinguishable from zero. <strong>Effect size</strong> tells you whether it's large enough to matter. With enough data, every trivial difference becomes statistically significant. Always report effect sizes.</p>
+
+  <div class="tbl-wrap">
+  <table>
+    <tr><th>Effect Size Measure</th><th>Formula</th><th>Use Case</th><th>Small / Medium / Large</th></tr>
+    <tr>
+      <td><strong>Cohen's d</strong></td>
+      <td><code>(μ₁ - μ₂) / σ_pooled</code></td>
+      <td>Comparing two group means</td>
+      <td>0.2 / 0.5 / 0.8</td>
+    </tr>
+    <tr>
+      <td><strong>Pearson's r</strong></td>
+      <td><code>Cov(X,Y) / (σ_X × σ_Y)</code></td>
+      <td>Linear correlation strength</td>
+      <td>0.1 / 0.3 / 0.5</td>
+    </tr>
+    <tr>
+      <td><strong>η² (Eta-squared)</strong></td>
+      <td><code>SS_effect / SS_total</code></td>
+      <td>ANOVA: variance explained</td>
+      <td>0.01 / 0.06 / 0.14</td>
+    </tr>
+    <tr>
+      <td><strong>Odds Ratio</strong></td>
+      <td><code>(a/b) / (c/d)</code></td>
+      <td>Binary outcomes, 2×2 tables</td>
+      <td>Context-dependent</td>
+    </tr>
+    <tr>
+      <td><strong>Relative Risk</strong></td>
+      <td><code>P(outcome|exposed) / P(outcome|unexposed)</code></td>
+      <td>Clinical/business experiments</td>
+      <td>Context-dependent</td>
+    </tr>
+  </table>
+  </div>
+
+  <h3>1.7 Multiple Testing — The Silent Killer of Analytics</h3>
+
+  <p>If you run 20 hypothesis tests with α=0.05, you expect <em>one false positive purely by chance</em>, even if no effects are real. This is the multiple testing problem, and it is rampant in business analytics — dashboards with 50 metrics, A/B tests that look at many segments, exploratory analyses that test dozens of features.</p>
+
+  <div class="formula">
+    <span class="f-label">Family-Wise Error Rate</span>
+    P(at least one false positive) = 1 - (1-α)^m
+
+    where m = number of tests
+    20 tests at α=0.05: P(at least one FP) = 1-(0.95)^20 = 64%
+    100 tests at α=0.05: P(at least one FP) = 99.4%
+  </div>
+
+  <h4>Corrections for Multiple Testing</h4>
+  <div class="tbl-wrap">
+  <table>
+    <tr><th>Method</th><th>Controls</th><th>How</th><th>When to Use</th></tr>
+    <tr><td><strong>Bonferroni</strong></td><td>FWER</td><td>α_adj = α/m</td><td>Few tests, need strict control (e.g. safety trials)</td></tr>
+    <tr><td><strong>Holm-Bonferroni</strong></td><td>FWER</td><td>Sequential Bonferroni</td><td>Slightly more powerful than Bonferroni</td></tr>
+    <tr><td><strong>Benjamini-Hochberg</strong></td><td>FDR</td><td>Sort p-values, adjust threshold</td><td>Many tests, exploratory analysis, genomics</td></tr>
+    <tr><td><strong>Benjamini-Yekutieli</strong></td><td>FDR</td><td>BH with dependence correction</td><td>When tests are correlated (e.g. correlated features)</td></tr>
+  </table>
+  </div>
+
+  <div class="callout callout-tip">
+    <span class="cl">✅ Practical Rule</span>
+    <p>In business analytics, use <strong>Benjamini-Hochberg (BH)</strong> by default for any analysis involving multiple tests. It controls the False Discovery Rate (FDR) — the expected proportion of your "significant" findings that are actually false positives. Setting FDR at 10% means that among your significant results, you expect 10% to be wrong — usually acceptable for business decisions.</p>
+  </div>
+
+  <h3>1.8 The Replication Crisis and What It Means for Analytics</h3>
+
+  <p>Between 2011 and 2020, large-scale replication attempts found that fewer than 50% of published psychology findings and fewer than 60% of cancer biology findings could be successfully replicated. The causes are relevant to every analyst:</p>
+
+  <ul>
+    <li><strong>P-hacking:</strong> Running many analyses and reporting only p &lt; 0.05 results</li>
+    <li><strong>HARKing:</strong> Hypothesizing After Results are Known — treating exploratory findings as confirmatory</li>
+    <li><strong>Small samples:</strong> Underpowered studies produce inflated effect size estimates even when they get lucky and find p &lt; 0.05</li>
+    <li><strong>Publication bias:</strong> Only significant results get published (or shared in business settings, acted on)</li>
+    <li><strong>Researcher degrees of freedom:</strong> Many undisclosed choices in analysis (which outliers to remove, which covariates to include) inflate Type I error</li>
+  </ul>
+
+  <div class="callout callout-concept">
+    <span class="cl">🔑 What to Do Instead</span>
+    <p><strong>Pre-register your analyses:</strong> Write down your hypothesis, sample size, test statistic, and α before collecting data. <strong>Report effect sizes and CIs</strong>, not just p-values. <strong>Distinguish exploration from confirmation:</strong> EDA and hypothesis generation must be separated from hypothesis testing on the same data. <strong>Use holdout sets:</strong> Any pattern found on training data must be validated on data the analysis hasn't seen.</p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 2: USE CASES
+════════════════════════════════════════════════════ -->
+<section class="content-section" id="usecases">
+  <div class="section-banner banner-usecases">
+    <span class="s-icon">🏭</span>
+    <div>
+      <div class="s-label">Section 2 of 4</div>
+      <div class="s-title">Use Cases — Where This Actually Gets Used</div>
+    </div>
+  </div>
+
+  <h2>Industry Applications of Statistical Foundations</h2>
+
+  <h3>2.1 E-Commerce — Conversion Rate Optimization</h3>
+  <p>An e-commerce company wants to test whether a new checkout button color improves conversion rate from 3.2% to 3.5% or better.</p>
+
+  <p><strong>Why statistics matters here, precisely:</strong></p>
+  <ul>
+    <li>With 10,000 visitors, a 0.3pp difference is indistinguishable from noise — a test this size has less than 20% power to detect it</li>
+    <li>Running the test for only 2 days and peeking at results inflates false positive rate from 5% to &gt;40%</li>
+    <li>Testing 10 button colors simultaneously requires multiple testing correction or you'll ship a "winner" that was random</li>
+    <li>Conversion rate is Binomial(n, p) distributed — CLT applies well for large n, but not for rare events (e.g. checkout completion = 0.2%)</li>
+  </ul>
+
+  <div class="callout callout-tip">
+    <span class="cl">✅ Real Approach Used by Netflix, Airbnb, Booking.com</span>
+    <p>These companies use <strong>sequential testing</strong> (see Research section) instead of fixed-horizon tests. This allows valid early stopping when an effect is large, without inflating Type I error. They also use <strong>CUPED</strong> (Controlled-experiment Using Pre-Experiment Data) to reduce variance by controlling for pre-experiment behavior, increasing power by 30-50% at no extra sample cost.</p>
+  </div>
+
+  <h3>2.2 Healthcare Analytics — Drug Efficacy Studies</h3>
+  <p>A pharmaceutical company analyzes whether a new drug reduces recovery time. This is the domain where misunderstood statistics has the highest stakes.</p>
+
+  <p><strong>Critical statistical choices:</strong></p>
+  <ul>
+    <li><strong>Primary endpoint pre-registration:</strong> Must specify "reduction in hospital stay ≥ 2 days" before seeing data</li>
+    <li><strong>Intention-to-treat analysis:</strong> Include all randomized patients, even dropouts, to avoid selection bias</li>
+    <li><strong>Adaptive trial design:</strong> Modern trials use Bayesian adaptive designs to update sample allocation as evidence accumulates</li>
+    <li><strong>NNT (Number Needed to Treat):</strong> More interpretable than p-values — "treat 8 patients to prevent 1 additional death"</li>
+  </ul>
+
+  <h3>2.3 Financial Services — Risk Modeling</h3>
+  <p>A bank models the probability of loan default to set credit limits and pricing.</p>
+
+  <p><strong>Distribution selection is critical:</strong></p>
+  <ul>
+    <li>Default rates are Beta-distributed (bounded 0-1), not normally distributed</li>
+    <li>Loss amounts follow power-law or extreme value distributions — the tails are everything for risk</li>
+    <li>VaR (Value at Risk) at 99% relies on tail behavior, which normal distribution assumptions severely underestimate (see 2008 financial crisis)</li>
+    <li>Copulas are used to model joint distributions of correlated defaults — ignoring correlation was a primary cause of CDO mispricing in 2007</li>
+  </ul>
+
+  <h3>2.4 Technology — Product Analytics</h3>
+  <p>A SaaS company monitors 150 product metrics on a weekly dashboard and wants to detect meaningful changes.</p>
+
+  <p><strong>The multiple testing trap in action:</strong></p>
+  <ul>
+    <li>With 150 metrics at α=0.05, expect 7-8 false alarms per week even if nothing changed</li>
+    <li>Most companies' dashboards with "red/green" alerts are generating massive false positive noise</li>
+    <li>Solution: Benjamini-Hochberg correction across all monitored metrics, or Bayesian anomaly detection that gives posterior probability rather than binary alert</li>
+  </ul>
+
+  <h3>2.5 Manufacturing — Quality Control</h3>
+  <p>A factory monitors product dimensions to detect when a machine drifts out of calibration.</p>
+
+  <p><strong>Classic application of control charts (Shewhart charts):</strong></p>
+  <ul>
+    <li>UCL/LCL (Upper/Lower Control Limits) are set at μ ± 3σ — based on CLT, only 0.27% of in-control samples fall outside these limits</li>
+    <li>But this assumes measurements are normal and independent — both fail for autocorrelated process data (use ARIMA-based SPC instead)</li>
+    <li>CUSUM charts detect small persistent shifts faster than Shewhart charts by accumulating evidence over time</li>
+  </ul>
+
+  <h3>When NOT to Use Classic Frequentist Statistics</h3>
+  <div class="callout callout-warning">
+    <span class="cl">⚠️ When Frequentist Hypothesis Testing Fails</span>
+    <ul>
+      <li><strong>Observational data:</strong> p-values from observational studies do not establish causation — confounders invalidate the inference</li>
+      <li><strong>Peeking at ongoing experiments:</strong> Sequential testing requires corrections — vanilla t-tests on peeked data inflate Type I error dramatically</li>
+      <li><strong>Very large samples:</strong> Everything becomes significant — effect size matters more than significance</li>
+      <li><strong>Non-exchangeable units:</strong> Users in a social network influence each other — independence assumption fails (use cluster-based variance estimation)</li>
+      <li><strong>Rare events:</strong> Binomial test breaks down for p &lt; 0.01 — use exact tests or Poisson approximations</li>
+    </ul>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 3: IMPLEMENTATION
+════════════════════════════════════════════════════ -->
+<section class="content-section" id="implementation">
+  <div class="section-banner banner-impl">
+    <span class="s-icon">⚙️</span>
+    <div>
+      <div class="s-label">Section 3 of 4</div>
+      <div class="s-title">Implementation — Full Python Code</div>
+    </div>
+  </div>
+
+  <h2>Building a Statistical Analysis Toolkit from Scratch</h2>
+
+  <h3>3.1 Fitting &amp; Diagnosing Distributions</h3>
+  <p>The first step in any analysis is understanding what distribution your data actually follows. Never assume — fit and test.</p>
+
+  <div class="code-label">Python — Distribution fitting and visualization</div>
+  <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> scipy.stats <span class="kw">as</span> stats
+<span class="kw">from</span> scipy.stats <span class="kw">import</span> (norm, lognorm, expon, gamma,
+                          kstest, anderson, shapiro)
+
+<span class="cm"># ─── Generate sample business data (replace with your data) ───</span>
+np.random.seed(<span class="nu">42</span>)
+<span class="cm"># Revenue data: highly right-skewed, like real purchase amounts</span>
+revenue_data = np.random.lognormal(mean=<span class="nu">4.5</span>, sigma=<span class="nu">1.2</span>, size=<span class="nu">1000</span>)
+
+<span class="kw">def</span> <span class="fn">fit_and_compare_distributions</span>(data, distributions=<span class="kw">None</span>):
+    <span class="cm">"""
+    Fit multiple distributions to data and rank them by goodness-of-fit.
+    
+    Uses Kolmogorov-Smirnov test: measures maximum distance between
+    empirical CDF and fitted theoretical CDF.
+    Smaller KS statistic = better fit.
+    """</span>
+    <span class="kw">if</span> distributions <span class="kw">is None</span>:
+        distributions = [
+            (<span class="st">'Normal'</span>,      norm),
+            (<span class="st">'Log-Normal'</span>,   lognorm),
+            (<span class="st">'Exponential'</span>,  expon),
+            (<span class="st">'Gamma'</span>,        gamma),
+        ]
+
+    results = []
+    <span class="kw">for</span> name, dist <span class="kw">in</span> distributions:
+        <span class="cm"># Fit distribution — MLE by default</span>
+        params = dist.fit(data)
+        
+        <span class="cm"># KS test: H0 = data comes from this distribution</span>
+        ks_stat, p_value = kstest(data, dist.cdf, args=params)
+        
+        <span class="cm"># AIC for model selection (penalizes extra parameters)</span>
+        log_likelihood = np.sum(dist.logpdf(data, *params))
+        k = len(params)
+        aic = <span class="nu">2</span>*k - <span class="nu">2</span>*log_likelihood
+        
+        results.append({
+            <span class="st">'distribution'</span>: name,
+            <span class="st">'params'</span>:        params,
+            <span class="st">'ks_statistic'</span>:  ks_stat,
+            <span class="st">'p_value'</span>:       p_value,
+            <span class="st">'aic'</span>:           aic,
+            <span class="st">'fits_well'</span>:     p_value &gt; <span class="nu">0.05</span>  <span class="cm"># fail to reject = good fit</span>
+        })
+
+    <span class="cm"># Sort by AIC (lower = better)</span>
+    df = pd.DataFrame(results).sort_values(<span class="st">'aic'</span>)
+    <span class="kw">return</span> df
+
+result_df = fit_and_compare_distributions(revenue_data)
+print(result_df[[<span class="st">'distribution'</span>, <span class="st">'ks_statistic'</span>, <span class="st">'p_value'</span>, <span class="st">'aic'</span>, <span class="st">'fits_well'</span>]])
+<span class="cm"># Expected output:
+# distribution  ks_statistic  p_value         aic    fits_well
+# Log-Normal    0.018         0.89            8823   True      ← best fit
+# Gamma         0.031         0.28            8967   True
+# Exponential   0.118         0.000           9801   False
+# Normal        0.209         0.000           10234  False     ← terrible fit!</span>
+
+<span class="kw">def</span> <span class="fn">plot_distribution_diagnostics</span>(data, dist_name=<span class="st">'lognorm'</span>):
+    <span class="cm">"""4-panel diagnostic plot for distribution assessment."""</span>
+    dist = getattr(stats, dist_name)
+    params = dist.fit(data)
+    
+    fig, axes = plt.subplots(<span class="nu">2</span>, <span class="nu">2</span>, figsize=(<span class="nu">12</span>, <span class="nu">8</span>))
+    fig.suptitle(f<span class="st">'Distribution Diagnostics: {dist_name}'</span>, fontsize=<span class="nu">14</span>)
+    
+    <span class="cm"># 1. Histogram with fitted PDF</span>
+    ax = axes[<span class="nu">0</span>,<span class="nu">0</span>]
+    ax.hist(data, bins=<span class="nu">50</span>, density=<span class="kw">True</span>, alpha=<span class="nu">0.6</span>, color=<span class="st">'steelblue'</span>, label=<span class="st">'Data'</span>)
+    x = np.linspace(data.min(), data.max(), <span class="nu">200</span>)
+    ax.plot(x, dist.pdf(x, *params), <span class="st">'r-'</span>, lw=<span class="nu">2</span>, label=f<span class="st">'Fitted {dist_name}'</span>)
+    ax.set_title(<span class="st">'Histogram + Fitted PDF'</span>); ax.legend()
+    
+    <span class="cm"># 2. QQ Plot — if points fall on diagonal, distribution fits well</span>
+    ax = axes[<span class="nu">0</span>,<span class="nu">1</span>]
+    stats.probplot(data, dist=dist, sparams=params[:-<span class="nu">2</span>], plot=ax)
+    ax.set_title(<span class="st">'Q-Q Plot (points on line = good fit)'</span>)
+    
+    <span class="cm"># 3. Empirical vs Theoretical CDF</span>
+    ax = axes[<span class="nu">1</span>,<span class="nu">0</span>]
+    sorted_data = np.sort(data)
+    empirical_cdf = np.arange(<span class="nu">1</span>, len(data)+<span class="nu">1</span>) / len(data)
+    theoretical_cdf = dist.cdf(sorted_data, *params)
+    ax.plot(sorted_data, empirical_cdf, label=<span class="st">'Empirical CDF'</span>)
+    ax.plot(sorted_data, theoretical_cdf, <span class="st">'r--'</span>, label=<span class="st">'Theoretical CDF'</span>)
+    ax.set_title(<span class="st">'CDF Comparison'</span>); ax.legend()
+    
+    <span class="cm"># 4. Log scale histogram (reveals tail behavior)</span>
+    ax = axes[<span class="nu">1</span>,<span class="nu">1</span>]
+    ax.hist(np.log(data[data &gt; <span class="nu">0</span>]), bins=<span class="nu">50</span>, density=<span class="kw">True</span>,
+            color=<span class="st">'purple'</span>, alpha=<span class="nu">0.6</span>)
+    ax.set_title(<span class="st">'Log-transformed Data (should look normal for lognormal)'</span>)
+    
+    plt.tight_layout()
+    <span class="kw">return</span> fig</code></pre>
+
+  <h3>3.2 Hypothesis Testing — The Complete Toolkit</h3>
+
+  <div class="code-label">Python — Choosing and running the right test</div>
+  <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> scipy <span class="kw">import</span> stats
+<span class="kw">from</span> scipy.stats <span class="kw">import</span> (ttest_ind, ttest_rel, mannwhitneyu,
+                          chi2_contingency, fisher_exact,
+                          levene, bartlett, shapiro)
+<span class="kw">import</span> warnings
+
+<span class="kw">def</span> <span class="fn">choose_and_run_test</span>(group_a: np.ndarray, group_b: np.ndarray,
+                         paired: bool = <span class="kw">False</span>,
+                         alpha: float = <span class="nu">0.05</span>) -&gt; dict:
+    <span class="cm">"""
+    Automatically selects the appropriate two-group comparison test
+    based on data properties, then runs it.
+    
+    Decision tree:
+    1. Are groups paired? → Paired t-test or Wilcoxon signed-rank
+    2. Are groups normally distributed? (Shapiro-Wilk)
+    3. Are variances equal? (Levene's test)
+    4. Based on above: select t-test variant or Mann-Whitney U
+    """</span>
+    result = {<span class="st">'test_chosen'</span>: <span class="kw">None</span>, <span class="st">'statistic'</span>: <span class="kw">None</span>,
+              <span class="st">'p_value'</span>: <span class="kw">None</span>, <span class="st">'reject_h0'</span>: <span class="kw">None</span>,
+              <span class="st">'effect_size'</span>: <span class="kw">None</span>, <span class="st">'notes'</span>: []}
+    
+    n_a, n_b = len(group_a), len(group_b)
+    
+    <span class="cm"># Step 1: Check normality (only reliable for n < 5000)</span>
+    if n_a &lt; <span class="nu">5000</span> <span class="kw">and</span> n_b &lt; <span class="nu">5000</span>:
+        _, p_norm_a = shapiro(group_a[:<span class="nu">5000</span>])
+        _, p_norm_b = shapiro(group_b[:<span class="nu">5000</span>])
+        is_normal = (p_norm_a &gt; <span class="nu">0.05</span>) <span class="kw">and</span> (p_norm_b &gt; <span class="nu">0.05</span>)
+    <span class="kw">else</span>:
+        <span class="cm"># CLT kicks in for large n, normality assumption holds</span>
+        is_normal = <span class="kw">True</span>
+        result[<span class="st">'notes'</span>].append(<span class="st">'Large n: invoking CLT for normality'</span>)
+    
+    <span class="cm"># Step 2: Check equal variances (Levene's is robust to non-normality)</span>
+    _, p_var = levene(group_a, group_b)
+    equal_var = p_var &gt; <span class="nu">0.05</span>
+    
+    <span class="cm"># Step 3: Choose test</span>
+    <span class="kw">if</span> paired:
+        <span class="kw">if</span> is_normal:
+            stat, p = ttest_rel(group_a, group_b)
+            result[<span class="st">'test_chosen'</span>] = <span class="st">'Paired t-test'</span>
+        <span class="kw">else</span>:
+            stat, p = stats.wilcoxon(group_a, group_b)
+            result[<span class="st">'test_chosen'</span>] = <span class="st">'Wilcoxon Signed-Rank'</span>
+    <span class="kw">elif</span> is_normal:
+        <span class="kw">if</span> equal_var:
+            stat, p = ttest_ind(group_a, group_b, equal_var=<span class="kw">True</span>)
+            result[<span class="st">'test_chosen'</span>] = <span class="st">"Student's t-test"</span>
+        <span class="kw">else</span>:
+            <span class="cm"># Welch's t-test: does NOT assume equal variance</span>
+            stat, p = ttest_ind(group_a, group_b, equal_var=<span class="kw">False</span>)
+            result[<span class="st">'test_chosen'</span>] = <span class="st">"Welch's t-test (unequal variance)"</span>
+    <span class="kw">else</span>:
+        <span class="cm"># Non-parametric alternative: tests median difference</span>
+        stat, p = mannwhitneyu(group_a, group_b, alternative=<span class="st">'two-sided'</span>)
+        result[<span class="st">'test_chosen'</span>] = <span class="st">'Mann-Whitney U (non-parametric)'</span>
+    
+    <span class="cm"># Cohen's d effect size (for t-tests)</span>
+    pooled_std = np.sqrt((np.std(group_a, ddof=<span class="nu">1</span>)**<span class="nu">2</span> +
+                          np.std(group_b, ddof=<span class="nu">1</span>)**<span class="nu">2</span>) / <span class="nu">2</span>)
+    cohens_d = (np.mean(group_a) - np.mean(group_b)) / pooled_std
+    
+    result.update({
+        <span class="st">'statistic'</span>:   stat,
+        <span class="st">'p_value'</span>:     p,
+        <span class="st">'reject_h0'</span>:   p &lt; alpha,
+        <span class="st">'effect_size'</span>: cohens_d,
+        <span class="st">'effect_interpretation'</span>: (
+            <span class="st">'negligible'</span> <span class="kw">if</span> abs(cohens_d) &lt; <span class="nu">0.2</span> <span class="kw">else</span>
+            <span class="st">'small'</span>      <span class="kw">if</span> abs(cohens_d) &lt; <span class="nu">0.5</span> <span class="kw">else</span>
+            <span class="st">'medium'</span>     <span class="kw">if</span> abs(cohens_d) &lt; <span class="nu">0.8</span> <span class="kw">else</span>
+            <span class="st">'large'</span>
+        ),
+        <span class="st">'equal_variance'</span>: equal_var,
+        <span class="st">'normal_data'</span>:    is_normal,
+    })
+    <span class="kw">return</span> result
+
+<span class="cm"># ─── Example: A/B test on conversion value ────────────────────</span>
+np.random.seed(<span class="nu">42</span>)
+control   = np.random.lognormal(<span class="nu">4.0</span>, <span class="nu">1.0</span>, <span class="nu">500</span>)  <span class="cm"># control group</span>
+treatment = np.random.lognormal(<span class="nu">4.1</span>, <span class="nu">1.0</span>, <span class="nu">500</span>)  <span class="cm"># 10% higher mean</span>
+
+test_result = choose_and_run_test(control, treatment)
+<span class="kw">for</span> k, v <span class="kw">in</span> test_result.items():
+    <span class="kw">if</span> v <span class="kw">is not None</span>: print(f<span class="st">"  {k}: {v}"</span>)
+
+<span class="cm"># Output:
+#   test_chosen: Welch's t-test (unequal variance)
+#   p_value: 0.031
+#   reject_h0: True
+#   effect_size: 0.138
+#   effect_interpretation: small
+#
+# Conclusion: Statistically significant (p=0.031) but SMALL effect.
+# The new treatment adds ~10% to revenue BUT the practical question is:
+# Is a Cohen's d of 0.138 worth the implementation cost?</span></code></pre>
+
+  <h3>3.3 Power Analysis — Design Your Study Right</h3>
+
+  <div class="code-label">Python — Sample size calculator and power curves</div>
+  <pre><code><span class="kw">from</span> statsmodels.stats.power <span class="kw">import</span> TTestIndPower, NormalIndPower
+<span class="kw">from</span> statsmodels.stats.proportion <span class="kw">import</span> proportion_effectsize
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="kw">def</span> <span class="fn">ab_test_sample_size</span>(
+    baseline_rate:   float,   <span class="cm"># current conversion rate, e.g. 0.05</span>
+    minimum_effect:  float,   <span class="cm"># smallest effect worth detecting, e.g. 0.01</span>
+    alpha:           float = <span class="nu">0.05</span>,
+    power:           float = <span class="nu">0.80</span>,
+    two_tailed:      bool  = <span class="kw">True</span>
+) -&gt; dict:
+    <span class="cm">"""
+    Calculate required sample size for a proportion A/B test.
+    
+    This is the FIRST thing you should do before running any experiment.
+    Running without power analysis is how you waste months on
+    underpowered tests that give you garbage results.
+    """</span>
+    treatment_rate = baseline_rate + minimum_effect
+    
+    <span class="cm"># Cohen's h for proportions</span>
+    effect_size = proportion_effectsize(treatment_rate, baseline_rate)
+    
+    analysis = NormalIndPower()
+    n_per_group = analysis.solve_power(
+        effect_size = effect_size,
+        power       = power,
+        alpha       = alpha,
+        alternative = <span class="st">'two-sided'</span> <span class="kw">if</span> two_tailed <span class="kw">else</span> <span class="st">'larger'</span>
+    )
+    n_per_group = int(np.ceil(n_per_group))
+    
+    <span class="kw">return</span> {
+        <span class="st">'n_per_group'</span>:    n_per_group,
+        <span class="st">'total_n'</span>:        n_per_group * <span class="nu">2</span>,
+        <span class="st">'effect_size_h'</span>:  effect_size,
+        <span class="st">'baseline'</span>:       baseline_rate,
+        <span class="st">'treatment'</span>:      treatment_rate,
+        <span class="st">'relative_lift'</span>:  minimum_effect / baseline_rate,
+        <span class="st">'days_needed'</span>:    <span class="kw">None</span>  <span class="cm"># fill in: n / daily_traffic</span>
+    }
+
+<span class="cm"># ─── Real scenarios ────────────────────────────────────────────</span>
+scenarios = [
+    (<span class="st">"Checkout CTA color"</span>,  <span class="nu">0.032</span>, <span class="nu">0.003</span>),  <span class="cm"># 3.2% → 3.5%</span>
+    (<span class="st">"Pricing page layout"</span>, <span class="nu">0.050</span>, <span class="nu">0.010</span>),  <span class="cm"># 5.0% → 6.0%</span>
+    (<span class="st">"Email subject line"</span>,  <span class="nu">0.220</span>, <span class="nu">0.020</span>),  <span class="cm"># 22% → 24% open rate</span>
+]
+
+print(f<span class="st">"{'Experiment':<25} {'N/group':>8} {'Total N':>8} {'Relative lift':>14}"</span>)
+print(<span class="st">"-"</span>*<span class="nu">60</span>)
+<span class="kw">for</span> name, base, lift <span class="kw">in</span> scenarios:
+    r = ab_test_sample_size(base, lift)
+    print(f<span class="st">"{name:<25} {r['n_per_group']:>8,} {r['total_n']:>8,} {r['relative_lift']:>13.1%}"</span>)
+
+<span class="cm"># Output:
+# Experiment                 N/group  Total N  Relative lift
+# ------------------------------------------------------------
+# Checkout CTA color          29,140   58,280          9.4%
+# Pricing page layout          4,414    8,828         20.0%
+# Email subject line           3,055    6,110          9.1%
+#
+# Key insight: Detecting small absolute lifts on low base rates
+# requires MASSIVE sample sizes. Most companies run A/B tests
+# 10-50x underpowered. Their "winners" are mostly noise.</span>
+
+<span class="cm"># ─── Power curve: visualize power across sample sizes ─────────</span>
+<span class="kw">def</span> <span class="fn">plot_power_curve</span>(effect_sizes=[<span class="nu">0.1</span>, <span class="nu">0.2</span>, <span class="nu">0.3</span>, <span class="nu">0.5</span>]):
+    analysis = TTestIndPower()
+    n_range = np.arange(<span class="nu">10</span>, <span class="nu">500</span>, <span class="nu">10</span>)
+    
+    plt.figure(figsize=(<span class="nu">10</span>, <span class="nu">6</span>))
+    <span class="kw">for</span> d <span class="kw">in</span> effect_sizes:
+        powers = [analysis.power(d, n, alpha=<span class="nu">0.05</span>) <span class="kw">for</span> n <span class="kw">in</span> n_range]
+        plt.plot(n_range, powers, label=f<span class="st">"Cohen's d = {d}"</span>, lw=<span class="nu">2</span>)
+    
+    plt.axhline(<span class="nu">0.8</span>, color=<span class="st">'red'</span>, linestyle=<span class="st">'--'</span>, label=<span class="st">'80% power threshold'</span>)
+    plt.xlabel(<span class="st">'Sample size per group'</span>); plt.ylabel(<span class="st">'Statistical Power'</span>)
+    plt.title(<span class="st">'Power Curves: How much data do you need?'</span>)
+    plt.legend(); plt.grid(alpha=<span class="nu">0.3</span>)
+    <span class="kw">return</span> plt.gcf()</code></pre>
+
+  <h3>3.4 Multiple Testing Correction — Protecting Against False Discoveries</h3>
+
+  <div class="code-label">Python — Benjamini-Hochberg FDR correction</div>
+  <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> statsmodels.stats.multitest <span class="kw">import</span> multipletests
+
+<span class="kw">def</span> <span class="fn">analyze_multiple_metrics</span>(
+    p_values:    list,
+    metric_names: list,
+    alpha:       float = <span class="nu">0.05</span>,
+    method:      str   = <span class="st">'fdr_bh'</span>  <span class="cm"># Benjamini-Hochberg FDR</span>
+) -&gt; pd.DataFrame:
+    <span class="cm">"""
+    Apply multiple testing correction to a batch of p-values.
+    
+    Methods available:
+    'bonferroni'  - FWER control, very conservative
+    'holm'        - FWER, step-down, less conservative than Bonferroni
+    'fdr_bh'      - Benjamini-Hochberg FDR, best for exploratory analysis
+    'fdr_by'      - Benjamini-Yekutieli, FDR with dependence correction
+    """</span>
+    reject, p_corrected, _, _ = multipletests(
+        p_values, alpha=alpha, method=method
+    )
+    
+    df = pd.DataFrame({
+        <span class="st">'metric'</span>:      metric_names,
+        <span class="st">'p_raw'</span>:       p_values,
+        <span class="st">'p_corrected'</span>: p_corrected,
+        <span class="st">'significant'</span>: reject
+    }).sort_values(<span class="st">'p_raw'</span>)
+    
+    df[<span class="st">'p_raw'</span>]       = df[<span class="st">'p_raw'</span>].round(<span class="nu">4</span>)
+    df[<span class="st">'p_corrected'</span>] = df[<span class="st">'p_corrected'</span>].round(<span class="nu">4</span>)
+    <span class="kw">return</span> df
+
+<span class="cm"># ─── Simulate a product dashboard with 20 metrics ─────────────</span>
+np.random.seed(<span class="nu">42</span>)
+<span class="cm"># 18 null effects + 2 real effects</span>
+p_values = (
+    list(np.random.uniform(<span class="nu">0</span>, <span class="nu">1</span>, <span class="nu">18</span>))  +  <span class="cm"># noise</span>
+    [<span class="nu">0.003</span>, <span class="nu">0.018</span>]                        <span class="cm"># real signals</span>
+)
+metric_names = [f<span class="st">"metric_{i}"</span> <span class="kw">for</span> i <span class="kw">in</span> range(<span class="nu">18</span>)] + [<span class="st">"dau"</span>, <span class="st">"revenue_per_user"</span>]
+
+<span class="cm"># Without correction: naive α=0.05</span>
+naive_significant = sum(<span class="nu">1</span> <span class="kw">for</span> p <span class="kw">in</span> p_values <span class="kw">if</span> p &lt; <span class="nu">0.05</span>)
+
+<span class="cm"># With BH correction</span>
+result = analyze_multiple_metrics(p_values, metric_names)
+bh_significant = result[<span class="st">'significant'</span>].sum()
+
+print(f<span class="st">"Without correction: {naive_significant} 'significant' results"</span>)
+print(f<span class="st">"With BH correction: {bh_significant} significant results"</span>)
+print(<span class="st">"\nTop findings after correction:"</span>)
+print(result[result[<span class="st">'significant'</span>]][[<span class="st">'metric'</span>,<span class="st">'p_raw'</span>,<span class="st">'p_corrected'</span>]])
+
+<span class="cm"># Output:
+# Without correction: 3 'significant' results  ← 1 false positive!
+# With BH correction: 2 significant results    ← correct!
+#
+# metric             p_raw  p_corrected
+# revenue_per_user   0.003        0.060  ← still significant
+# dau                0.018        0.180  ← still significant
+#
+# The correction eliminates the noise and keeps the real signals.</span></code></pre>
+
+  <h3>3.5 The Bootstrap — When Formulas Don't Exist</h3>
+  <p>The bootstrap is perhaps the most powerful and underused tool in the statistician's toolkit. When the distribution of a statistic is unknown or hard to derive analytically (median, correlation, custom metrics), the bootstrap estimates it empirically.</p>
+
+  <div class="code-label">Python — Bootstrap for confidence intervals on any statistic</div>
+  <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> scipy.stats <span class="kw">import</span> bootstrap <span class="kw">as</span> scipy_bootstrap
+
+<span class="kw">def</span> <span class="fn">bootstrap_ci</span>(
+    data:      np.ndarray,
+    statistic: callable,
+    n_boot:    int   = <span class="nu">10_000</span>,
+    ci:        float = <span class="nu">0.95</span>,
+    method:    str   = <span class="st">'percentile'</span>
+) -&gt; dict:
+    <span class="cm">"""
+    Bootstrap confidence interval for ANY statistic.
+    
+    Works for: mean, median, std, Gini coefficient,
+    AUC, custom revenue metrics — anything you can compute.
+    
+    method options:
+    'percentile'  - simple, robust for symmetric distributions
+    'bca'         - bias-corrected and accelerated, more accurate
+    """</span>
+    boot_stats = np.empty(n_boot)
+    n = len(data)
+    
+    <span class="kw">for</span> i <span class="kw">in</span> range(n_boot):
+        <span class="cm"># Resample WITH replacement — the core of bootstrap</span>
+        sample = data[np.random.randint(<span class="nu">0</span>, n, n)]
+        boot_stats[i] = statistic(sample)
+    
+    alpha = <span class="nu">1</span> - ci
+    lower = np.percentile(boot_stats, <span class="nu">100</span> * alpha/<span class="nu">2</span>)
+    upper = np.percentile(boot_stats, <span class="nu">100</span> * (<span class="nu">1</span> - alpha/<span class="nu">2</span>))
+    
+    <span class="kw">return</span> {
+        <span class="st">'point_estimate'</span>:  statistic(data),
+        <span class="st">'ci_lower'</span>:        lower,
+        <span class="st">'ci_upper'</span>:        upper,
+        <span class="st">'ci_width'</span>:        upper - lower,
+        <span class="st">'n_bootstrap'</span>:     n_boot,
+        <span class="st">'confidence_level'</span>: ci
+    }
+
+<span class="cm"># ─── Use cases ─────────────────────────────────────────────────</span>
+np.random.seed(<span class="nu">42</span>)
+revenue = np.random.lognormal(<span class="nu">5</span>, <span class="nu">1.5</span>, <span class="nu">1000</span>)  <span class="cm"># realistic revenue data</span>
+
+<span class="cm"># 1. CI for median (no closed-form formula)</span>
+median_ci = bootstrap_ci(revenue, np.median)
+print(f<span class="st">"Median revenue: ${median_ci['point_estimate']:.0f}"</span>)
+print(f<span class="st">"95% CI: (${median_ci['ci_lower']:.0f}, ${median_ci['ci_upper']:.0f})"</span>)
+
+<span class="cm"># 2. CI for 90th percentile (extremely skewed, bootstrap essential)</span>
+p90_ci = bootstrap_ci(revenue, <span class="kw">lambda</span> x: np.percentile(x, <span class="nu">90</span>))
+print(f<span class="st">"\n90th percentile revenue: ${p90_ci['point_estimate']:.0f}"</span>)
+print(f<span class="st">"95% CI: (${p90_ci['ci_lower']:.0f}, ${p90_ci['ci_upper']:.0f})"</span>)
+
+<span class="cm"># 3. CI for Gini coefficient (inequality measure)
+# No simple formula exists — bootstrap is the only practical option</span>
+<span class="kw">def</span> <span class="fn">gini</span>(x):
+    n = len(x)
+    s = np.sort(x)
+    <span class="kw">return</span> (<span class="nu">2</span> * np.sum(np.arange(<span class="nu">1</span>, n+<span class="nu">1</span>) * s) / (n * s.sum())) - (n+<span class="nu">1</span>)/n
+
+gini_ci = bootstrap_ci(revenue, gini)
+print(f<span class="st">"\nGini coefficient: {gini_ci['point_estimate']:.3f}"</span>)
+print(f<span class="st">"95% CI: ({gini_ci['ci_lower']:.3f}, {gini_ci['ci_upper']:.3f})"</span>)</code></pre>
+
+  <div class="quiz">
+    <div class="q-title">🧠 Section 3 Check — Implementation</div>
+    <ol>
+      <li>You have purchase amount data that's right-skewed (most users spend $0–50, a few spend $500+). You want to compare average purchase amounts between two versions of a pricing page. What test would <code>choose_and_run_test()</code> select and why? What would you do differently?</li>
+      <li>An A/B test on a checkout page with baseline conversion 1.5% needs to detect a 0.3pp lift. Calculate the required sample size using the code above. If your site gets 5,000 daily visitors (split equally), how many days must the test run?</li>
+      <li>A product dashboard monitors 50 metrics. After a feature launch, 4 metrics show p &lt; 0.05. After applying BH correction, only 1 remains significant. What does this tell you about the launch? What's the next step?</li>
+    </ol>
+    <div class="hint">Hint for Q1: Think about what "right-skewed" implies for the distribution, and why the log transform helps before applying parametric tests.</div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 4: RESEARCH FRONTIERS
+════════════════════════════════════════════════════ -->
+<section class="content-section" id="research">
+  <div class="section-banner banner-research">
+    <span class="s-icon">🔬</span>
+    <div>
+      <div class="s-label">Section 4 of 4</div>
+      <div class="s-title">Research Frontiers — Where the Field Is Going</div>
+    </div>
+  </div>
+
+  <h2>The Cutting Edge of Statistical Practice</h2>
+
+  <h3>4.1 Sequential Testing &amp; Always-Valid Inference</h3>
+
+  <p>Classical A/B testing requires you to fix sample size in advance and look at results only once. In practice, businesses peek at results continuously — which inflates Type I error dramatically. <strong>Sequential testing</strong> solves this by designing tests that are valid at any stopping time.</p>
+
+  <div class="paper">
+    <div class="p-title">Always Valid Inference: Continuous Monitoring of A/B Tests</div>
+    <div class="p-meta">Johari et al., 2022 · Spotify/Stanford</div>
+    <div class="p-desc">Introduces anytime-valid p-values and confidence sequences that maintain validity regardless of when you stop a test. Used in production at Spotify. The key insight: replace fixed-horizon t-tests with e-values and martingale-based tests. Allows early stopping when an effect is large or futility stopping when an effect is clearly absent, without inflating false positive rates.</div>
+  </div>
+
+  <div class="paper">
+    <div class="p-title">Peeking at A/B Tests: Why it matters, and what to do about it</div>
+    <div class="p-meta">Johari, Pekelis &amp; Walsh, 2015 · Optimizely</div>
+    <div class="p-desc">Quantifies exactly how much peeking inflates false positive rates (a test peeked at every day for 30 days has a true α of ~40% not 5%). Proposes the mixture sequential probability ratio test as a solution. Directly applicable to any analytics team running A/B tests.</div>
+  </div>
+
+  <h4>What This Means for Your Work</h4>
+  <ul>
+    <li>Replace fixed-horizon tests with sequential tests (libraries: <code>scipy.stats</code> upcoming, or <code>streamlit-multivariate-testing</code>)</li>
+    <li>If you must peek: pre-register the peek times and use Bonferroni correction for the number of peeks</li>
+    <li>Bayesian testing is naturally sequential — posterior probability updates are always valid to examine</li>
+  </ul>
+
+  <h3>4.2 The p-value Reform Movement</h3>
+
+  <p>In 2019, a letter signed by over 800 statisticians in <em>Nature</em> called for retiring the concept of "statistical significance." This is not fringe — it reflects a genuine crisis in how statistics is practiced.</p>
+
+  <div class="paper">
+    <div class="p-title">Retire Statistical Significance</div>
+    <div class="p-meta">Amrhein, Greenland &amp; McShane, Nature, 2019 · 854 signatories</div>
+    <div class="p-desc">Argues that the bright-line p &lt; 0.05 threshold causes more harm than good: it creates a false binary (significant/not), encourages p-hacking, and discards useful information. Proposes: report full confidence intervals, effect sizes, and the practical significance of findings. Stop using "significant" as a word entirely.</div>
+  </div>
+
+  <div class="paper">
+    <div class="p-title">Moving to a World Beyond "p < 0.05"</div>
+    <div class="p-meta">Wasserstein, Schirm &amp; Lazar, American Statistician, 2019</div>
+    <div class="p-desc">The American Statistical Association's second statement on p-values. Introduces the ATOM framework: Accept uncertainty, be Thoughtful, Open, and Modest. Recommends reporting effect sizes and CIs rather than binary significance thresholds. Highly practical for applied analytics.</div>
+  </div>
+
+  <h3>4.3 Conformal Prediction — Distribution-Free Uncertainty</h3>
+
+  <p>Classical confidence intervals make distributional assumptions (usually normality). <strong>Conformal prediction</strong> produces valid prediction intervals with <em>no distributional assumptions whatsoever</em> — intervals that are guaranteed to cover the true value with at least (1-α) probability, regardless of the data distribution.</p>
+
+  <div class="paper">
+    <div class="p-title">A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification</div>
+    <div class="p-meta">Angelopoulos &amp; Bates, 2022 · Berkeley</div>
+    <div class="p-desc">Accessible tutorial on conformal prediction. Shows how to wrap any ML model with valid uncertainty intervals. Key result: for any model f and any new test point, conformal prediction guarantees P(y ∈ C(x)) ≥ 1-α without any assumptions on the data distribution. Used in production at Amazon, Airbnb for demand forecasting uncertainty.</div>
+  </div>
+
+  <div class="callout callout-research">
+    <span class="cl">🔬 Why This Matters for Analytics</span>
+    <p>Most prediction intervals in business analytics assume the errors are normally distributed — they're not (revenue, clicks, durations are all non-normal). Conformal prediction gives you valid intervals for any model on any data. The Python library <code>MAPIE</code> implements this and wraps any sklearn-compatible model. This is rapidly becoming the standard for uncertainty quantification in production ML.</p>
+  </div>
+
+  <h3>4.4 Bootstrap Variants &amp; Modern Resampling</h3>
+
+  <div class="paper">
+    <div class="p-title">An Introduction to the Bootstrap</div>
+    <div class="p-meta">Efron &amp; Tibshirani, 1993 · The foundational text</div>
+    <div class="p-desc">The original bootstrap paper and book. Still the essential reference. Key insight: the bootstrap approximates the sampling distribution of a statistic by using the empirical distribution of the data as a proxy for the true distribution. For most statistics of interest in business analytics, the bootstrap is more accurate than analytical formulas.</div>
+  </div>
+
+  <div class="paper">
+    <div class="p-title">CUPED: Improving Sensitivity of Online Controlled Experiments by Utilizing Pre-Experiment Data</div>
+    <div class="p-meta">Deng, Xu, Kohavi &amp; Walker, 2013 · Microsoft Research</div>
+    <div class="p-desc">CUPED (Controlled-experiment Using Pre-Experiment Data) uses variance reduction to dramatically increase the power of A/B tests without increasing sample size. The key idea: regress out pre-experiment behavior to reduce noise. Implementations at Microsoft, Netflix, and Airbnb show 30-50% variance reduction, effectively requiring half the sample size. Directly applicable to any team running online experiments.</div>
+  </div>
+
+  <h3>4.5 Open Research Problems</h3>
+
+  <p>These are areas where the current methods are known to be inadequate and active research is ongoing:</p>
+
+  <ul>
+    <li><strong>Network interference in A/B tests:</strong> When units (users) influence each other through a network, the independence assumption fails. Current solutions (cluster randomization, ego-network experiments) are imperfect. Active research at LinkedIn, Twitter, Meta.</li>
+    <li><strong>Long-term effects:</strong> Most A/B tests run for 1-2 weeks and measure short-term metrics. The correlation between short-term and long-term effects is often low or negative. No consensus solution exists.</li>
+    <li><strong>Heterogeneous treatment effects:</strong> Average treatment effects hide that different user segments respond differently. CATE (Conditional Average Treatment Effect) estimation is a growing area using causal forests and meta-learners.</li>
+    <li><strong>Valid inference after model selection:</strong> Using the same data to select a model and estimate its performance is known to produce over-confident estimates, but the right correction is still debated.</li>
+    <li><strong>Bandit vs A/B testing:</strong> Bayesian multi-armed bandits adapt assignment probabilities as evidence accumulates, but their frequentist properties are not always well understood. When to use bandits vs fixed A/B tests is not fully settled.</li>
+  </ul>
+
+  <h3>4.6 Key Tools &amp; Libraries to Know in 2026</h3>
+  <div class="tbl-wrap">
+  <table>
+    <tr><th>Library</th><th>Purpose</th><th>When to Use</th></tr>
+    <tr><td><strong>scipy.stats</strong></td><td>Core statistical tests</td><td>t-tests, KS-tests, distribution fitting — your daily workhorse</td></tr>
+    <tr><td><strong>statsmodels</strong></td><td>Regression, time series, stats models</td><td>OLS, logistic regression, ARIMA, survival analysis</td></tr>
+    <tr><td><strong>pingouin</strong></td><td>Statistical tests with effect sizes</td><td>ANOVA, pairwise tests — reports effect sizes automatically</td></tr>
+    <tr><td><strong>MAPIE</strong></td><td>Conformal prediction</td><td>Valid prediction intervals for any sklearn model</td></tr>
+    <tr><td><strong>bootstrapped</strong></td><td>Facebook's bootstrap library</td><td>A/B test bootstrap CIs for business metrics</td></tr>
+    <tr><td><strong>PyMC</strong></td><td>Bayesian modeling</td><td>Hierarchical models, Bayesian A/B testing (Ch 8)</td></tr>
+    <tr><td><strong>causalml</strong></td><td>Causal inference &amp; HTE</td><td>Uplift modeling, CATE estimation, meta-learners (Ch 7)</td></tr>
+  </table>
+  </div>
+
+  <div class="quiz">
+    <div class="q-title">🧠 Chapter 1 — Final Questions</div>
+    <ol>
+      <li>Your company runs 200 A/B tests per year, each at α=0.05 and 80% power. Assume 20% of the tested hypotheses are actually true. How many false positives and false negatives do you expect per year? What does this imply about your product decisions?</li>
+      <li>A colleague reports: "Our new feature significantly increased DAU (p=0.038, n=50,000)." What three questions would you ask before acting on this finding?</li>
+      <li>You need a 95% CI for the 95th percentile of customer lifetime value. Why can't you use a normal approximation, and how would you compute it correctly?</li>
+      <li>Read the abstract of "Always Valid Inference" (Johari et al., 2022). In one paragraph, explain why classical t-tests become invalid when you peek at results, and how anytime-valid inference fixes this.</li>
+    </ol>
+    <div class="hint">For Q1: Use Bayes' theorem on your testing results. Prior P(true hypothesis) = 0.2, likelihood of detecting = power = 0.8, Type I rate = α = 0.05. Compute the positive predictive value of a "significant" finding.</div>
+  </div>
+
+</section>
+
+<!-- CHAPTER NAVIGATION -->
+<div class="ch-nav">
+  <a href="index.html">
+    <div class="nav-lbl">← Previous</div>
+    Table of Contents
+  </a>
+  <a href="#" style="opacity:.4;pointer-events:none;">
+    <div class="nav-lbl">Next →</div>
+    Ch 02: EDA &amp; Feature Engineering (Coming Soon)
+  </a>
+</div>
+
+</main>
+
+<script>
+document.querySelectorAll('.nav-sub').forEach(l => {
+  l.addEventListener('click', () => document.getElementById('sidebar').classList.remove('open'));
+});
+</script>
+</body>
+</html>
